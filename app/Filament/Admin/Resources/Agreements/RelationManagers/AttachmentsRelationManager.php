@@ -2,13 +2,8 @@
 
 namespace App\Filament\Admin\Resources\Agreements\RelationManagers;
 
-use Filament\Actions\AssociateAction;
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\DissociateAction;
-use Filament\Actions\DissociateBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
@@ -28,7 +23,7 @@ class AttachmentsRelationManager extends RelationManager
         return $schema
            ->components([
                 FileUpload::make('file_path')
-                    ->label('File')
+                    ->label('Select File')
                     ->directory('agreement-attachments')
                     ->openable()
                     ->downloadable()
@@ -84,8 +79,9 @@ class AttachmentsRelationManager extends RelationManager
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->toolbarActions([
-                DeleteBulkAction::make(),
-            ]);
+            // ->toolbarActions([
+            //     DeleteBulkAction::make(),
+            // ])
+            ;
     }
 }
