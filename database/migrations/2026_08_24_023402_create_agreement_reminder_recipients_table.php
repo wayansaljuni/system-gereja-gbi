@@ -16,6 +16,10 @@ return new class extends Migration
             $table->foreignId('agreement_reminder_id')
                 ->constrained('agreement_reminders')
                 ->cascadeOnDelete();
+            $table->foreignId('user_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
             $table->string('name', 150)->nullable();
             $table->string('email', 255);
             $table->enum('recipient_type', [
@@ -25,7 +29,12 @@ return new class extends Migration
             ])->default('to');
             $table->boolean('is_active')
                 ->default(true);
+            $table->boolean('is_notified')
+                ->default(false);
+            $table->timestamp('notified_at')
+                ->nullable();
             $table->timestamps();
+
             $table->index('agreement_reminder_id');
             $table->index('email');
         });

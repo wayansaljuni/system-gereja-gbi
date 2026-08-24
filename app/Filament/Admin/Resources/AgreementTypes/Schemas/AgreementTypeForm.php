@@ -21,7 +21,7 @@ class AgreementTypeForm
                     ->icon(Heroicon::OutlinedIdentification)
                     ->schema([
                         TextInput::make('code')
-                            ->label('Kode')
+                            ->label('Type Code')
                             ->prefixIcon(Heroicon::OutlinedHashtag)
                             ->required()
                             ->maxLength(50)
@@ -29,7 +29,7 @@ class AgreementTypeForm
                             ->placeholder('cth: NDA, MOU, SPK'),
 
                         TextInput::make('name')
-                            ->label('Nama')
+                            ->label('Agreement Type Name')
                             ->prefixIcon(Heroicon::OutlinedDocumentText)
                             ->required()
                             ->maxLength(255)
@@ -41,30 +41,30 @@ class AgreementTypeForm
                     ->icon(Heroicon::OutlinedPencilSquare)
                     ->schema([
                         Textarea::make('description')
-                            ->label('Deskripsi')
+                            ->label('Description')
                             ->placeholder('Jelaskan secara singkat jenis perjanjian ini...')
                             ->rows(4)
                             ->columnSpanFull(),
                     ])
                     ->collapsible(),
 
-                Section::make('Pengaturan')
-                    ->description('Atur perilaku dan status jenis perjanjian')
+                Section::make('Setting')
+                    ->description('Set the behavior and status of the type of agreement')
                     ->icon(Heroicon::OutlinedCog6Tooth)
                     ->schema([
                         Grid::make(2)
                             ->schema([
                                 Toggle::make('has_period')
-                                    ->label('Memiliki Periode')
-                                    ->helperText('Aktifkan jika perjanjian ini punya masa berlaku')
+                                    ->label('Period')
+                                    // ->helperText('Aktifkan jika perjanjian ini punya masa berlaku')
                                     ->onIcon(Heroicon::OutlinedCalendarDays)
                                     ->offIcon(Heroicon::OutlinedNoSymbol)
                                     ->onColor('info')
                                     ->required(),
 
                                 Toggle::make('is_active')
-                                    ->label('Status Aktif')
-                                    ->helperText('Nonaktifkan untuk menyembunyikan dari pilihan')
+                                    ->label('Status Active')
+                                    // ->helperText('Nonaktifkan untuk menyembunyikan dari pilihan')
                                     ->onIcon(Heroicon::OutlinedCheckCircle)
                                     ->offIcon(Heroicon::OutlinedXCircle)
                                     ->onColor('success')

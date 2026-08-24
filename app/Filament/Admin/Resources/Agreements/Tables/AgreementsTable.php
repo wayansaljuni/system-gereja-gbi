@@ -3,7 +3,7 @@
 namespace App\Filament\Admin\Resources\Agreements\Tables;
 
 // use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+// use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
@@ -17,30 +17,30 @@ class AgreementsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->persistColumnSearchesInSession()
             ->columns([
                 TextColumn::make('agreement_number')
-                    ->label('No. Perjanjian')
+                    ->label('Agreement Number')
                     ->badge()
                     ->color('primary')
-                    ->searchable()
+                    ->searchable(isIndividual:true)
                     ->sortable(),
-
                 TextColumn::make('title')
-                    ->label('Nama Dokumen')
+                    ->label('Document Name')
                     ->icon(Heroicon::OutlinedBookmark)
-                    ->searchable()
+                    ->searchable(isIndividual:true)
                     ->sortable()
                     ->wrap() 
                     ->weight('medium'),
 
                 TextColumn::make('agreementType.name')
-                    ->label('Jenis')
+                    ->label('Agreement Type')
                     ->badge()
                     ->color('gray')
                     ->sortable(),
 
                 TextColumn::make('sifat')
-                    ->label('Sifat')
+                    ->label('Document Type')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'Original' => 'success',
@@ -49,20 +49,8 @@ class AgreementsTable
                         default => 'gray',
                     }),
 
-                // TextColumn::make('start_date')
-                //     ->label('Mulai')
-                //     ->date('d M Y')
-                //     ->icon(Heroicon::OutlinedCalendar)
-                //     ->sortable()
-                //     ->toggleable(),
-
-                // TextColumn::make('end_date')
-                //     ->label('Berakhir')
-                //     ->date('d M Y')
-                //     ->icon(Heroicon::OutlinedCalendar)
-                //     ->sortable(),
                 TextColumn::make('start_date')
-                        ->label('Periode')
+                        ->label('Period')
                         ->date('d M Y')
                         ->icon(Heroicon::OutlinedCalendar)
                         ->description(fn ($record) => $record->end_date
@@ -83,15 +71,6 @@ class AgreementsTable
                     })
                     ->sortable(),
 
-                // IconColumn::make('auto_renewal')
-                //     ->label('Auto Renew')
-                //     ->boolean()
-                //     ->trueIcon(Heroicon::OutlinedArrowPath)
-                //     ->falseIcon(Heroicon::OutlinedNoSymbol)
-                //     ->trueColor('info')
-                //     ->falseColor('gray')
-                //     ->toggleable(),
-
                 IconColumn::make('reminder_enabled')
                     ->label('Reminder')
                     ->boolean()
@@ -103,7 +82,7 @@ class AgreementsTable
                 TextColumn::make('notes')
                     ->label('Notes')
                     ->icon(Heroicon::OutlinedBookmark)
-                    ->searchable()
+                    ->searchable(isIndividual:true)
                     ->sortable()
                     ->wrap() 
                     ->weight('medium'),
@@ -119,11 +98,11 @@ class AgreementsTable
                     ->label('Status')
                     ->options([
                         'draft' => 'Draft',
-                        'active' => 'Aktif',
-                        'expiring' => 'Akan Berakhir',
-                        'expired' => 'Berakhir',
-                        'terminated' => 'Diakhiri',
-                        'cancelled' => 'Dibatalkan',
+                        'active' => 'Active',
+                        // 'expiring' => 'Akan Berakhir',
+                        'expired' => 'Expired',
+                        'terminated' => 'Terminated',
+                        'cancelled' => 'Cancelled',
                     ]),
 
                 SelectFilter::make('agreement_type_id')
@@ -139,9 +118,9 @@ class AgreementsTable
             ->recordActions([
                 EditAction::make(),
             ])
-            ->toolbarActions([
-                DeleteBulkAction::make(),
-            ])
+            // ->toolbarActions([
+            //     DeleteBulkAction::make(),
+            // ])
             ->defaultSort('created_at', 'desc');
     }
 }

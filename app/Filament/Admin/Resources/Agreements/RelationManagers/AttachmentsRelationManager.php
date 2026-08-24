@@ -31,17 +31,17 @@ class AttachmentsRelationManager extends RelationManager
                     ->columnSpanFull(),
 
                 TextInput::make('file_name')
-                    ->label('Nama File')
+                    ->label('File Name')
                     ->required()
                     ->maxLength(255),
 
                 TextInput::make('file_type')
-                    ->label('Tipe File')
+                    ->label('File Type')
                     ->maxLength(50)
                     ->placeholder('cth: pdf, docx'),
 
                 Textarea::make('description')
-                    ->label('Deskripsi')
+                    ->label('Description')
                     ->rows(2)
                     ->columnSpanFull(),
             ]);
@@ -53,27 +53,28 @@ class AttachmentsRelationManager extends RelationManager
             ->recordTitleAttribute('file_name')
             ->columns([
                 TextColumn::make('file_name')
-                    ->label('Nama File')
+                    ->label('File Name')
                     ->icon(Heroicon::OutlinedDocument)
                     ->searchable(),
 
                 TextColumn::make('file_type')
-                    ->label('Tipe')
+                    ->label('File Type')
                     ->badge()
                     ->color('gray'),
 
                 TextColumn::make('description')
-                    ->label('Deskripsi')
+                    ->label('Description')
                     ->limit(40)
                     ->placeholder('—'),
 
                 TextColumn::make('created_at')
-                    ->label('Diunggah')
+                    ->label('Uploaded')
                     ->dateTime('d M Y')
                     ->sortable(),
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                ->label('New Attach'),
             ])
             ->recordActions([
                 EditAction::make(),

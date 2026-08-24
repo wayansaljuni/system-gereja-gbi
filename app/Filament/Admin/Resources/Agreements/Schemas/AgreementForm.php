@@ -17,12 +17,12 @@ class AgreementForm
     {
         return $schema
            ->components([
-                Section::make('Data Utama Perjanjian')
+                Section::make('Agreement Details')
                     // ->description('Data utama perjanjian')
                     ->icon(Heroicon::OutlinedDocumentText)
                     ->schema([
                         TextInput::make('agreement_number')
-                            ->label('Nomor Perjanjian')
+                            ->label('Agreement Number')
                             ->prefixIcon(Heroicon::OutlinedHashtag)
                             ->required()
                             ->maxLength(100)
@@ -30,7 +30,8 @@ class AgreementForm
                             ->placeholder('cth: AGR/2026/001'),
 
                         Select::make('agreement_type_id')
-                            ->label('Jenis Perjanjian')
+                            ->label('Agreement Type')
+                            ->required()
                             ->relationship('agreementType', 'name')
                             ->prefixIcon(Heroicon::OutlinedTag)
                             ->searchable()
@@ -42,7 +43,7 @@ class AgreementForm
                             ->native(false),
 
                         Textarea::make('title')
-                            ->label('Nama Dokumen')
+                            ->label('Document Name')
                             // ->prefixIcon(Heroicon::OutlinedBookmark)
                             ->required()
                             ->maxLength(255)
@@ -56,7 +57,7 @@ class AgreementForm
                             ->maxLength(255),
 
                         Select::make('sifat')
-                            ->label('Sifat Dokumen')
+                            ->label('Document Nature')
                             ->options([
                                 'Original' => 'Original',
                                 'Copy' => 'Copy',
@@ -67,13 +68,13 @@ class AgreementForm
                             ->default('Original')
                             ->required(),
                         DatePicker::make('start_date')
-                            ->label('Tanggal Mulai')
+                            ->label('Start Date')
                             ->prefixIcon(Heroicon::OutlinedCalendar)
                             ->native(false)
                             ->displayFormat('d/m/Y'),
 
                         DatePicker::make('end_date')
-                            ->label('Tanggal Berakhir')
+                            ->label('End Date')
                             ->prefixIcon(Heroicon::OutlinedCalendar)
                             ->native(false)
                             ->displayFormat('d/m/Y')
@@ -82,73 +83,6 @@ class AgreementForm
                     ])
                     ->columns(2),
 
-                // Section::make('Periode & Durasi')
-                //     ->description('Masa berlaku perjanjian')
-                //     ->icon(Heroicon::OutlinedCalendarDays)
-                //     ->schema([
-                //         DatePicker::make('start_date')
-                //             ->label('Tanggal Mulai')
-                //             ->prefixIcon(Heroicon::OutlinedCalendar)
-                //             ->native(false)
-                //             ->displayFormat('d/m/Y'),
-
-                //         DatePicker::make('end_date')
-                //             ->label('Tanggal Berakhir')
-                //             ->prefixIcon(Heroicon::OutlinedCalendar)
-                //             ->native(false)
-                //             ->displayFormat('d/m/Y')
-                //             ->after('start_date'),
-
-                        // TextInput::make('duration_value')
-                        //     ->label('Nilai Durasi')
-                        //     ->prefixIcon(Heroicon::OutlinedClock)
-                        //     ->numeric()
-                        //     ->minValue(1),
-
-                        // Select::make('duration_unit')
-                        //     ->label('Satuan Durasi')
-                        //     ->options([
-                        //         'day' => 'Hari',
-                        //         'month' => 'Bulan',
-                        //         'year' => 'Tahun',
-                        //     ])
-                        //     ->native(false)
-                        //     ->prefixIcon(Heroicon::OutlinedAdjustmentsHorizontal),
-                    // ])
-                    // ->columns(2),
-
-                // Section::make('Perpanjangan Otomatis')
-                //     ->description('Pengaturan auto-renewal perjanjian')
-                //     ->icon(Heroicon::OutlinedArrowPath)
-                //     ->schema([
-                //         Toggle::make('auto_renewal')
-                //             ->label('Aktifkan Perpanjangan Otomatis')
-                //             ->onIcon(Heroicon::OutlinedArrowPath)
-                //             ->offIcon(Heroicon::OutlinedNoSymbol)
-                //             ->onColor('info')
-                //             ->live()
-                //             ->columnSpanFull(),
-
-                //         TextInput::make('renewal_period_value')
-                //             ->label('Nilai Periode Perpanjangan')
-                //             ->prefixIcon(Heroicon::OutlinedClock)
-                //             ->numeric()
-                //             ->minValue(1)
-                //             ->visible(fn ($get) => $get('auto_renewal')),
-
-                //         Select::make('renewal_period_unit')
-                //             ->label('Satuan Periode Perpanjangan')
-                //             ->options([
-                //                 'day' => 'Hari',
-                //                 'month' => 'Bulan',
-                //                 'year' => 'Tahun',
-                //             ])
-                //             ->native(false)
-                //             ->prefixIcon(Heroicon::OutlinedAdjustmentsHorizontal)
-                //             ->visible(fn ($get) => $get('auto_renewal')),
-                //     ])
-                //     ->columns(2),
-
                 Section::make('Status & Reminder')
                     ->icon(Heroicon::OutlinedBellAlert)
                     ->schema([
@@ -156,11 +90,10 @@ class AgreementForm
                             ->label('Status')
                             ->options([
                                 'draft' => 'Draft',
-                                'active' => 'Aktif',
-                                'expiring' => 'Akan Berakhir',
-                                'expired' => 'Berakhir',
-                                'terminated' => 'Diakhiri',
-                                'cancelled' => 'Dibatalkan',
+                                'active' => 'Active',
+                                'expired' => 'Expired',
+                                'terminated' => 'Terminated',
+                                'cancelled' => 'Cancelled',
                             ])
                             ->native(false)
                             ->prefixIcon(Heroicon::OutlinedFlag)
@@ -168,18 +101,18 @@ class AgreementForm
                             ->required(),
 
                         Toggle::make('reminder_enabled')
-                            ->label('Aktifkan Reminder')
+                            ->label('Enable Reminder')
                             ->onIcon(Heroicon::OutlinedBellAlert)
                             ->offIcon(Heroicon::OutlinedBellSlash)
                             ->onColor('success')
                             ->default(true),
                         Textarea::make('pic')
-                            ->label('PIC (Penanggung Jawab)')
+                            ->label('PIC (Person in Charge)')
                             ->rows(2)
                             ->columnSpanFull(),
                         Textarea::make('notes')
                             ->label('Notes')
-                            ->rows(2)
+                            ->rows(4)
                             ->columnSpanFull(),
                     ])
                     ->columns(2),

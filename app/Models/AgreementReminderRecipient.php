@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class AgreementReminderRecipient extends Model
 {
     protected $fillable = [
-        'agreement_reminder_id',
+       'agreement_reminder_id',
         'user_id',
         'name',
         'email',
+        'recipient_type',
+        'is_active',
         'is_notified',
         'notified_at',
     ];

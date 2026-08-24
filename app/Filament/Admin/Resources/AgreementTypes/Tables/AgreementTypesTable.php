@@ -17,29 +17,31 @@ class AgreementTypesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->persistColumnSearchesInSession()
             ->columns([
                 TextColumn::make('code')
-                    ->label('Kode')
+                    ->label('Type Code')
                     ->badge()
                     ->color('primary')
-                    ->searchable()
+                    ->searchable(isIndividual:true)
                     ->sortable(),
 
                 TextColumn::make('name')
-                    ->label('Nama')
+                    ->label('Agreement Type Name')
                     ->icon(Heroicon::OutlinedDocumentText)
-                    ->searchable()
+                    ->searchable(isIndividual:true)
                     ->sortable()
                     ->weight('medium'),
 
                 TextColumn::make('description')
-                    ->label('Deskripsi')
+                    ->label('Agreement Type Description')
                     ->limit(40)
                     ->placeholder('—')
+                    ->searchable(isIndividual:true)
                     ->toggleable(),
 
                 IconColumn::make('has_period')
-                    ->label('Periode')
+                    ->label('Period')
                     ->boolean()
                     ->trueIcon(Heroicon::OutlinedCalendarDays)
                     ->falseIcon(Heroicon::OutlinedNoSymbol)
@@ -48,7 +50,7 @@ class AgreementTypesTable
                     ->sortable(),
 
                 IconColumn::make('is_active')
-                    ->label('Aktif')
+                    ->label('Active')
                     ->boolean()
                     ->trueColor('success')
                     ->falseColor('danger')

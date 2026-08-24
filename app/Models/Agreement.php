@@ -56,4 +56,8 @@ class Agreement extends Model
     {
         return $this->hasMany(AgreementParty::class);
     }
+    public function agreements(): HasMany
+    {
+        return $this->hasMany(Agreement::class);
+    }
 }

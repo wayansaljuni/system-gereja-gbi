@@ -27,7 +27,7 @@ class PartiesRelationManager extends RelationManager
         return $schema
             ->components([
                 Select::make('party_type')
-                    ->label('Tipe Pihak')
+                    ->label('Party Type')
                     ->options([
                         'internal' => 'Internal',
                         'external' => 'External',
@@ -38,16 +38,16 @@ class PartiesRelationManager extends RelationManager
                     ->required(),
 
                 TextInput::make('name')
-                    ->label('Nama Pihak')
+                    ->label('Party Name')
                     ->prefixIcon(Heroicon::OutlinedUser)
                     ->required()
                     ->maxLength(255),
 
-                TextInput::make('role')
-                    ->label('Peran')
-                    ->prefixIcon(Heroicon::OutlinedIdentification)
-                    ->maxLength(100)
-                    ->placeholder('cth: Vendor, Klien, Mitra'),
+                // TextInput::make('role')
+                //     ->label('Peran')
+                //     ->prefixIcon(Heroicon::OutlinedIdentification)
+                //     ->maxLength(100)
+                //     ->placeholder('cth: Vendor, Klien, Mitra'),
 
                 TextInput::make('contact_person')
                     ->label('Contact Person')
@@ -61,7 +61,7 @@ class PartiesRelationManager extends RelationManager
                     ->maxLength(255),
 
                 TextInput::make('phone')
-                    ->label('Telepon')
+                    ->label('Phoen Number')
                     ->prefixIcon(Heroicon::OutlinedPhone)
                     ->tel()
                     ->maxLength(50),
@@ -75,18 +75,18 @@ class PartiesRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 TextColumn::make('name')
-                    ->label('Nama')
+                    ->label('Party Name')
                     ->icon(Heroicon::OutlinedUser)
                     ->searchable(),
 
                 TextColumn::make('party_type')
-                    ->label('Tipe')
+                    ->label('Party Type')
                     ->badge()
                     ->color(fn (string $state): string => $state === 'internal' ? 'info' : 'gray'),
 
-                TextColumn::make('role')
-                    ->label('Peran')
-                    ->placeholder('—'),
+                // TextColumn::make('role')
+                //     ->label('Peran')
+                //     ->placeholder('—'),
 
                 TextColumn::make('contact_person')
                     ->label('Contact Person')
@@ -100,20 +100,22 @@ class PartiesRelationManager extends RelationManager
                     ->toggleable(),
 
                 TextColumn::make('phone')
-                    ->label('Telepon')
+                    ->label('Phone Number')
                     ->icon(Heroicon::OutlinedPhone)
                     ->placeholder('—')
                     ->toggleable(),
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                ->label('New Party'),
             ])
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
             ])
-            ->toolbarActions([
-                DeleteBulkAction::make(),
-            ]);
+            // ->toolbarActions([
+            //     DeleteBulkAction::make(),
+            // ])
+            ;
     }
 }

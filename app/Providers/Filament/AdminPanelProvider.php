@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Admin\Widgets\AgreementStatsOverview;
+use App\Filament\Admin\Widgets\AgreementTypeChart;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -12,8 +14,6 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -30,11 +30,11 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->defaultThemeMode(ThemeMode::Light)
             ->login()
-            ->brandName('NAYATI SYSTEM APP') 
+            ->brandName('NAYATI-SYSTEM') 
             ->colors([
                 'primary' => Color::Amber,
             ])
-     ->sidebarFullyCollapsibleOnDesktop()
+            ->sidebarFullyCollapsibleOnDesktop()
             ->maxContentWidth(Width::Full)
             ->sidebarWidth('17rem') 
             ->collapsedSidebarWidth('4rem')
@@ -44,10 +44,12 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
+            // ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
             ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
+                // AccountWidget::class,
+                // FilamentInfoWidget::class,
+                AgreementStatsOverview::class,
+                AgreementTypeChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,

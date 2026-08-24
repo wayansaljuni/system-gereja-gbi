@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AgreementType extends Model
 {
@@ -17,5 +18,10 @@ class AgreementType extends Model
     protected $casts = [
         'has_period' => 'boolean',
         'is_active' => 'boolean',
-    ];  //
+    ];     
+    public function agreements(): HasMany
+    {
+        return $this->hasMany(Agreement::class);
+    } 
+    //
 }
