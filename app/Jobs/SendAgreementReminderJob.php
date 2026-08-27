@@ -26,6 +26,8 @@ class SendAgreementReminderJob implements ShouldQueue
             ->where('is_notified', false)
             ->get();
 
+        $touchedReminders = collect();
+
         foreach ($recipients as $recipient) {
             try {
                 Mail::to($recipient->email)->send(
@@ -36,10 +38,28 @@ class SendAgreementReminderJob implements ShouldQueue
                     'is_notified' => true,
                     'notified_at' => now(),
                 ]);
+
+                $touchedReminders->push($recipient->reminder);
             } catch (\Throwable $e) {
                 report($e);
                 // is_notified tetap false, biar bisa dicoba lagi nanti
             }
         }
+
+        $touchedReminders->unique('id')->each(function ($reminder) {
+            $reminder->refresh();
+
+            $allNotified = $reminder->recipients()
+                ->where('is_active', true)
+                ->where('is_notified', false)
+                ->doesntExist();
+
+            if ($allNotified && ! $reminder->is_sent) {
+                $reminder->update([
+                    'is_sent' => true,
+                    'sent_at' => now(),
+                ]);
+            }
+        });
     }
 }

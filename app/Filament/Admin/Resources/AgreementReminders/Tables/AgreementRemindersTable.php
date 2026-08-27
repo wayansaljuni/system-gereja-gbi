@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\AgreementReminders\Tables;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class AgreementRemindersTable
@@ -75,7 +76,13 @@ class AgreementRemindersTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                TernaryFilter::make('is_sent')
+                    ->label('Sent Status')
+                    ->placeholder('ALL')
+                    ->trueLabel('Sent')
+                    ->falseLabel('Not Sent')
+                    ->native(false),
+                        //
             ])
             ->recordActions([
                 ViewAction::make(),
