@@ -2,8 +2,9 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Admin\Widgets\AgreementReminderOverview;
 use App\Filament\Admin\Widgets\AgreementStatsOverview;
-use App\Filament\Admin\Widgets\AgreementTypeChart;
+// use App\Filament\Admin\Widgets\AgreementTypeChart;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -28,9 +29,12 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->id('admin')
             ->path('admin')
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->defaultThemeMode(ThemeMode::Light)
             ->login()
-            ->brandName('NAYATI-SYSTEM') 
+            ->brandLogo(fn () => view('filament.admin.logo'))            
+            ->favicon(asset('images/logo_32.png'))
+            // ->brandLogoHeight('2rem')         
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -49,7 +53,8 @@ class AdminPanelProvider extends PanelProvider
                 // AccountWidget::class,
                 // FilamentInfoWidget::class,
                 AgreementStatsOverview::class,
-                AgreementTypeChart::class,
+                // AgreementTypeChart::class,
+                AgreementReminderOverview::class,
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -7,6 +7,7 @@ use Filament\Widgets\ChartWidget;
 
 class AgreementTypeChart extends ChartWidget
 {
+    protected static ?int $sort = 3;
     protected ?string $heading = 'Agreements by Type';
 
     protected function getData(): array

@@ -2,11 +2,13 @@
 
 namespace App\Filament\Admin\Widgets;
 
+use App\Filament\Admin\Resources\Agreements\AgreementResource;
+use App\Filament\Admin\Resources\AgreementTypes\AgreementTypeResource;
 use App\Models\Agreement;
 use App\Models\AgreementType;
+use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Filament\Support\Icons\Heroicon;
 
 class AgreementStatsOverview extends BaseWidget
 {
@@ -16,32 +18,29 @@ class AgreementStatsOverview extends BaseWidget
         $activeTypes = AgreementType::where('is_active', true)->count();
         $totalAgreements = Agreement::count();
         $activeAgreements = Agreement::where('status', 'active')->count();
-        $expiringAgreements = Agreement::where('status', 'expiring')->count();
 
         return [
             Stat::make('Agreement Types', $totalTypes)
                 ->description($activeTypes . ' Active')
                 ->descriptionIcon(Heroicon::OutlinedTag)
                 ->color('primary')
-                ->icon(Heroicon::OutlinedTag),
+                ->icon(Heroicon::OutlinedTag)
+                ->url(AgreementTypeResource::getUrl('index')),
 
             Stat::make('Total Agreement', $totalAgreements)
                 ->description('ALL Agreements')
                 ->descriptionIcon(Heroicon::OutlinedDocumentText)
                 ->color('info')
-                ->icon(Heroicon::OutlinedDocumentText),
+                ->icon(Heroicon::OutlinedDocumentText)
+                ->url(AgreementResource::getUrl('index')),
 
             Stat::make('Total Agreement Active', $activeAgreements)
                 ->description('Agreement Active')
                 ->descriptionIcon(Heroicon::OutlinedCheckCircle)
                 ->color('success')
-                ->icon(Heroicon::OutlinedCheckCircle),
-
-            // Stat::make('Akan Berakhir', $expiringAgreements)
-            //     ->description('Perlu ditinjau segera')
-            //     ->descriptionIcon(Heroicon::OutlinedExclamationTriangle)
-            //     ->color('warning')
-            //     ->icon(Heroicon::OutlinedExclamationTriangle),
+                ->icon(Heroicon::OutlinedCheckCircle)
+                ->url(AgreementResource::getUrl('index')),
+                
         ];
     }
 }

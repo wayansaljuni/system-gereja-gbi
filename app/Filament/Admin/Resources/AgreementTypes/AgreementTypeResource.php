@@ -24,6 +24,7 @@ class AgreementTypeResource extends Resource
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?string $modelLabel = 'Agreement Type';
     protected static ?string $pluralModelLabel = 'Agreement Types';
+    protected static ?int $navigationSort = 1;
 
     
     protected static ?string $model = AgreementType::class;
