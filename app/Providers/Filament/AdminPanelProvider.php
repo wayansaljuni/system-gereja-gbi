@@ -4,7 +4,9 @@ namespace App\Providers\Filament;
 
 use App\Filament\Admin\Widgets\AgreementReminderOverview;
 use App\Filament\Admin\Widgets\AgreementStatsOverview;
-// use App\Filament\Admin\Widgets\AgreementTypeChart;
+use App\Filament\Admin\Widgets\RecentActivityWidget;
+use App\Http\Middleware\ForcePasswordChange;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -55,7 +57,7 @@ class AdminPanelProvider extends PanelProvider
                 AgreementStatsOverview::class,
                 // AgreementTypeChart::class,
                 AgreementReminderOverview::class,
-            ])
+                RecentActivityWidget::class])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -66,12 +68,13 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                ForcePasswordChange::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
             ])
             ->plugins([
-                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+                FilamentShieldPlugin::make(),
             ])
             ;
     }

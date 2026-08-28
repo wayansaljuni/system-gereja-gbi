@@ -7,6 +7,8 @@ use App\Models\AgreementType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class Agreement extends Model
 {
@@ -59,5 +61,14 @@ class Agreement extends Model
     public function agreements(): HasMany
     {
         return $this->hasMany(Agreement::class);
+    }
+
+   use LogsActivity;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty();
     }
 }

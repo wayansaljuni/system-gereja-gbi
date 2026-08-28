@@ -13,17 +13,18 @@ class AgreementRemindersTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->persistColumnSearchesInSession()
             ->columns([
                 TextColumn::make('agreement.title')
                     ->label('Agreement')
-                    ->searchable()
+                    ->searchable(isIndividual:true)
                     ->icon('heroicon-o-document-text')
                     ->weight('medium')
                     ->wrap(),
 
                 TextColumn::make('title')
                     ->label('Reminder')
-                    ->searchable()
+                    ->searchable(isIndividual:true)
                     ->icon('heroicon-o-tag')
                     ->wrap()
                     ->description(fn ($record): string => $record->remind_at->diffForHumans()),
@@ -31,6 +32,7 @@ class AgreementRemindersTable
                 TextColumn::make('remind_at')
                     ->label('Reminder Date')
                     ->date('d M Y')
+                    ->searchable(isIndividual:true)
                     ->sortable()
                     ->icon('heroicon-o-calendar-days')
                     ->badge()
@@ -58,6 +60,7 @@ class AgreementRemindersTable
                 TextColumn::make('sent_at')
                     ->label('Sent At')
                     ->dateTime('d M Y, H:i')
+                    ->searchable(isIndividual:true)
                     ->sortable()
                     ->icon('heroicon-o-paper-airplane')
                     ->placeholder('—')

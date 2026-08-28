@@ -35,12 +35,14 @@ class AgreementsTable
 
                 TextColumn::make('agreementType.name')
                     ->label('Agreement Type')
+                    ->searchable(isIndividual:true)
                     ->badge()
                     ->color('gray')
                     ->sortable(),
 
                 TextColumn::make('sifat')
                     ->label('Document Type')
+                    ->searchable(isIndividual:true)
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'Original' => 'success',

@@ -16,20 +16,56 @@ class UsersTable
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->searchable(),
+                    ->label('User Name')
+                    ->searchable(isIndividual:true)
+                    ->sortable()
+                    ->icon('heroicon-o-user-circle')
+                    ->weight('medium')
+                    ->description(fn ($record): string => $record->email),
+
                 TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
+                    ->label('Email Address')
+                    ->searchable(isIndividual:true)
+                    ->icon('heroicon-o-envelope')
+                    ->copyable()
+                    ->copyMessage('Email copied')
+                    ->copyMessageDuration(1500),
+
+                TextColumn::make('roles.name')
+                    ->label('Role')
+                    ->searchable(isIndividual:true)
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'super_admin', 'admin' => 'danger',
+                        'manager' => 'warning',
+                        default => 'gray',
+                    })
+                    ->separator(','),
+
                 TextColumn::make('email_verified_at')
-                    ->dateTime()
+                    ->label('Verification Status')
+                    ->state(fn ($record): string => $record->email_verified_at ? 'Verified' : 'Unverified')
+                    ->badge()
+                    ->icon(fn ($record): string => $record->email_verified_at
+                        ? 'heroicon-o-check-badge'
+                        : 'heroicon-o-exclamation-circle')
+                    ->color(fn ($record): string => $record->email_verified_at ? 'success' : 'danger')
                     ->sortable(),
+
                 TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Joined')
+                    ->dateTime('d M Y, H:i')
                     ->sortable()
+                    ->icon('heroicon-o-calendar-days')
+                    ->since()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label('Last Updated')
+                    ->dateTime('d M Y, H:i')
                     ->sortable()
+                    ->icon('heroicon-o-pencil-square')
+                    ->since()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([

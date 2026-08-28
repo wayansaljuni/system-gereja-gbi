@@ -22,7 +22,7 @@ class AgreementResource extends Resource
 {
     protected static string|UnitEnum|null $navigationGroup = 'Agreements';
     protected static ?string $model = Agreement::class;
-    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentCheck;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentCheck;
     protected static ?string $navigationLabel = 'Agreements';
     protected static ?string $recordTitleAttribute = 'title';
     protected static ?int $navigationSort = 2;

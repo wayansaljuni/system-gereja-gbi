@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('agreement_type_id')
                 ->nullable()
                 ->constrained('agreement_types')
-                ->nullOnDelete();
+                ->restrictOnDelete();
             $table->string('qty', 255);
             $table->string('title', 255);
             $table->text('pic')->nullable();

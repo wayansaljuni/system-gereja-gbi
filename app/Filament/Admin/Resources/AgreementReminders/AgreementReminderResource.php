@@ -8,6 +8,7 @@ use App\Filament\Admin\Resources\AgreementReminders\Schemas\AgreementReminderFor
 use App\Filament\Admin\Resources\AgreementReminders\Schemas\AgreementReminderInfolist;
 use App\Filament\Admin\Resources\AgreementReminders\Tables\AgreementRemindersTable;
 use App\Models\AgreementReminder;
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,12 +19,9 @@ class AgreementReminderResource extends Resource
 {
     protected static string|UnitEnum|null $navigationGroup = 'Agreements';
     protected static ?string $model = AgreementReminder::class;
-    protected static string|\BackedEnum|null $navigationIcon = Heroicon::BellAlert;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::BellAlert;
     protected static ?string $recordTitleAttribute = 'title';
     protected static ?int $navigationSort = 3;
-
-
-
 
     public static function form(Schema $schema): Schema
     {

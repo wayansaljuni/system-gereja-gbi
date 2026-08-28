@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\Users\Schemas;
 // use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
@@ -39,6 +40,7 @@ class UserForm
                             ->label('Role')
                             ->relationship('roles', 'name')
                             ->searchable()
+                            ->multiple(true)
                             ->preload()
                             ->required()
                             ->prefixIcon('heroicon-o-shield-check')
@@ -79,7 +81,11 @@ class UserForm
                                         ? 'Minimum 8 characters.'
                                         : 'Leave blank if you do not want to change the password.'
                             ),
-                    ])
+                        Toggle::make('must_change_password')
+                            ->label('Require Password Change on First Login')
+                            ->helperText('Enable if the user must change their default password on first login.')                            ->default(true) // default true untuk user baru
+                            ->inline(false),
+                        ])
                     ->columns(1),
             ]);
     }    

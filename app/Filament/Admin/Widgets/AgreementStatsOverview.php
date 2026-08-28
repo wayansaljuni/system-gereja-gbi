@@ -12,6 +12,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class AgreementStatsOverview extends BaseWidget
 {
+    protected static ?int $sort = 4;
     protected function getStats(): array
     {
         $totalTypes = AgreementType::count();

@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Filament\Admin\Resources\ActivityLogs\Tables;
+
+use Filament\Actions\ViewAction;
+use Filament\Tables\Table;
+
+class ActivityLogsTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->columns([
+                //
+            ])
+            ->filters([
+                //
+            ])
+            ->recordActions([
+                ViewAction::make(),
+                // EditAction::make(),
+            ])
+            // ->toolbarActions([
+            //     BulkActionGroup::make([
+            //         DeleteBulkAction::make(),
+            //     ]),
+            // ])
+            ;
+    }
+}

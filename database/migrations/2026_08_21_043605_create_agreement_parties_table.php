@@ -13,10 +13,8 @@ return new class extends Migration
     {
         Schema::create('agreement_parties', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('agreement_id')
-                ->constrained('agreements')
-                ->cascadeOnDelete();
-          $table->enum('party_type', [
+            $table->foreignId('agreement_id')->constrained('agreements')->cascadeOnDelete();
+            $table->enum('party_type', [
                 'internal',
                 'external',
             ])->default('external');
