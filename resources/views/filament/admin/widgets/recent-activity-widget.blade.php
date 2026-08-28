@@ -1,7 +1,7 @@
 <x-filament-widgets::widget>
     <x-filament::section>
         <x-slot name="heading">
-            Aktivitas Terbaru
+            Lates Activities
         </x-slot>
 
         <div class="space-y-4">

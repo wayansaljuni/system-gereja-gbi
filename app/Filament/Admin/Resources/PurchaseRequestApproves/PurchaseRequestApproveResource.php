@@ -22,7 +22,7 @@ class PurchaseRequestApproveResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::BookOpen;
     protected static ?string $recordTitleAttribute = 'title';
     protected static ?int $navigationSort = 5;
-    protected static ?string $navigationLabel = 'Approval PR (Purchase Request)';
+    protected static ?string $navigationLabel = 'Approval PR';
     protected static ?string $modelLabel = 'Approval Purchasing Request';
     protected static ?string $pluralModelLabel = 'Approval Purchasing Requests';
 

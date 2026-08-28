@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Widgets;
 
 use App\Filament\Admin\Resources\AgreementReminders\AgreementReminderResource;
+use App\Helpers\RoleHelper;
 use App\Models\AgreementReminder;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -10,7 +11,12 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 class AgreementReminderOverview extends BaseWidget
 {
     protected static ?int $sort = 2;
-
+    
+    public static function canView(): bool
+    {
+        return RoleHelper::isSuperadminOrLegal() ?? false;
+    }
+    
     protected function getStats(): array
     {
         $baseQuery = AgreementReminder::query()

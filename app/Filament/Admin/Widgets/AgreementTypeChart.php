@@ -2,11 +2,17 @@
 
 namespace App\Filament\Admin\Widgets;
 
+use App\Helpers\RoleHelper;
 use App\Models\AgreementType;
 use Filament\Widgets\ChartWidget;
 
 class AgreementTypeChart extends ChartWidget
 {
+    public static function canView(): bool
+    {
+        return RoleHelper::isSuperadminOrLegal() ?? false;
+    }    
+
     protected static ?int $sort = 3;
     protected ?string $heading = 'Agreements by Type';
 
