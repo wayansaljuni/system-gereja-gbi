@@ -1,0 +1,1138 @@
+/*
+ * Filum.
+ *
+ * Direction: a shift board and a ledger, not a messenger. The people using this
+ * are mid-task in a back office, so the sidebar answers "who is at their desk"
+ * and the thread reads as a timestamped log they can scan and cite. Bubbles,
+ * alternating sides and a floating round trigger were all considered and
+ * rejected: they scan badly in a 26rem drawer and say nothing about the work.
+ *
+ * Every colour is derived from Filament's own tokens, so the chat inherits
+ * whatever palette the panel already uses. Note the shape those tokens take:
+ * Filament 4 and 5 are built on Tailwind 4 and publish complete colour values
+ * ("--primary-600: oklch(0.44 0.03 322)"), NOT the space-separated RGB channels
+ * Filament 3 used. They must therefore be consumed directly -- var(--primary-600)
+ * -- and never wrapped, because rgb(var(--primary-600)) is invalid CSS and every
+ * declaration holding it is silently dropped. Translucency comes from color-mix
+ * for the same reason. The literal after each token is a genuine fallback for
+ * rendering outside a Filament layout, not decoration.
+ */
+
+.filum-root {
+    /* Six roles, all inherited from the host panel. */
+    --filum-ink: var(--gray-50, #f9fafb);
+    --filum-recess: #fff;
+    --filum-hairline: color-mix(in oklab, var(--gray-950, #030712) 10%, transparent);
+    --filum-text: var(--gray-950, #030712);
+    --filum-whisper: var(--gray-500, #6b7280);
+    --filum-signal: var(--primary-600, #4f46e5);
+    --filum-live: var(--success-600, #16a34a);
+
+    --filum-radius: 0.75rem;
+    --filum-radius-sm: 0.375rem;
+    --filum-pad: 0.875rem;
+    --filum-gutter: 3.25rem;
+    --filum-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+    color: var(--filum-text);
+    font-size: 0.875rem;
+    line-height: 1.55;
+}
+
+/*
+ * Filament puts .dark on the html element. Inverting ink and recess -- rather
+ * than lightening both -- is what makes the sidebar read as recessed into the
+ * page in dark mode and raised out of it in light, matching how Filament's own
+ * sections sit against the page background.
+ */
+.dark .filum-root {
+    --filum-ink: var(--gray-950, #030712);
+    --filum-recess: var(--gray-900, #111827);
+    --filum-hairline: color-mix(in oklab, #fff 12%, transparent);
+    --filum-text: var(--gray-100, #f3f4f6);
+    --filum-whisper: var(--gray-400, #9ca3af);
+    --filum-signal: var(--primary-400, #818cf8);
+    --filum-live: var(--success-400, #4ade80);
+}
+
+.filum-root :focus-visible {
+    outline: 2px solid var(--filum-signal);
+    outline-offset: 2px;
+}
+
+/* Shell ------------------------------------------------------------------- */
+
+.filum-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 17rem) minmax(0, 1fr);
+    background: var(--filum-recess);
+    border: 1px solid var(--filum-hairline);
+    border-radius: var(--filum-radius);
+    box-shadow: 0 1px 2px color-mix(in oklab, var(--gray-950, #030712) 5%, transparent);
+    overflow: hidden;
+}
+
+/* The thread scrolls, not the page. */
+.filum-mode-page .filum-panel {
+    height: clamp(28rem, calc(100vh - 17rem), 46rem);
+}
+
+.filum-scroll {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--filum-hairline) transparent;
+}
+
+.filum-scroll::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+}
+
+.filum-scroll::-webkit-scrollbar-thumb {
+    background: var(--filum-hairline);
+    border-radius: 9999px;
+}
+
+.filum-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* The eyebrow: every small uppercase label in the interface. */
+.filum-eyebrow {
+    margin: 0;
+    color: var(--filum-whisper);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+
+/* Shift board ------------------------------------------------------------- */
+
+.filum-board {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: var(--filum-ink);
+    border-inline-end: 1px solid var(--filum-hairline);
+}
+
+.filum-board-head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: var(--filum-pad);
+    border-block-end: 1px solid var(--filum-hairline);
+}
+
+.filum-search {
+    width: 100%;
+    padding: 0.375rem 0.625rem;
+    background: var(--filum-recess);
+    border: 1px solid var(--filum-hairline);
+    border-radius: var(--filum-radius-sm);
+    color: inherit;
+    font: inherit;
+}
+
+.filum-search::placeholder {
+    color: var(--filum-whisper);
+}
+
+.filum-board-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 0.5rem;
+}
+
+/* A shift group: HERE, then AWAY. The count is information, so it is shown. */
+.filum-shift {
+    margin: 0 0 0.25rem;
+    padding: 0;
+}
+
+.filum-shift + .filum-shift {
+    margin-top: 0.75rem;
+}
+
+.filum-shift-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.375rem;
+    padding: 0.375rem 0.5rem;
+}
+
+.filum-shift-count {
+    font-family: var(--filum-mono);
+    font-variant-numeric: tabular-nums;
+}
+
+.filum-people {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.filum-person {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    width: 100%;
+    padding: 0.4375rem 0.5rem;
+    background: transparent;
+    border: 0;
+    border-radius: var(--filum-radius-sm);
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    text-align: start;
+}
+
+.filum-person:hover {
+    background: color-mix(in oklab, var(--filum-text) 6%, transparent);
+}
+
+.filum-person-active {
+    background: color-mix(in oklab, var(--filum-signal) 12%, transparent);
+}
+
+.filum-person-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.8125rem;
+}
+
+.filum-person-active .filum-person-name {
+    font-weight: 600;
+}
+
+/*
+ * Presence rides on the avatar ring rather than a separate dot: the shift
+ * heading already says who is here, and one signal per fact keeps the row calm.
+ */
+.filum-avatar {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    border-radius: 9999px;
+    background: color-mix(in oklab, var(--filum-text) 10%, transparent);
+    box-shadow: 0 0 0 1px var(--filum-hairline);
+    color: var(--filum-text);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1;
+    overflow: hidden;
+}
+
+.filum-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.filum-avatar-live {
+    box-shadow:
+        0 0 0 2px var(--filum-recess),
+        0 0 0 3.5px var(--filum-live);
+}
+
+.filum-board .filum-avatar-live {
+    box-shadow:
+        0 0 0 2px var(--filum-ink),
+        0 0 0 3.5px var(--filum-live);
+}
+
+.filum-count {
+    flex: 0 0 auto;
+    min-width: 1.25rem;
+    padding: 0 0.375rem;
+    border-radius: 9999px;
+    background: var(--filum-signal);
+    color: var(--filum-recess);
+    font-family: var(--filum-mono);
+    font-size: 0.625rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    line-height: 1.25rem;
+    text-align: center;
+}
+
+/* Ledger ------------------------------------------------------------------ */
+
+.filum-conversation {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    background: var(--filum-recess);
+}
+
+.filum-thread-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.625rem var(--filum-pad);
+    border-block-end: 1px solid var(--filum-hairline);
+}
+
+.filum-thread-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.filum-thread-state {
+    flex: 0 0 auto;
+    color: var(--filum-whisper);
+}
+
+.filum-thread-state-live {
+    color: var(--filum-live);
+}
+
+.filum-back {
+    display: none;
+    flex: 0 0 auto;
+    padding: 0.25rem 0.5rem;
+    background: transparent;
+    border: 1px solid var(--filum-hairline);
+    border-radius: var(--filum-radius-sm);
+    color: var(--filum-whisper);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.75rem;
+    line-height: 1.2;
+}
+
+.filum-thread {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 0.75rem 0;
+}
+
+.filum-log {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/*
+ * The signature: a fixed monospace time gutter. One continuous column with the
+ * times in a true tabular rule down the left, so a long thread scans like a log
+ * -- and so nothing has to reflow when the drawer is 26rem wide, which is where
+ * alternating bubbles fall apart.
+ */
+.filum-row {
+    display: grid;
+    grid-template-columns: var(--filum-gutter) minmax(0, 1fr);
+    align-items: start;
+    column-gap: 0.5rem;
+    padding-inline-end: var(--filum-pad);
+}
+
+.filum-when {
+    padding-top: 0.3125rem;
+    color: var(--filum-whisper);
+    font-family: var(--filum-mono);
+    font-size: 0.6875rem;
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+}
+
+.filum-said {
+    min-width: 0;
+    padding: 0.25rem 0.625rem;
+    border-inline-start: 2px solid transparent;
+    border-radius: 0 var(--filum-radius-sm) var(--filum-radius-sm) 0;
+}
+
+/* Mine, said twice and no more: an accent rail and a wash of the same colour. */
+.filum-row-mine .filum-said {
+    background: color-mix(in oklab, var(--filum-signal) 10%, transparent);
+    border-inline-start-color: var(--filum-signal);
+}
+
+.filum-who {
+    display: block;
+    margin-bottom: 0.0625rem;
+    color: var(--filum-whisper);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.filum-row-mine .filum-who {
+    color: var(--filum-signal);
+}
+
+.filum-what {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* A day changes: the one divider in the interface, and it carries a fact. */
+.filum-day {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin: 0.75rem var(--filum-pad) 0.5rem;
+}
+
+.filum-day::before,
+.filum-day::after {
+    content: "";
+    flex: 1 1 auto;
+    height: 1px;
+    background: var(--filum-hairline);
+}
+
+.filum-older {
+    align-self: center;
+    margin-bottom: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: transparent;
+    border: 1px solid var(--filum-hairline);
+    border-radius: 9999px;
+    color: var(--filum-whisper);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.75rem;
+}
+
+.filum-older:hover {
+    color: var(--filum-text);
+}
+
+/* Composer ---------------------------------------------------------------- */
+
+.filum-composer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.5rem;
+    padding: var(--filum-pad);
+    background: var(--filum-ink);
+    border-block-start: 1px solid var(--filum-hairline);
+}
+
+.filum-input {
+    flex: 1 1 10rem;
+    min-width: 0;
+    padding: 0.4375rem 0.625rem;
+    background: var(--filum-recess);
+    border: 1px solid var(--filum-hairline);
+    border-radius: var(--filum-radius-sm);
+    color: inherit;
+    font: inherit;
+    resize: vertical;
+}
+
+.filum-input::placeholder {
+    color: var(--filum-whisper);
+}
+
+.filum-send {
+    flex: 0 0 auto;
+    padding: 0.4375rem 0.875rem;
+    background: var(--filum-signal);
+    border: 0;
+    border-radius: var(--filum-radius-sm);
+    color: var(--filum-recess);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+}
+
+.filum-send:hover {
+    background: color-mix(in oklab, var(--filum-signal) 85%, var(--filum-text));
+}
+
+.filum-error {
+    flex: 1 0 100%;
+    margin: 0;
+    color: var(--danger-600, #dc2626);
+    font-size: 0.75rem;
+}
+
+.dark .filum-error {
+    color: var(--danger-400, #f87171);
+}
+
+.filum-empty {
+    margin: auto;
+    padding: var(--filum-pad);
+    color: var(--filum-whisper);
+    text-align: center;
+    text-wrap: balance;
+}
+
+.filum-board-body .filum-empty {
+    margin: 0;
+    padding-block: 1.5rem;
+}
+
+/* Drawer ------------------------------------------------------------------ */
+
+/*
+ * The overlay docks into the bottom corner as a drawer with a tab, flush to the
+ * viewport edges -- the shape a tool panel takes, not the floating circle a
+ * consumer widget takes. Only the corner that faces the page is rounded.
+ */
+.filum-mode-overlay {
+    --filum-gutter: 2.875rem;
+
+    position: fixed;
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.filum-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    order: 2;
+    padding: 0.5rem 0.875rem;
+    background: var(--filum-recess);
+    border: 1px solid var(--filum-hairline);
+    border-inline-end: 0;
+    border-block-end: 0;
+    border-start-start-radius: var(--filum-radius-sm);
+    box-shadow: 0 -2px 12px color-mix(in oklab, var(--gray-950, #030712) 12%, transparent);
+    color: var(--filum-text);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+}
+
+.filum-tab-label {
+    font-size: 0.8125rem;
+}
+
+/* One pane at a time in the drawer: two panes in 26rem is two cramped panes. */
+.filum-mode-overlay .filum-panel {
+    order: 1;
+    grid-template-columns: minmax(0, 1fr);
+    width: min(26rem, 100vw);
+    height: min(32rem, calc(100vh - 6rem));
+    border-inline-end: 0;
+    border-block-end: 0;
+    border-radius: var(--filum-radius) 0 0 0;
+    box-shadow: 0 -8px 32px color-mix(in oklab, var(--gray-950, #030712) 24%, transparent);
+    animation: filum-rise 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.filum-mode-overlay .filum-board {
+    border-inline-end: 0;
+}
+
+.filum-mode-overlay .filum-back {
+    display: block;
+}
+
+@keyframes filum-rise {
+    from {
+        opacity: 0;
+        transform: translateY(0.75rem);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .filum-mode-overlay .filum-panel {
+        animation: none;
+    }
+}
+
+/* Narrow ------------------------------------------------------------------ */
+
+@media (max-width: 48rem) {
+    .filum-mode-page .filum-panel {
+        grid-template-columns: minmax(0, 1fr);
+        height: clamp(24rem, calc(100vh - 13rem), 40rem);
+    }
+
+    .filum-mode-page .filum-board {
+        border-inline-end: 0;
+        border-block-end: 1px solid var(--filum-hairline);
+    }
+}
+
+.filum-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip-path: inset(50%);
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* Groups and invitations ---------------------------------------------------- */
+
+.filum-hash {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    color: var(--filum-whisper);
+    font-family: var(--filum-mono);
+    font-weight: 600;
+}
+
+.filum-avatar-group {
+    background: transparent;
+    box-shadow: 0 0 0 1px var(--filum-hairline);
+    color: var(--filum-whisper);
+    font-family: var(--filum-mono);
+}
+
+.filum-invitation {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.4375rem 0.5rem;
+}
+
+.filum-invited-by {
+    grid-column: 1 / -1;
+    order: 3;
+    color: var(--filum-whisper);
+    font-size: 0.6875rem;
+}
+
+.filum-accept,
+.filum-decline {
+    padding: 0.125rem 0.5rem;
+    border: 1px solid var(--filum-hairline);
+    border-radius: var(--filum-radius-sm);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.6875rem;
+}
+
+.filum-accept {
+    background: color-mix(in oklab, var(--filum-signal) 16%, transparent);
+    border-color: transparent;
+}
+
+.filum-new-group {
+    padding: 0.375rem 0.5rem 0;
+}
+
+.filum-invite > summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.filum-invite > summary::-webkit-details-marker {
+    display: none;
+}
+
+.filum-invite-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin: 0.375rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* The owner's controls take the whole width: the header is one flex row of
+   chrome, and a field or a roster wrapping into the middle of it would push the
+   group's own name off the line it belongs on. */
+.filum-rename,
+.filum-roster {
+    flex: 1 1 100%;
+    min-width: 0;
+}
+
+.filum-roster {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.filum-roster > li {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+/* Reactions ---------------------------------------------------------------- */
+
+/*
+ * Two things live in this row and they are not the same kind of thing. A
+ * reaction somebody left is part of the record, so it is always visible. The
+ * control for leaving one is chrome, and in a log this dense chrome has to earn
+ * its place -- so it is revealed on hover, the way Slack and Discord reveal
+ * theirs, rather than sitting under all fifty messages at once.
+ */
+
+.filum-root [x-cloak] {
+    display: none !important;
+}
+
+.filum-reactions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+    /* No margin until something is actually said, so an empty row costs nothing. */
+    min-height: 1.5rem;
+}
+
+.filum-reactions-said {
+    margin-top: 0.375rem;
+}
+
+.filum-reaction {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3125rem;
+    height: 1.5rem;
+    padding: 0 0.5rem 0 0.4375rem;
+    background: color-mix(in oklab, var(--filum-text) 6%, transparent);
+    border: 1px solid transparent;
+    border-radius: 9999px;
+    color: var(--filum-whisper);
+    cursor: pointer;
+    font: inherit;
+    line-height: 1;
+    transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.filum-reaction:hover {
+    background: color-mix(in oklab, var(--filum-text) 11%, transparent);
+}
+
+/*
+ * Yours is stated with the same accent own messages already use, so the ledger
+ * has one meaning for that colour rather than two.
+ */
+.filum-reaction-mine {
+    background: color-mix(in oklab, var(--filum-signal) 14%, transparent);
+    border-color: color-mix(in oklab, var(--filum-signal) 38%, transparent);
+    color: var(--filum-signal);
+}
+
+.filum-reaction-mine:hover {
+    background: color-mix(in oklab, var(--filum-signal) 20%, transparent);
+}
+
+/* Emoji render at their own optical size; the surrounding type stays 0.875rem. */
+.filum-reaction-emoji {
+    font-size: 0.8125rem;
+    line-height: 1;
+}
+
+/* Counts share the tabular face the time gutter uses -- numbers read as numbers. */
+.filum-reaction-count {
+    font-family: var(--filum-mono);
+    font-size: 0.6875rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+}
+
+/* The opener ---------------------------------------------------------------- */
+
+.filum-reaction-add {
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 9999px;
+    color: var(--filum-whisper);
+    cursor: pointer;
+    /* Transparent rather than hidden: the row keeps its height, so revealing the
+       control moves nothing under the pointer. */
+    opacity: 0;
+    transition: opacity 120ms ease, background-color 120ms ease, color 120ms ease;
+}
+
+.filum-reaction-add svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.filum-row:hover .filum-reaction-add,
+.filum-reactions:focus-within .filum-reaction-add,
+.filum-reaction-add[aria-expanded='true'] {
+    opacity: 1;
+}
+
+.filum-reaction-add:hover,
+.filum-reaction-add[aria-expanded='true'] {
+    background: color-mix(in oklab, var(--filum-text) 10%, transparent);
+    color: var(--filum-text);
+}
+
+/* Touch has no hover, so there it stays put rather than being unreachable. */
+@media (hover: none) {
+    .filum-reaction-add {
+        opacity: 1;
+    }
+}
+
+/* The set ------------------------------------------------------------------- */
+
+/*
+ * Inline in the row rather than floating above the thread. A popover inside a
+ * scrolling log needs clipping and stacking handled, and would cover the very
+ * messages being reacted to -- which is the one thing a ledger must not do to
+ * itself.
+ */
+.filum-reaction-set {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.0625rem;
+    padding: 0.125rem;
+    background: var(--filum-ink);
+    border: 1px solid var(--filum-hairline);
+    border-radius: 9999px;
+}
+
+.filum-reaction-set button {
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 9999px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    line-height: 1;
+    transition: background-color 120ms ease, transform 120ms ease;
+}
+
+.filum-reaction-set button:hover {
+    background: color-mix(in oklab, var(--filum-text) 12%, transparent);
+    transform: scale(1.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .filum-reaction,
+    .filum-reaction-add,
+    .filum-reaction-set button {
+        transition: none;
+    }
+
+    .filum-reaction-set button:hover {
+        transform: none;
+    }
+}
+
+/* Replies and files --------------------------------------------------------- */
+
+/*
+ * One mark means "this answers that", and it appears in exactly two places: the
+ * quote above an answer, and the strip above the composer while you write one.
+ * Two places, one glyph, no boxes -- which is what lets the quote sit inside an
+ * own-message without a second rail running down beside the accent one.
+ */
+
+.filum-quote {
+    display: flex;
+    align-items: baseline;
+    gap: 0.375rem;
+    margin-bottom: 0.1875rem;
+    color: var(--filum-whisper);
+    font-size: 0.75rem;
+}
+
+.filum-quote::before {
+    content: '\21B3';
+}
+
+/* The ledger draws its mark, the composer carries one in the markup for the
+   screen reader to skip -- both land on the same glyph at the same weight. */
+.filum-quote::before,
+.filum-replying-mark {
+    flex: none;
+    color: color-mix(in oklab, var(--filum-whisper) 70%, transparent);
+    font-size: 0.8125rem;
+    line-height: 1;
+}
+
+.filum-replying-mark {
+    color: color-mix(in oklab, var(--filum-signal) 80%, transparent);
+}
+
+/* The author reads as the eyebrow it is, one step quieter than a sender name. */
+.filum-quote-who {
+    flex: 0 0 auto;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.filum-quote-what {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 0.85;
+}
+
+/* Files ---------------------------------------------------------------------- */
+
+.filum-files {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.375rem;
+    margin-top: 0.4375rem;
+}
+
+/*
+ * Rectangular, not a pill: a reaction is a tally and a file is a thing. The size
+ * sits at the trailing edge in the same tabular face the time gutter uses, so
+ * numbers line up down a column of files exactly as times do down the thread.
+ */
+.filum-file {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: min(20rem, 100%);
+    padding: 0.375rem 0.5rem;
+    background: color-mix(in oklab, var(--filum-text) 5%, transparent);
+    border: 1px solid var(--filum-hairline);
+    border-radius: var(--filum-radius-sm);
+    color: inherit;
+    font-size: 0.8125rem;
+    text-decoration: none;
+    transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.filum-file:hover {
+    background: color-mix(in oklab, var(--filum-text) 9%, transparent);
+    border-color: color-mix(in oklab, var(--filum-signal) 40%, transparent);
+}
+
+.filum-file svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex: none;
+    color: var(--filum-whisper);
+}
+
+.filum-file-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.filum-file-size {
+    flex: none;
+    color: var(--filum-whisper);
+    font-family: var(--filum-mono);
+    font-size: 0.6875rem;
+    font-variant-numeric: tabular-nums;
+}
+
+/*
+ * A contact sheet, not a gallery: images share one height and let width fall
+ * where it may, so a row of them aligns along the bottom however differently
+ * they were shot. Sizing by width instead would leave a ragged edge.
+ */
+.filum-file-image {
+    padding: 0;
+    max-width: none;
+    border-radius: var(--filum-radius-sm);
+    overflow: hidden;
+    line-height: 0;
+}
+
+.filum-file-image img {
+    display: block;
+    height: 6.5rem;
+    width: auto;
+    max-width: 14rem;
+    object-fit: cover;
+}
+
+/* Composer ------------------------------------------------------------------- */
+
+/*
+ * The two trays are deliberately unalike, because they answer different
+ * questions. What you are answering is tinted with the accent and carries the
+ * same mark the quote does. What is about to go with the message is shown as the
+ * very chips it will become, so the composer previews its own outcome.
+ */
+.filum-replying {
+    flex: 1 0 100%;
+    display: flex;
+    align-items: baseline;
+    gap: 0.375rem;
+    margin-bottom: 0.4375rem;
+    color: var(--filum-signal);
+    font-size: 0.75rem;
+}
+
+.filum-replying-what {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--filum-whisper);
+}
+
+.filum-replying-what em {
+    color: var(--filum-text);
+    font-style: normal;
+}
+
+.filum-picked {
+    flex: 1 0 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin: 0 0 0.4375rem;
+    padding: 0;
+    list-style: none;
+}
+
+.filum-picked li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4375rem;
+    max-width: min(16rem, 100%);
+    padding: 0.3125rem 0.375rem 0.3125rem 0.5rem;
+    background: color-mix(in oklab, var(--filum-text) 5%, transparent);
+    border: 1px dashed var(--filum-hairline);
+    border-radius: var(--filum-radius-sm);
+    font-size: 0.75rem;
+}
+
+.filum-picked-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.filum-replying-drop,
+.filum-picked button {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.125rem;
+    height: 1.125rem;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 9999px;
+    color: var(--filum-whisper);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.9375rem;
+    line-height: 1;
+}
+
+.filum-replying-drop:hover,
+.filum-picked button:hover {
+    background: color-mix(in oklab, var(--filum-text) 12%, transparent);
+    color: var(--filum-text);
+}
+
+/*
+ * Borderless, and the same height as Send. Two outlined boxes side by side would
+ * read as two equal choices, and attaching a file is not equal to sending.
+ */
+.filum-attach {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    flex: none;
+    border-radius: var(--filum-radius-sm);
+    color: var(--filum-whisper);
+    cursor: pointer;
+}
+
+.filum-attach:hover {
+    background: color-mix(in oklab, var(--filum-text) 8%, transparent);
+    color: var(--filum-text);
+}
+
+.filum-attach:focus-within {
+    outline: 2px solid var(--filum-signal);
+    outline-offset: 2px;
+}
+
+.filum-attach input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.filum-attach svg {
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+/* Upload in flight: the control says so rather than looking inert. */
+.filum-attach-busy {
+    position: absolute;
+    inset-block-end: 0.125rem;
+    inset-inline-end: 0.125rem;
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 9999px;
+    background: var(--filum-signal);
+    animation: filum-pulse 900ms ease-in-out infinite;
+}
+
+@keyframes filum-pulse {
+    50% { opacity: 0.2; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .filum-file {
+        transition: none;
+    }
+
+    .filum-attach-busy {
+        animation: none;
+    }
+}

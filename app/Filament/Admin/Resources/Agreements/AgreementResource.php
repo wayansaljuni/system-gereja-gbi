@@ -59,4 +59,5 @@ class AgreementResource extends Resource
             'edit' => EditAgreement::route('/{record}/edit'),
         ];
     }
+
 }

@@ -11,6 +11,7 @@ use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Zvizvi\FilamentColumnFilters\Filters\ColumnFilter;
 
 class PurchaseRequestApprovesTable
 {
@@ -23,6 +24,7 @@ class PurchaseRequestApprovesTable
                     ->label('No. Nota')
                     ->icon(Heroicon::OutlinedBookmark)
                     ->searchable(isIndividual:true)
+                    ->columnFilter(ColumnFilter::search())
                     ->sortable(),
 
                 TextColumn::make('tgl')
@@ -37,6 +39,7 @@ class PurchaseRequestApprovesTable
                     ->label('Project Name')
                     ->wrap()
                     ->searchable(isIndividual:true)
+                    ->columnFilter(ColumnFilter::search())
                     ->extraHeaderAttributes([
                         'style' => 'min-width: 300px; width: 300px;',
                     ])
@@ -47,6 +50,7 @@ class PurchaseRequestApprovesTable
                     ->label('No.SO / Dept')
                     ->badge()
                     ->searchable(isIndividual:true)
+                    ->columnFilter(ColumnFilter::search())
                     ->sortable()
                     ->description(fn ($record): string => $record->dept),
                 TextColumn::make('kd_cab')

@@ -11,6 +11,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Zvizvi\FilamentColumnFilters\Filters\ColumnFilter;
 
 class AgreementsTable
 {
@@ -23,12 +24,14 @@ class AgreementsTable
                     ->label('Agreement Number')
                     ->badge()
                     ->color('primary')
+                    ->columnFilter(ColumnFilter::search())
                     ->searchable(isIndividual:true)
                     ->sortable(),
                 TextColumn::make('title')
                     ->label('Document Name')
                     ->icon(Heroicon::OutlinedBookmark)
                     ->searchable(isIndividual:true)
+                    ->columnFilter(ColumnFilter::search())
                     ->sortable()
                     ->wrap() 
                     ->weight('medium'),
@@ -36,6 +39,7 @@ class AgreementsTable
                 TextColumn::make('agreementType.name')
                     ->label('Agreement Type')
                     ->searchable(isIndividual:true)
+                    ->columnFilter(ColumnFilter::search())
                     ->badge()
                     ->color('gray')
                     ->sortable(),
@@ -43,6 +47,7 @@ class AgreementsTable
                 TextColumn::make('sifat')
                     ->label('Document Type')
                     ->searchable(isIndividual:true)
+                    ->columnFilter(ColumnFilter::search())
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'Original' => 'success',
@@ -85,6 +90,7 @@ class AgreementsTable
                     ->label('Notes')
                     ->icon(Heroicon::OutlinedBookmark)
                     ->searchable(isIndividual:true)
+                    ->columnFilter(ColumnFilter::search())
                     ->sortable()
                     ->wrap() 
                     ->weight('medium'),

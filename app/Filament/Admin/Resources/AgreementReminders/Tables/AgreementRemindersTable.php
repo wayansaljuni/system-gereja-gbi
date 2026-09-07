@@ -7,6 +7,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Zvizvi\FilamentColumnFilters\Filters\ColumnFilter;
 
 class AgreementRemindersTable
 {
@@ -18,6 +19,7 @@ class AgreementRemindersTable
                 TextColumn::make('agreement.title')
                     ->label('Agreement')
                     ->searchable(isIndividual:true)
+                    ->columnFilter(ColumnFilter::search())
                     ->icon('heroicon-o-document-text')
                     ->weight('medium')
                     ->wrap(),
@@ -25,6 +27,7 @@ class AgreementRemindersTable
                 TextColumn::make('title')
                     ->label('Reminder')
                     ->searchable(isIndividual:true)
+                    ->columnFilter(ColumnFilter::search())
                     ->icon('heroicon-o-tag')
                     ->wrap()
                     ->description(fn ($record): string => $record->remind_at->diffForHumans()),

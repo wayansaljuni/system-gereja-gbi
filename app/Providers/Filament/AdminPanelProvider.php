@@ -18,12 +18,14 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
+use Heyosseus\Filum\FilumPlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Zvizvi\FilamentColumnFilters\FilamentColumnFiltersPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -77,6 +79,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 FilamentShieldPlugin::make(),
+                FilamentColumnFiltersPlugin::make(),
+                FilumPlugin::make(),
             ])
             ;
     }

@@ -11,6 +11,7 @@ use Spatie\Activitylog\Support\LogOptions;
 class Hpr extends Model
 {
     use HasFactory;
+    protected $connection = 'mysql55';
     protected $table = 'hpr';
     protected $primaryKey = 'idhpr';
     public $incrementing = true;

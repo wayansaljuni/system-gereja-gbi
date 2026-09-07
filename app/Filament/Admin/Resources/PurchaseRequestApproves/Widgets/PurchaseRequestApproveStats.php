@@ -9,13 +9,13 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class PurchaseRequestApproveStats extends StatsOverviewWidget
 {
-    // public static function canView(): bool
-    // {
-    //     return auth()->user()?->hasAnyRoleCustom([
-    //         'super_admin',
-    //         'approvalpr',
-    //     ]) ?? false;
-    // }
+    public static function canView(): bool
+    {
+        return auth()->user()?->hasAnyRoleCustom([
+            'super_admin',
+            'approvalpr',
+        ]) ?? false;
+    }
     protected function getStats(): array
     {
         $total = Hpr::query()
