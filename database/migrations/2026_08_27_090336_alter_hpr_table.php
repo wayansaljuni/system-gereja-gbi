@@ -30,9 +30,17 @@ return new class extends Migration
         // Diperlukan karena saat ALTER satu kolom date, MySQL ikut
         // memvalidasi ulang SEMUA kolom lain di tabel, termasuk yang
         // masih berdefault '0000-00-00' dan belum sempat diubah.
-        DB::statement("SET SESSION sql_mode = REPLACE(REPLACE(REPLACE(@@sql_mode, 'NO_ZERO_DATE', ''), 'NO_ZERO_IN_DATE', ''), 'STRICT_TRANS_TABLES', '')");
-
-        Schema::table('hpr', function (Blueprint $table) {
+        // DB::statement("SET SESSION sql_mode = REPLACE(REPLACE(REPLACE(@@sql_mode, 'NO_ZERO_DATE', ''), 'NO_ZERO_IN_DATE', ''), 'STRICT_TRANS_TABLES', '')");
+        DB::connection('mysql55')->statement(
+            "SET SESSION sql_mode = REPLACE(
+                REPLACE(
+                    REPLACE(@@sql_mode, 'NO_ZERO_DATE', ''),
+                    'NO_ZERO_IN_DATE', ''
+                ),
+                'STRICT_TRANS_TABLES', ''
+            )"
+        );
+       Schema::connection('mysql55')->table('hpr', function (Blueprint $table) {
             // --- Perbaikan kolom tanggal agar valid & nullable ---
             $table->date('tgl')->nullable()->default(null)->change();
             $table->date('tglapp')->nullable()->default(null)->change();
@@ -50,9 +58,18 @@ return new class extends Migration
 
     public function down(): void
     {
-        DB::statement("SET SESSION sql_mode = REPLACE(REPLACE(REPLACE(@@sql_mode, 'NO_ZERO_DATE', ''), 'NO_ZERO_IN_DATE', ''), 'STRICT_TRANS_TABLES', '')");
+        // DB::statement("SET SESSION sql_mode = REPLACE(REPLACE(REPLACE(@@sql_mode, 'NO_ZERO_DATE', ''), 'NO_ZERO_IN_DATE', ''), 'STRICT_TRANS_TABLES', '')");
+       DB::connection('mysql55')->statement(
+            "SET SESSION sql_mode = REPLACE(
+                REPLACE(
+                    REPLACE(@@sql_mode, 'NO_ZERO_DATE', ''),
+                    'NO_ZERO_IN_DATE', ''
+                ),
+                'STRICT_TRANS_TABLES', ''
+            )"
+        );
 
-        Schema::table('hpr', function (Blueprint $table) {
+        Schema::connection('mysql55')->table('hpr', function (Blueprint $table) {
             $table->dropColumn(['created_at', 'updated_at']);
             $table->date('tgl')->default('0000-00-00')->nullable(false)->change();
             $table->date('tglapp')->default('0000-00-00')->nullable(false)->change();
