@@ -286,7 +286,7 @@
                 <span class="eyebrow"><span class="dot"></span> Sistem internal — akses staf resmi</span>
                 <h1 class="headline">Satu sistem untuk <em>seluruh operasional</em> perusahaan.</h1>
                 <p class="lede">
-                    NAYATI-SYSTEM menyatukan keuangan, inventaris, pengadaan, SDM, dan perjanjian dalam satu panel —
+                    NAYATI-SYSTEM menyatukan keuangan, inventaris, pengadaan dan perjanjian dalam satu panel —
                     supaya setiap divisi bekerja dari data yang sama, bukan spreadsheet dan folder terpisah.
                 </p>
 
@@ -320,7 +320,6 @@
                 <div class="ledger-row"><span class="k">Pesanan Pembelian</span><span class="badge pending">Menunggu Approval</span></div>
                 <div class="ledger-row"><span class="k">Faktur Jatuh Tempo</span><span class="v">Rp 84.200.000</span></div>
                 <div class="ledger-row"><span class="k">Perjanjian Aktif</span><span class="badge active">Berjalan</span></div>
-                <div class="ledger-row"><span class="k">Cuti Karyawan</span><span class="v">3 Pengajuan</span></div>
                 <div class="ledger-foot">
                     <span class="mono">Diperbarui otomatis</span>
                     <span class="mono">NAYATI-SYSTEM</span>
