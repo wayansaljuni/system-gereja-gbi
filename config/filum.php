@@ -210,7 +210,7 @@ return [
 
     'navigation' => [
         'sort' => null,
-        'group' => null,
+        'group' => 'Setting',
     ],
 
 ];

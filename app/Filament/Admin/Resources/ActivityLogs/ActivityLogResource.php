@@ -17,16 +17,12 @@ use UnitEnum;
 class ActivityLogResource extends Resource
 {
     protected static ?string $model = Activity::class;
-
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Clock;
-
     protected static ?string $navigationLabel = 'Activity Logs';
-
     protected static ?string $modelLabel = 'Activity Log';
-
     protected static ?string $pluralModelLabel = 'Activity Logs';
-
     protected static string|UnitEnum|null $navigationGroup = 'Setting';
+    protected static ?int $navigationSort = 1;
 
     public static function table(Table $table): Table
     {
