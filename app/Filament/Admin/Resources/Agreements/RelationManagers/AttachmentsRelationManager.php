@@ -21,12 +21,30 @@ class AttachmentsRelationManager extends RelationManager
     public function form(Schema $schema): Schema
     {
         return $schema
-           ->components([
+            ->components([
+
                 FileUpload::make('file_path')
                     ->label('Select File')
+                    ->disk('local')
                     ->directory('agreement-attachments')
+                    ->visibility('private')
                     ->openable()
                     ->downloadable()
+
+                    ->getOpenableFileUrlUsing(
+                        fn (string $file): string => route(
+                            'agreement-attachments.view',
+                            ['path' => $file]
+                        )
+                    )
+
+                    ->getDownloadableFileUrlUsing(
+                        fn (string $file): string => route(
+                            'agreement-attachments.download',
+                            ['path' => $file]
+                        )
+                    )
+
                     ->required()
                     ->columnSpanFull(),
 
@@ -38,7 +56,7 @@ class AttachmentsRelationManager extends RelationManager
                 TextInput::make('file_type')
                     ->label('File Type')
                     ->maxLength(50)
-                    ->placeholder('cth: pdf, docx'),
+                    ->placeholder('cth: pdf, docx, png, jpg, dll'),
 
                 Textarea::make('description')
                     ->label('Description')
@@ -51,7 +69,9 @@ class AttachmentsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('file_name')
+
             ->columns([
+
                 TextColumn::make('file_name')
                     ->label('File Name')
                     ->icon(Heroicon::OutlinedDocument)
@@ -72,17 +92,15 @@ class AttachmentsRelationManager extends RelationManager
                     ->dateTime('d M Y')
                     ->sortable(),
             ])
+
             ->headerActions([
                 CreateAction::make()
-                ->label('New Attach'),
+                    ->label('New Attach'),
             ])
+
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
-            ])
-            // ->toolbarActions([
-            //     DeleteBulkAction::make(),
-            // ])
-            ;
+            ]);
     }
 }
