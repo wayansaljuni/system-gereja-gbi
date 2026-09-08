@@ -274,7 +274,7 @@
             </nav>
 
             <a href="{{ Route::has('filament.admin.auth.login') ? route('filament.admin.auth.login') : url('/admin/login') }}" class="btn btn-primary">
-                Masuk
+                LOGIN
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
         </div>
@@ -292,7 +292,7 @@
 
                 <div class="hero-cta">
                     <a href="{{ Route::has('filament.admin.auth.login') ? route('filament.admin.auth.login') : url('/admin/login') }}" class="btn btn-gold">
-                        Masuk ke Panel Admin
+                        Login ke Panel Admin
                     </a>
                     <a href="#modul" class="btn btn-ghost">Lihat Modul</a>
                 </div>
@@ -409,7 +409,7 @@
             <span class="section-tag">Mulai Bekerja</span>
             <h2>Masuk ke panel untuk mengelola operasional perusahaan hari ini.</h2>
             <a href="{{ Route::has('filament.admin.auth.login') ? route('filament.admin.auth.login') : url('/admin/login') }}" class="btn btn-primary">
-                Masuk ke NAYATI-SYSTEM
+                LOGIN NAYATI-SYSTEM
             </a>
         </div>
     </section>
