@@ -316,9 +316,9 @@
                     </div>
                     <span class="stamp">LIVE</span>
                 </div>
-                <div class="ledger-row"><span class="k">Stok Kritis</span><span class="v">7 Item</span></div>
+                <div class="ledger-row"><span class="k">Product Baru</span><span class="v">...</span></div>
                 <div class="ledger-row"><span class="k">Pesanan Pembelian</span><span class="badge pending">Menunggu Approval</span></div>
-                <div class="ledger-row"><span class="k">Faktur Jatuh Tempo</span><span class="v">Rp 84.200.000</span></div>
+                <div class="ledger-row"><span class="k">Faktur Jatuh Tempo</span><span class="v">...</span></div>
                 <div class="ledger-row"><span class="k">Perjanjian Aktif</span><span class="badge active">Berjalan</span></div>
                 <div class="ledger-foot">
                     <span class="mono">Diperbarui otomatis</span>
