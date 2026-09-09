@@ -29,7 +29,8 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
-        'must_change_password', // tambahkan ini
+        'must_change_password',
+        'kd_cab',
     ];
 
     /**
@@ -86,4 +87,14 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasAnyRole($roles);
     }
 
+    public function getCabang(): ?Kdcab
+    {
+        if (blank($this->kd_cab)) {
+            return null;
+        }
+
+        return Kdcab::query()
+            ->where('kd_cab', $this->kd_cab)
+            ->first();
+    }
 }

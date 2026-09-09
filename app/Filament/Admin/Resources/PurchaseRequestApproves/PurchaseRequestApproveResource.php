@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 class PurchaseRequestApproveResource extends Resource
@@ -51,4 +52,28 @@ class PurchaseRequestApproveResource extends Resource
             // 'edit' => EditPurchaseRequestApprove::route('/{record}/edit'),
         ];
     }
+    
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        $user = auth()->user();
+
+        if (! $user) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        // Super Admin bisa melihat semua cabang
+        if ($user->hasRole('super_admin')) {
+            return $query;
+        }
+
+        // User yang tidak punya cabang tidak boleh melihat data
+        if (blank($user->kd_cab)) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        // User biasa hanya melihat cabangnya
+        return $query->where('kd_cab', $user->kd_cab);
+    }    
 }

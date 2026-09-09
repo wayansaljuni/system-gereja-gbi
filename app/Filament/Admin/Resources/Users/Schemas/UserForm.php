@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Users\Schemas;
 
 // use Filament\Forms\Components\DateTimePicker;
+use App\Models\Kdcab;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -53,6 +54,33 @@ class UserForm
                                 fn () => ! auth()->user()->hasRole('super_admin')
                             )
                             ->dehydrated(),
+
+                        Select::make('kd_cab')
+                            ->label('Branch')
+                            ->options(
+                                fn () => Kdcab::query()
+                                    ->orderBy('kd_cab')
+                                    ->get()
+                                    ->mapWithKeys(fn (Kdcab $cabang) => [
+                                        $cabang->kd_cab => "{$cabang->kd_cab} - {$cabang->nm_cab}",
+                                    ])
+                                    ->toArray()
+                            )
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->prefixIcon('heroicon-o-building-office-2')
+                            ->helperText(
+                                fn () => auth()->user()->hasRole('super_admin')
+                                    ? 'Select the branch this user can access.'
+                                    : 'The branch can only be changed by a Super Admin.'
+                            )
+                            ->disabled(
+                                fn () => ! auth()->user()->hasRole('super_admin')
+                            )
+                            ->dehydrated(),
+                            
+    
                     ])
                     ->columns(2),
 

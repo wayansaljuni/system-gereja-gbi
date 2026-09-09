@@ -7,7 +7,6 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,6 +19,204 @@ class PurchaseRequestApprovesTable
         return $table
             ->persistColumnSearchesInSession()
             ->columns([
+
+            TextColumn::make('approval_level_1')
+                ->label('Approve-1')
+                ->state(function ($record) {
+                    if ($record->approve === 'Y') {
+                        return 'Approved';
+                    }
+
+                    if ($record->approve === 'T') {
+                        return 'Rejected';
+                    }
+
+                    return 'Setujui';
+                })
+                ->badge()
+                ->color(fn ($record) => match ($record->approve) {
+                    'Y' => 'success',
+                    'T' => 'danger',
+                    default => 'warning',
+                })
+                ->icon(fn ($record) => match ($record->approve) {
+                    'Y' => 'heroicon-o-check-circle',
+                    'T' => 'heroicon-o-x-circle',
+                    default => 'heroicon-o-check',
+                })
+                ->action(
+                    Action::make('setujuiL1')
+                        ->modalHeading(
+                            fn ($record) =>
+                                "Detail Purchase Request - {$record->nota}"
+                        )
+                        ->modalContent(
+                            fn ($record) => view(
+                                'filament.admin.modals.purchase-request-detail',
+                                ['record' => $record]
+                            )
+                        )
+                        ->modalWidth('4xl')
+                        ->modalSubmitActionLabel('Setujui')
+                        ->visible(function ($record) {
+                            $user = auth()->user();
+
+                            if (! $user?->hasRole('approvepr')) {
+                                return false;
+                            }
+
+                            if ($record->approve !== '') {
+                                return false;
+                            }
+
+                            return $record->kd_cab === $user->kd_cab;
+                        })
+                    ->action(function ($record) {
+                        $user = auth()->user();
+                        $bypassLevel2 =
+                            in_array($record->jnsbudget , [
+                                'DROPPING',
+                                'FROM SO',
+                                'COMPLAIN CS',
+                            ], true)
+                            ||
+                            (
+                                in_array($record->jnsbudget, [
+                                    'BUDGET',
+                                    'NON BUDGET',
+                                ], true)
+                                && $record->kd_supp === '1NYTI'
+                            )
+                            ||
+                            (
+                                $record->kd_cab !== '00'
+                                && $record->gp === 'Y'
+                                && $record->jnsbudget === 'BUDGET'
+                            );
+
+                        $data = [
+                            'approve'   => 'Y',
+                            'tglapp'    => now(),
+                            'approveby' => $user?->name,
+                        ];
+
+                        // Jika memenuhi kondisi bypass,
+                        // Level 2 langsung dianggap approved.
+                        if ($bypassLevel2) {
+                            $data['approve1']   = 'Y';
+                            $data['tglapp1']    = now();
+                            $data['approveby1'] = 'BYPASS';
+                        }
+
+                        $record->update($data);
+
+                        Notification::make()
+                            ->title(
+                                $bypassLevel2
+                                    ? 'PR disetujui Level 1 dan Level 2 di-bypass'
+                                    : 'PR disetujui (Level 1)'
+                            )
+                            ->success()
+                            ->send();
+                      })
+                ),
+
+            TextColumn::make('approval_level_2')
+                ->label('Approve-2')
+                ->state(function ($record) {
+                    // Level 1 belum disetujui
+                    if ($record->approve !== 'Y') {
+                        return 'Waiting L1';
+                    }
+
+                    if ($record->approve1 === 'Y') {
+                        return 'Approved';
+                    }
+
+                    if ($record->approve1 === 'T') {
+                        return 'Rejected';
+                    }
+
+                    return 'Setujui';
+                })
+                ->badge()
+                ->color(function ($record) {
+                    if ($record->approve !== 'Y') {
+                        return 'gray';
+                    }
+
+                    return match ($record->approve1) {
+                        'Y' => 'success',
+                        'T' => 'danger',
+                        default => 'warning',
+                    };
+                })
+                ->icon(function ($record) {
+                    if ($record->approve !== 'Y') {
+                        return 'heroicon-o-clock';
+                    }
+
+                    return match ($record->approve1) {
+                        'Y' => 'heroicon-o-check-circle',
+                        'T' => 'heroicon-o-x-circle',
+                        default => 'heroicon-o-check-badge',
+                    };
+                })
+                ->action(
+                    Action::make('setujuiL2')
+                        ->modalHeading(
+                            fn ($record) =>
+                                "Detail Purchase Request - {$record->nota}"
+                        )
+                        ->modalContent(
+                            fn ($record) => view(
+                                'filament.admin.modals.purchase-request-detail',
+                                ['record' => $record]
+                            )
+                        )
+                        ->modalWidth('4xl')
+                        ->modalSubmitActionLabel('Setujui')
+                        ->visible(function ($record) {
+                            $user = auth()->user();
+
+                            if (! $user?->hasRole('approvepr')) {
+                                return false;
+                            }
+
+                            if ($record->kd_cab !== $user->kd_cab) {
+                                return false;
+                            }
+
+                            return $record->approve === 'Y'
+                                && $record->approve1 === '';
+                        })
+                        ->action(function ($record) {
+                            $user = auth()->user();
+
+                            /*
+                            * Validasi ulang untuk keamanan.
+                            */
+                            abort_unless(
+                                $user?->hasRole('approvepr')
+                                && $record->kd_cab === $user->kd_cab
+                                && $record->approve === 'Y'
+                                && $record->approve1 === '',
+                                403
+                            );
+
+                            $record->update([
+                                'approve1'   => 'Y',
+                                'tglapp1'    => now(),
+                                'approveby1' => $user->name,
+                            ]);
+
+                            Notification::make()
+                                ->title('PR disetujui (Level 2)')
+                                ->success()
+                                ->send();
+                        })
+                ),            
+
                 TextColumn::make('nota')
                     ->label('No. Nota')
                     ->icon(Heroicon::OutlinedBookmark)
@@ -41,26 +238,33 @@ class PurchaseRequestApprovesTable
                     ->searchable(isIndividual:true)
                     ->columnFilter(ColumnFilter::search())
                     ->extraHeaderAttributes([
-                        'style' => 'min-width: 300px; width: 300px;',
+                        'style' => 'min-width: 250px; width: 250px;',
                     ])
                     ->extraCellAttributes([
-                        'style' => 'min-width: 300px;',
+                        'style' => 'min-width: 250px;',
                     ]),
                 TextColumn::make('nop')
                     ->label('No.SO / Dept')
-                    ->badge()
                     ->searchable(isIndividual:true)
                     ->columnFilter(ColumnFilter::search())
                     ->sortable()
-                    ->description(fn ($record): string => $record->dept),
+                    ->description(fn ($record): string => $record->dept)
+                    ->extraHeaderAttributes([
+                        'style' => 'min-width: 100px; width: 100px;',
+                    ])
+                    ->extraCellAttributes([
+                        'style' => 'min-width: 100px;',
+                    ]),
+                    
                 TextColumn::make('kd_cab')
                     ->label('Cabang')
-                    ->searchable(isIndividual:true)
-                    ->sortable(),
-                TextColumn::make('jnsbudget')
-                    ->label('Jenis PR')
-                    ->searchable(isIndividual:true)
-                    ->sortable(),
+                    ->badge()
+                    // ->searchable(isIndividual:true)
+                    ->columnFilter(ColumnFilter::search())
+                    ->sortable()
+                    ->searchable()
+                    ->description(fn ($record): string => $record->jnsbudget),
+
                 TextColumn::make('approve')
                     ->label('Status Level-1')
                     ->badge()
@@ -123,7 +327,7 @@ class PurchaseRequestApprovesTable
             ])
             ->filters([
                 Filter::make('perlu_approval')
-                    ->label('Hanya yang perlu approval saja')
+                    ->label('perlu approve')
                     ->toggle()
                     ->default(true) // aktif otomatis saat halaman pertama dibuka
                     ->query(fn ($query) => $query->where(function ($q) {
@@ -155,103 +359,7 @@ class PurchaseRequestApprovesTable
                                     $query->whereDate('tgl', '<=', $date)
                             );
                     }),
-                    ])
-            ->recordActions([
-                // --- Level 1 ---
-                Action::make('setujuiL1')
-                    ->label('Setujui (Level-1)')
-                    ->icon('heroicon-o-check')
-                    ->color('success')
-                    ->visible(fn ($record) => auth()->user()?->hasRole('approvepr')
-                        && $record->approve === '')
-                    ->modalHeading(fn ($record) => "Detail Purchase Request - {$record->nota}")
-                    ->modalContent(fn ($record) => view('filament.admin.modals.purchase-request-detail', ['record' => $record]))
-                    ->modalWidth('4xl')
-                    ->modalSubmitActionLabel('Setujui')
-                    // Tombol Cancel/close sudah otomatis disediakan Filament di modal.
-                    ->action(function ($record) {
-                        $record->update([
-                            'approve' => 'Y',
-                            'tglapp' => now(),
-                            'approveby' => auth()->user()?->name,
-                        ]);
-
-                        Notification::make()
-                            ->title('PR disetujui (Level 1)')
-                            ->success()
-                            ->send();
-                    }),
-
-                // Action::make('tolakL1')
-                //     ->label('Tolak (Level-1)')
-                //     ->icon('heroicon-o-x-mark')
-                //     ->color('danger')
-                //     ->visible(fn ($record) => auth()->user()?->hasRole('approvepr')
-                //         && $record->approve === '')
-                //     ->requiresConfirmation()
-                //     ->modalHeading('Tolak Purchase Request - Level 1')
-                //     ->modalDescription(fn ($record) => "Yakin ingin menolak PR nota {$record->nota} (Level 1)?")
-                //     ->action(function ($record) {
-                //         $record->update([
-                //             'approve' => 'T',
-                //             'tglapp' => now(),
-                //             'approveby' => auth()->user()?->name,
-                //         ]);
-
-                //         Notification::make()
-                //             ->title('PR ditolak (Level 1)')
-                //             ->warning()
-                //             ->send();
-                //     }),
-
-                // --- Level 2, hanya muncul setelah Level 1 = Y ---
-                Action::make('setujuiL2')
-                    ->label('Setujui (Level-2)')
-                    ->icon('heroicon-o-check-badge')
-                    ->color('success')
-                    ->visible(fn ($record) => auth()->user()?->hasRole('approvepr')
-                        && $record->approve === 'Y'
-                        && $record->approve1 === '')
-                    ->modalHeading(fn ($record) => "Detail Purchase Request - {$record->nota}")
-                    ->modalContent(fn ($record) => view('filament.admin.modals.purchase-request-detail', ['record' => $record]))
-                    ->modalWidth('4xl')
-                    ->modalSubmitActionLabel('Setujui')
-                    ->action(function ($record) {
-                        $record->update([
-                            'approve1' => 'Y',
-                            'tglapp1' => now(),
-                            'approveby1' => auth()->user()?->name,
-                        ]);
-
-                        Notification::make()
-                            ->title('PR disetujui (Level 2)')
-                            ->success()
-                            ->send();
-                    }),
-
-                // Action::make('tolakL2')
-                //     ->label('Tolak (Level-2)')
-                //     ->icon('heroicon-o-x-mark')
-                //     ->color('danger')
-                //     ->visible(fn ($record) => auth()->user()?->hasRole('approvepr')
-                //         && $record->approve === 'Y'
-                //         && $record->approve1 === '')
-                //     ->requiresConfirmation()
-                //     ->modalHeading('Tolak Purchase Request - Level 2')
-                //     ->modalDescription(fn ($record) => "Yakin ingin menolak PR nota {$record->nota} (Level 2)?")
-                //     ->action(function ($record) {
-                //         $record->update([
-                //             'approve1' => 'T',
-                //             'tglapp1' => now(),
-                //             'approveby1' => auth()->user()?->name,
-                //         ]);
-
-                //         Notification::make()
-                //             ->title('PR ditolak (Level 2)')
-                //             ->warning()
-                //             ->send();
-                //     }),
-            ], position: RecordActionsPosition::BeforeColumns)
-            ->defaultSort('tgl', 'desc');
-    }
+                ]);
+                
+        }
 }

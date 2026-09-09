@@ -18,25 +18,35 @@ class PurchaseRequestApproveStats extends StatsOverviewWidget
     }
     protected function getStats(): array
     {
-        $total = Hpr::query()
-        ->where(function ($query) {
-            $query
-            ->where('approve', '')
-            ->orWhere(function ($query) {
+        $user = auth()->user();
+
+        $query = Hpr::query()
+            ->where(function ($query) {
                 $query
-                    ->where('approve', 'Y')
-                    ->where('approve1', '');
-                });
+                    ->where('approve', '')
+                    ->orWhere(function ($query) {
+                        $query
+                            ->where('approve', 'Y')
+                            ->where('approve1', '');
+                    });
             })
-            ->whereDate('tgl', '>=', now()->subDays(90))
-            ->count();
+            ->whereDate('tgl', '>=', now()->subDays(90));
+
+        if (
+            ! $user->hasRole('super_admin')
+            && $user->kd_cab !== '00'
+        ) {
+            $query->where('kd_cab', $user->kd_cab);
+        }
+
+        $total = $query->count();
 
         return [
-            Stat::make('Total Belum Approval', $total)
-                ->description('Purchase Request menunggu approval')
-                ->descriptionIcon('heroicon-o-clock')
+            Stat::make('Purchase Request Need Approval', $total)
+                ->description('Last 90 days')
+                ->descriptionIcon('heroicon-m-clock')
                 ->color('warning')
                 ->url(PurchaseRequestApproveResource::getUrl('index')),
-        ];
+        ];                
     }
 }

@@ -303,7 +303,7 @@
                 </div>
 
                 <div class="hero-stats">
-                    <div class="stat"><b>6</b><span>Modul Terintegrasi</span></div>
+                    <div class="stat"><b>-</b><span>Modul Terintegrasi</span></div>
                     <div class="stat"><b>100%</b><span>Data Real-time</span></div>
                     <div class="stat"><b>1</b><span>Panel, Semua Divisi</span></div>
                 </div>
@@ -316,9 +316,9 @@
                     </div>
                     <span class="stamp">LIVE</span>
                 </div>
-                <div class="ledger-row"><span class="k">Product Baru</span><span class="v">...</span></div>
+                <div class="ledger-row"><span class="k">Product Baru</span><span class="v">Deskripsi dan harga</span></div>
                 <div class="ledger-row"><span class="k">Pesanan Pembelian</span><span class="badge pending">Menunggu Approval</span></div>
-                <div class="ledger-row"><span class="k">Faktur Jatuh Tempo</span><span class="v">...</span></div>
+                <div class="ledger-row"><span class="k">Faktur Jatuh Tempo</span><span class="v">Penagihan</span></div>
                 <div class="ledger-row"><span class="k">Perjanjian Aktif</span><span class="badge active">Berjalan</span></div>
                 <div class="ledger-foot">
                     <span class="mono">Diperbarui otomatis</span>

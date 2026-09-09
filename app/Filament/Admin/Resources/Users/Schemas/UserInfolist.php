@@ -38,6 +38,15 @@ class UserInfolist
                                 ->replace('_', ' ')
                                 ->title()
                         ),
+                    TextEntry::make('kd_cab')
+                        ->label('Branch')
+                        ->icon('heroicon-o-building-office-2')
+                        ->badge()
+                        ->formatStateUsing(
+                            fn ($state) => str($state)
+                                ->replace('_', ' ')
+                                ->title()
+                        ),
                 ])
                 ->columns(2),
 

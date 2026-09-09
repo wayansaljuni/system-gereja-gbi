@@ -15,7 +15,7 @@
         "laravel/reverb": "^1.11",
         "laravel/tinker": "^3.0",
         "spatie/laravel-activitylog": "^5.1",
-        "zvizvi/filament-column-filters": "^0.0.6"
+        "zvizvi/filament-column-filters": "0.0.6"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.7",
