@@ -21,16 +21,14 @@ class PurchaseRequestApprovesTable
             ->columns([
 
             TextColumn::make('approval_level_1')
-                ->label('Approve-1')
+                ->label('Approve-1 (AM)')
                 ->state(function ($record) {
                     if ($record->approve === 'Y') {
                         return 'Approved';
                     }
-
                     if ($record->approve === 'T') {
                         return 'Rejected';
                     }
-
                     return 'Setujui';
                 })
                 ->badge()
@@ -60,7 +58,6 @@ class PurchaseRequestApprovesTable
                         ->modalSubmitActionLabel('Setujui')
                         ->visible(function ($record) {
                             $user = auth()->user();
-
                             if (! $user?->hasRole('approvepr')) {
                                 return false;
                             }
@@ -72,9 +69,9 @@ class PurchaseRequestApprovesTable
                             return $record->kd_cab === $user->kd_cab;
                         })
                     ->action(function ($record) {
-                        $user = auth()->user();
+                        $user = auth()->user(); 
                         $bypassLevel2 =
-                            in_array($record->jnsbudget , [
+                            (in_array($record->jnsbudget , [
                                 'DROPPING',
                                 'FROM SO',
                                 'COMPLAIN CS',
@@ -92,7 +89,8 @@ class PurchaseRequestApprovesTable
                                 $record->kd_cab !== '00'
                                 && $record->gp === 'Y'
                                 && $record->jnsbudget === 'BUDGET'
-                            );
+                            ))
+                            && $record->inventory != 'MI';
 
                         $data = [
                             'approve'   => 'Y',
@@ -122,21 +120,18 @@ class PurchaseRequestApprovesTable
                 ),
 
             TextColumn::make('approval_level_2')
-                ->label('Approve-2')
+                ->label('Approve-2(FA/Coord)')
                 ->state(function ($record) {
                     // Level 1 belum disetujui
                     if ($record->approve !== 'Y') {
-                        return 'Waiting L1';
+                        return 'Waiting Approve-1';
                     }
-
                     if ($record->approve1 === 'Y') {
                         return 'Approved';
                     }
-
                     if ($record->approve1 === 'T') {
                         return 'Rejected';
                     }
-
                     return 'Setujui';
                 })
                 ->badge()
@@ -144,7 +139,6 @@ class PurchaseRequestApprovesTable
                     if ($record->approve !== 'Y') {
                         return 'gray';
                     }
-
                     return match ($record->approve1) {
                         'Y' => 'success',
                         'T' => 'danger',
@@ -155,7 +149,6 @@ class PurchaseRequestApprovesTable
                     if ($record->approve !== 'Y') {
                         return 'heroicon-o-clock';
                     }
-
                     return match ($record->approve1) {
                         'Y' => 'heroicon-o-check-circle',
                         'T' => 'heroicon-o-x-circle',
@@ -164,45 +157,125 @@ class PurchaseRequestApprovesTable
                 })
                 ->action(
                     Action::make('setujuiL2')
+                        ->label('Setujui (Level-2)')
+                        ->icon('heroicon-o-check')
+                        ->color('success')
+                        ->visible(function ($record) {
+                            return $record->approve === 'Y'
+                                && $record->approve1 === '';
+                        })
+                        ->mountUsing(function ($record, Action $action) {
+                            $user = auth()->user();
+                            if (! $user) {
+                                Notification::make()
+                                    ->title('Approval tidak diizinkan')
+                                    ->body('Sesi login Anda sudah berakhir.')
+                                    ->danger()
+                                    ->send();
+                                $action->cancel();
+                                return;
+                            }
+                            // KHUSUS APPROVAL LEVEL 2
+                            if (! $user->hasRole('approvepr2')) {
+                                Notification::make()
+                                    ->title('Approval tidak diizinkan')
+                                    ->body('Anda tidak memiliki role Approval PR Level 2.')
+                                    ->warning()
+                                    ->send();
+                                $action->cancel();
+                                return;
+                            }
+                            // Cabang PR harus sama dengan cabang user,
+                            // kecuali PR cabang 00
+                            if ($record->kd_cab !== $user->kd_cab && $user->kd_cab !== '00') {
+                                Notification::make()
+                                    ->title('Approval tidak diizinkan')
+                                    ->body(
+                                        "PR {$record->nota} berasal dari cabang {$record->kd_cab}. " .
+                                        "Cabang Anda adalah {$user->kd_cab}."
+                                    )
+                                    ->warning()
+                                    ->send();
+                                $action->cancel();
+                                return;
+                            }
+
+                            // Inventory MI hanya boleh untuk cabang 00
+                            if ($record->inventory === 'MI' && $user->kd_cab !== '00') {
+                                Notification::make()
+                                    ->title('Approval tidak diizinkan')
+                                    ->body('Inventory MI hanya dapat di-approve untuk cabang 00.')
+                                    ->warning()
+                                    ->send();
+                                $action->cancel();
+                                return;
+                            }
+
+                            // Harus sudah disetujui Level 1
+                            if ($record->approve !== 'Y') {
+                                Notification::make()
+                                    ->title('Approval tidak diizinkan')
+                                    ->body('PR belum mendapatkan Approval Level 1.')
+                                    ->warning()
+                                    ->send();
+                                $action->cancel();
+                                return;
+                            }
+
+                            // Level 2 masih harus kosong
+                            if ($record->approve1 !== '') {
+                                Notification::make()
+                                    ->title('Approval tidak diizinkan')
+                                    ->body('PR ini sudah diproses pada Approval Level 2.')
+                                    ->warning()
+                                    ->send();
+                                $action->cancel();
+                                return;
+                            }
+                        })
+
                         ->modalHeading(
                             fn ($record) =>
                                 "Detail Purchase Request - {$record->nota}"
                         )
+
                         ->modalContent(
                             fn ($record) => view(
                                 'filament.admin.modals.purchase-request-detail',
-                                ['record' => $record]
+                                [
+                                    'record' => $record,
+                                ]
                             )
                         )
+
                         ->modalWidth('4xl')
                         ->modalSubmitActionLabel('Setujui')
-                        ->visible(function ($record) {
-                            $user = auth()->user();
 
-                            if (! $user?->hasRole('approvepr')) {
-                                return false;
-                            }
-
-                            if ($record->kd_cab !== $user->kd_cab) {
-                                return false;
-                            }
-
-                            return $record->approve === 'Y'
-                                && $record->approve1 === '';
-                        })
                         ->action(function ($record) {
                             $user = auth()->user();
+                            // Validasi ulang sebelum update
+                            if (! $user || ! $user->hasRole('approvepr2')
+                                || (
+                                    $record->kd_cab !== $user->kd_cab
+                                    && $user->kd_cab !== '00'
+                                )
+                                || (
+                                    $record->inventory === 'MI'
+                                    && $user->kd_cab !== '00'
+                                )
+                                || $record->approve !== 'Y'
+                                || $record->approve1 !== ''
+                            ) {
+                                Notification::make()
+                                    ->title('Approval gagal')
+                                    ->body(
+                                        'PR tidak dapat di-approve karena Anda tidak memiliki akses atau kondisi approval sudah berubah.'
+                                    )
+                                    ->danger()
+                                    ->send();
 
-                            /*
-                            * Validasi ulang untuk keamanan.
-                            */
-                            abort_unless(
-                                $user?->hasRole('approvepr')
-                                && $record->kd_cab === $user->kd_cab
-                                && $record->approve === 'Y'
-                                && $record->approve1 === '',
-                                403
-                            );
+                                return;
+                            }
 
                             $record->update([
                                 'approve1'   => 'Y',
@@ -211,23 +284,30 @@ class PurchaseRequestApprovesTable
                             ]);
 
                             Notification::make()
-                                ->title('PR disetujui (Level 2)')
+                                ->title('PR berhasil disetujui')
+                                ->body(
+                                    "Purchase Request {$record->nota} berhasil disetujui pada Level 2."
+                                )
                                 ->success()
                                 ->send();
-                        })
-                ),            
-
+                        }),
+                    ),
+                        
                 TextColumn::make('nota')
-                    ->label('No. Nota')
+                    ->label('No. Nota / Type PR')
                     ->icon(Heroicon::OutlinedBookmark)
-                    ->searchable(isIndividual:true)
+                    // ->searchable(isIndividual:true)
                     ->columnFilter(ColumnFilter::search())
-                    ->sortable(),
+                    ->sortable()
+                    ->description(fn ($record): string => $record->inventory),
 
                 TextColumn::make('tgl')
                     ->label('Tanggal')
                     ->date('d/m/Y')
-                    ->searchable(isIndividual:true)
+                    // ->searchable(isIndividual:true)
+                    ->columnFilter(ColumnFilter::search())
+                    ->sortable()
+                    ->searchable()
                     ->icon(Heroicon::OutlinedCalendar)
                     ->sortable(),
 
@@ -235,7 +315,7 @@ class PurchaseRequestApprovesTable
                     ->icon(Heroicon::OutlinedCreditCard)
                     ->label('Project Name')
                     ->wrap()
-                    ->searchable(isIndividual:true)
+                    // ->searchable(isIndividual:true)
                     ->columnFilter(ColumnFilter::search())
                     ->extraHeaderAttributes([
                         'style' => 'min-width: 250px; width: 250px;',
@@ -245,7 +325,7 @@ class PurchaseRequestApprovesTable
                     ]),
                 TextColumn::make('nop')
                     ->label('No.SO / Dept')
-                    ->searchable(isIndividual:true)
+                    // ->searchable(isIndividual:true)
                     ->columnFilter(ColumnFilter::search())
                     ->sortable()
                     ->description(fn ($record): string => $record->dept)

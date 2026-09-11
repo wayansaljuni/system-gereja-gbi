@@ -13,7 +13,8 @@ class PurchaseRequestApproveStats extends StatsOverviewWidget
     {
         return auth()->user()?->hasAnyRoleCustom([
             'super_admin',
-            'approvalpr',
+            'approvepr',
+            'approvepr2',
         ]) ?? false;
     }
     protected function getStats(): array

@@ -5,12 +5,12 @@ namespace App\Filament\Admin\Resources\AgreementTypes\Tables;
 // use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-// use Filament\Actions\ViewAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Zvizvi\FilamentColumnFilters\Filters\ColumnFilter;
 
 class AgreementTypesTable
 {
@@ -23,13 +23,14 @@ class AgreementTypesTable
                     ->label('Type Code')
                     ->badge()
                     ->color('primary')
-                    ->searchable(isIndividual:true)
+                    ->columnFilter(ColumnFilter::search())
+                    // ->searchable(isIndividual:true)
                     ->sortable(),
 
                 TextColumn::make('name')
                     ->label('Agreement Type Name')
                     ->icon(Heroicon::OutlinedDocumentText)
-                    ->searchable(isIndividual:true)
+                    ->columnFilter(ColumnFilter::search())
                     ->sortable()
                     ->weight('medium'),
 
@@ -37,12 +38,13 @@ class AgreementTypesTable
                     ->label('Agreement Type Description')
                     ->limit(40)
                     ->placeholder('—')
-                    ->searchable(isIndividual:true)
+                    ->columnFilter(ColumnFilter::search())
                     ->toggleable(),
 
                 IconColumn::make('has_period')
                     ->label('Period')
                     ->boolean()
+                    ->columnFilter(ColumnFilter::search())
                     ->trueIcon(Heroicon::OutlinedCalendarDays)
                     ->falseIcon(Heroicon::OutlinedNoSymbol)
                     ->trueColor('info')
@@ -52,6 +54,7 @@ class AgreementTypesTable
                 IconColumn::make('is_active')
                     ->label('Active')
                     ->boolean()
+                    ->columnFilter(ColumnFilter::search())
                     ->trueColor('success')
                     ->falseColor('danger')
                     ->sortable(),

@@ -18,7 +18,7 @@ class AgreementRemindersTable
             ->columns([
                 TextColumn::make('agreement.title')
                     ->label('Agreement')
-                    ->searchable(isIndividual:true)
+                    // ->searchable(isIndividual:true)
                     ->columnFilter(ColumnFilter::search())
                     ->icon('heroicon-o-document-text')
                     ->weight('medium')
@@ -26,7 +26,7 @@ class AgreementRemindersTable
 
                 TextColumn::make('title')
                     ->label('Reminder')
-                    ->searchable(isIndividual:true)
+                    // ->searchable(isIndividual:true)
                     ->columnFilter(ColumnFilter::search())
                     ->icon('heroicon-o-tag')
                     ->wrap()
@@ -35,7 +35,7 @@ class AgreementRemindersTable
                 TextColumn::make('remind_at')
                     ->label('Reminder Date')
                     ->date('d M Y')
-                    ->searchable(isIndividual:true)
+                    ->columnFilter(ColumnFilter::search())
                     ->sortable()
                     ->icon('heroicon-o-calendar-days')
                     ->badge()
@@ -48,6 +48,7 @@ class AgreementRemindersTable
 
                IconColumn::make('is_sent')
                     ->label('Already Sent')
+                    ->columnFilter(ColumnFilter::search())
                     ->boolean()
                     ->trueColor('success')
                     ->falseColor('warning'),
@@ -63,7 +64,7 @@ class AgreementRemindersTable
                 TextColumn::make('sent_at')
                     ->label('Sent At')
                     ->dateTime('d M Y, H:i')
-                    ->searchable(isIndividual:true)
+                    ->columnFilter(ColumnFilter::search())
                     ->sortable()
                     ->icon('heroicon-o-paper-airplane')
                     ->placeholder('—')

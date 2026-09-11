@@ -25,12 +25,12 @@ class AgreementsTable
                     ->badge()
                     ->color('primary')
                     ->columnFilter(ColumnFilter::search())
-                    ->searchable(isIndividual:true)
+                    // ->searchable(isIndividual:true)
                     ->sortable(),
                 TextColumn::make('title')
                     ->label('Document Name')
                     ->icon(Heroicon::OutlinedBookmark)
-                    ->searchable(isIndividual:true)
+                    // ->searchable(isIndividual:true)
                     ->columnFilter(ColumnFilter::search())
                     ->sortable()
                     ->wrap() 
@@ -38,7 +38,7 @@ class AgreementsTable
 
                 TextColumn::make('agreementType.name')
                     ->label('Agreement Type')
-                    ->searchable(isIndividual:true)
+                    // ->searchable(isIndividual:true)
                     ->columnFilter(ColumnFilter::search())
                     ->badge()
                     ->color('gray')
@@ -46,7 +46,7 @@ class AgreementsTable
 
                 TextColumn::make('sifat')
                     ->label('Document Type')
-                    ->searchable(isIndividual:true)
+                    // ->searchable(isIndividual:true)
                     ->columnFilter(ColumnFilter::search())
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
@@ -59,6 +59,7 @@ class AgreementsTable
                 TextColumn::make('start_date')
                         ->label('Period')
                         ->date('d M Y')
+                        ->columnFilter(ColumnFilter::search())
                         ->icon(Heroicon::OutlinedCalendar)
                         ->description(fn ($record) => $record->end_date
                             ? 'Berakhir: ' . $record->end_date->format('d M Y')
@@ -66,6 +67,7 @@ class AgreementsTable
                         ->sortable(),
                 TextColumn::make('status')
                     ->label('Status')
+                    ->columnFilter(ColumnFilter::search())
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
@@ -80,6 +82,7 @@ class AgreementsTable
 
                 IconColumn::make('reminder_enabled')
                     ->label('Reminder')
+                    ->columnFilter(ColumnFilter::search())
                     ->boolean()
                     ->trueIcon(Heroicon::OutlinedBellAlert)
                     ->falseIcon(Heroicon::OutlinedBellSlash)
@@ -89,7 +92,7 @@ class AgreementsTable
                 TextColumn::make('notes')
                     ->label('Notes')
                     ->icon(Heroicon::OutlinedBookmark)
-                    ->searchable(isIndividual:true)
+                    // ->searchable(isIndividual:true)
                     ->columnFilter(ColumnFilter::search())
                     ->sortable()
                     ->wrap() 

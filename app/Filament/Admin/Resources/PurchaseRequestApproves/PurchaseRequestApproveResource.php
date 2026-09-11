@@ -64,7 +64,7 @@ class PurchaseRequestApproveResource extends Resource
         }
 
         // Super Admin bisa melihat semua cabang
-        if ($user->hasRole('super_admin')) {
+        if ($user->hasRole('super_admin') || $user->kd_cab === '00') {
             return $query;
         }
 
