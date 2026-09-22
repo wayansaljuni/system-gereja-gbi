@@ -7,6 +7,7 @@ namespace App\Models;
 // use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 // use Illuminate\Notifications\Notifiable;
@@ -31,6 +32,8 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'must_change_password',
         'kd_cab',
+        'kdun',
+        'nik',
     ];
 
     /**
@@ -96,5 +99,15 @@ class User extends Authenticatable implements FilamentUser
         return Kdcab::query()
             ->where('kd_cab', $this->kd_cab)
             ->first();
+    }
+    
+    public function karyawan(): BelongsTo
+    {
+        return $this->belongsTo(Mkar::class, 'nik', 'nik');
+    }
+
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Munit::class, 'kdun', 'kdun');
     }
 }

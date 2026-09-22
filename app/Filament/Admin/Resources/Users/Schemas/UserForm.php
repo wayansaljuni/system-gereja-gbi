@@ -4,6 +4,8 @@ namespace App\Filament\Admin\Resources\Users\Schemas;
 
 // use Filament\Forms\Components\DateTimePicker;
 use App\Models\Kdcab;
+use App\Models\Mkar;
+use App\Models\Munit;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -59,6 +61,7 @@ class UserForm
                             ->label('Branch')
                             ->options(
                                 fn () => Kdcab::query()
+                                    ->select('kd_cab', 'nm_cab')
                                     ->orderBy('kd_cab')
                                     ->get()
                                     ->mapWithKeys(fn (Kdcab $cabang) => [
@@ -79,7 +82,61 @@ class UserForm
                                 fn () => ! auth()->user()->hasRole('super_admin')
                             )
                             ->dehydrated(),
-                            
+
+                        Select::make('kdun')
+                            ->label('Unit Perusahaan')
+                            ->options(
+                                fn () => Munit::query()
+                                    ->select('kdun', 'ket')
+                                    ->orderBy('kdun')
+                                    ->get()
+                                    ->mapWithKeys(fn (Munit $unit) => [
+                                        $unit->kdun => "{$unit->kdun} - {$unit->ket}",
+                                    ])
+                                    ->toArray()
+                            )
+                            ->searchable()
+                            ->preload()
+                            ->prefixIcon('heroicon-o-building-office')
+                            ->helperText(
+                                fn () => auth()->user()->hasRole('super_admin')
+                                    ? 'Select the branch this user can access.'
+                                    : 'The branch can only be changed by a Super Admin.'
+                            )
+                            ->disabled(
+                                fn () => ! auth()->user()->hasRole('super_admin')
+                            )
+                            ->dehydrated(),
+
+                        Select::make('nik')
+                            ->label('Identification Number (NIK)')
+                            ->options(
+                                Mkar::query()
+                                    ->select('nik', 'ket')
+                                    ->where(function ($query) {
+                                        $query->whereNull('tglklr')
+                                            ->orWhere('tglklr', '')
+                                            ->orWhere('tglklr', '0000-00-00');
+                                    })
+                                    ->orderBy('nik')
+                                    ->pluck('ket', 'nik')
+                                    ->map(
+                                        fn ($ket, $nik) => "{$nik} - {$ket}"
+                                    )
+                                    ->toArray()
+                            ) 
+                            ->searchable()
+                            ->preload()
+                            ->prefixIcon('heroicon-o-users')
+                            ->helperText(
+                                fn () => auth()->user()->hasRole('super_admin')
+                                    ? 'Select the branch this user can access.'
+                                    : 'The branch can only be changed by a Super Admin.'
+                            )
+                            ->disabled(
+                                fn () => ! auth()->user()->hasRole('super_admin')
+                            )
+                            ->dehydrated(),
     
                     ])
                     ->columns(2),
