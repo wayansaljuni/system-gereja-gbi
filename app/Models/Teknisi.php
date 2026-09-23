@@ -37,8 +37,8 @@ class Teknisi extends Model
     {
         return $this->belongsTo(
             Spk::class,
-            'noko', // field pada teknisi
-            'noko'  // field pada spk
+            'nospk', // field pada teknisi
+            'nospk'  // field pada spk
         );
     }
 

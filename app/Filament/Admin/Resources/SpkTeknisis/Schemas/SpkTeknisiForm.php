@@ -8,8 +8,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
-// use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+// use Illuminate\Support\HtmlString;
 
 class SpkTeknisiForm
 {
@@ -77,6 +77,12 @@ class SpkTeknisiForm
                     ->schema([
                         Textarea::make('produk_klh')
                             ->label('Keluhan Customer')
+                            // ->label(new HtmlString(
+                            //     '<div class="flex items-center gap-2">
+                            //         <x-heroicon-o-pencil-square class="w-5 h-5" />
+                            //         <span>Remark</span>
+                            //     </div>'
+                            // ))
                             ->rows(3)->disabled()->dehydrated(false),
                         // Bisa diedit
                         Textarea::make('produk_krskn')
@@ -188,7 +194,7 @@ class SpkTeknisiForm
                             ->disabled(fn ($livewire): bool =>$livewire->currentVisit !== 3),
 
                         DateTimePicker::make('produk_tglplg3')
-                            ->label('Pulang 3')
+                            ->label('Kepulangan -3')
                             ->prefixIcon('heroicon-o-arrow-left-circle')
                             ->seconds(false)->minDate(fn ($get) => $get('produk_tgldtg3'))
                             ->displayFormat('d M Y H:i')

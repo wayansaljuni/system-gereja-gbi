@@ -6,6 +6,7 @@ use App\Filament\Admin\Widgets\AgreementReminderOverview;
 use App\Filament\Admin\Widgets\AgreementStatsOverview;
 use App\Filament\Admin\Widgets\PurchaseRequestApproveStats;
 use App\Filament\Admin\Widgets\RecentActivityWidget;
+use App\Filament\Widgets\SpkTeknisiStats;
 use App\Http\Middleware\ForcePasswordChange;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Enums\ThemeMode;
@@ -36,7 +37,8 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->defaultThemeMode(ThemeMode::Light)
-            ->login()
+            // ->login()
+            ->login(\App\Filament\Admin\Pages\Auth\Login::class)
             ->brandLogo(fn () => view('filament.admin.logo'))            
             ->favicon(asset('images/logo_32.png'))
             // ->brandLogoHeight('2rem')         
@@ -57,6 +59,7 @@ class AdminPanelProvider extends PanelProvider
                 'Agreements',
                 'Purchasing',
                 'Setting',
+                'CRM',
             ])            // ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
             ->widgets([
                 // AccountWidget::class,
@@ -65,7 +68,8 @@ class AdminPanelProvider extends PanelProvider
                 AgreementStatsOverview::class,
                 AgreementReminderOverview::class,
                 RecentActivityWidget::class,
-                PurchaseRequestApproveStats::class])
+                PurchaseRequestApproveStats::class,
+                SpkTeknisiStats::class])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

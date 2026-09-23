@@ -4,7 +4,7 @@ namespace App\Filament\Admin\Resources\ActivityLogs\Schemas;
 
 use Filament\Schemas\Schema;
 
-class ActivityLogForm
+class ActivityLogsForm
 {
     public static function configure(Schema $schema): Schema
     {

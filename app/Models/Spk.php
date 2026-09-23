@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -69,5 +70,30 @@ class Spk extends Model
             'noko',   // field di tabel spk
             'noko'    // field di tabel komplain
         );
+    }    
+    public function scopeAktif(Builder $query): Builder
+    {
+        $nik = auth()->user()?->nik;
+        return $query
+            // Filter SPK mulai 2026-01-01
+            ->where('tgk', '>=', '2026-01-01')
+            // Produk belum Closed 
+            ->whereHas('produk', function (Builder $query) {
+                $query->where(function (Builder $query) {
+                    $query
+                        ->where('sts', '<>', 'Closed');
+                });
+            })
+            // Jika users.nik terisi, filter teknisi berdasarkan NIK
+            // Jika NULL / kosong, jangan filter NIK
+            ->when(
+                filled($nik),
+                fn (Builder $query) =>
+                    $query->whereHas(
+                        'teknisi',
+                        fn (Builder $teknisi) =>
+                            $teknisi->where('nik', $nik)
+                    )
+            );        
     }    
 }

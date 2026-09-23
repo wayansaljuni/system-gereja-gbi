@@ -24,23 +24,24 @@ class SpkTeknisisTable
                         'spk.produk',
                         'komplain.customer',
                     ])
-                    ->where('nik', $user->nik)
+                    // Filter NIK hanya jika users.nik terisi
+                    ->when(
+                        filled($user?->nik),
+                        fn ($query) => $query->where('nik', $user->nik)
+                    )
+                    // Filter SPK mulai 2026-01-01
+                    ->whereHas('spk', function ($query) {
+                        $query->where('tgk', '>=', '2026-01-01');
+                    })                    
                     ->whereHas('spk.produk', function ($query) {
                         $query->where(function ($query) {
                             $query
                                 ->where('sts', '<>', 'Closed')
-                                ->orWhereNull('sts');
+                                ;
                         });
                     });
             })
-            // ->modifyQueryUsing(function ($query) {
-            //     $user = auth()->user();
-            //     return $query
-            //         ->with([
-            //             'komplain.customer',
-            //         ])
-            //         ->where('teknisi.nik', $user->nik);
-            // })
+
             ->columns([
                 TextColumn::make('spk.nospk')
                     ->label('No. SPK / Tgl SPK')->columnFilter(ColumnFilter::search())

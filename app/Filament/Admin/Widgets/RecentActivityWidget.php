@@ -16,7 +16,7 @@ class RecentActivityWidget extends Widget
 
     protected int|string|array $columnStart = [
         'default' => 1,
-        'xl' => 4,
+        'xl' => 1,
     ];
 
     public function getActivities()
@@ -24,7 +24,7 @@ class RecentActivityWidget extends Widget
         return Activity::query()
             ->with('causer')
             ->latest('created_at')
-            ->limit(10)
+            ->limit(5)
             ->get();
     }
 }
