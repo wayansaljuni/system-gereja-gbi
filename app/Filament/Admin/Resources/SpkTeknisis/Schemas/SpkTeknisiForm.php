@@ -22,7 +22,7 @@ class SpkTeknisiForm
                     ->icon('heroicon-o-document-text')->iconColor('warning')->columnSpanFull()
                     ->columns(4)
                     ->schema([
-                        TextInput::make('nama')
+                        TextInput::make('teknisi_nama')
                             ->label('Nama Teknisi')
                             ->prefixIcon('heroicon-o-user')
                             ->disabled(),

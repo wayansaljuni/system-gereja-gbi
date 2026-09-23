@@ -16,40 +16,67 @@ class SpkTeknisisTable
     {
         return $table
             ->persistColumnSearchesInSession()
-            ->modifyQueryUsing(function ($query) {
-                $user = auth()->user();
-                return $query
-                    ->with([
-                        'spk',
-                        'spk.produk',
-                        'komplain.customer',
-                    ])
-                    // Filter NIK hanya jika users.nik terisi
-                    ->when(
-                        filled($user?->nik),
-                        fn ($query) => $query->where('nik', $user->nik)
-                    )
-                    // Filter SPK mulai 2026-01-01
-                    ->whereHas('spk', function ($query) {
-                        $query->where('tgk', '>=', '2026-01-01');
-                    })                    
-                    ->whereHas('spk.produk', function ($query) {
-                        $query->where(function ($query) {
-                            $query
-                                ->where('sts', '<>', 'Closed')
-                                ;
-                        });
-                    });
-            })
+            // ->modifyQueryUsing(function ($query) {
+            //     $user = auth()->user();
+            //     return $query
+            //         ->with([
+            //             'spk',
+            //             'spk.produk',
+            //             'komplain.customer',
+            //         ])
+            //         // Filter NIK hanya jika users.nik terisi
+            //         ->when(
+            //             filled($user?->nik),
+            //             fn ($query) => $query->where('nik', $user->nik)
+            //         )
+            //         // Filter SPK mulai 2026-01-01
+            //         ->whereHas('spk', function ($query) {
+            //             $query->where('tgk', '>=', '2026-01-01');
+            //         })                    
+            //         ->whereHas('spk.produk', function ($query) {
+            //             $query->where(function ($query) {
+            //                 $query
+            //                     ->where('sts', '<>', 'Closed')
+            //                     ;
+            //             });
+            //         });
+            // })
+                ->modifyQueryUsing(function ($query) {
+                    $user = auth()->user();
+
+                    return $query
+                        ->with([
+                            'produk',
+                            'teknisi',
+                            'komplain.customer',
+                        ])
+
+                        // spk.tgk >= 2026-01-01
+                        ->where('tgk', '>=', '2026-01-01')
+
+                        // produk.sts <> Closed
+                        ->whereHas('produk', function ($query) {
+                            $query->where('sts', '<>', 'Closed');
+                        })
+
+                        // teknisi.nik = users.nik
+                        ->when(
+                            filled($user?->nik),
+                            fn ($query) => $query->whereHas(
+                                'teknisi',
+                                fn ($query) => $query->where('nik', $user->nik)
+                            )
+                        );
+                })
 
             ->columns([
-                TextColumn::make('spk.nospk')
+                TextColumn::make('nospk')
                     ->label('No. SPK / Tgl SPK')->columnFilter(ColumnFilter::search())
                     ->icon('heroicon-o-document-text')
                     ->iconColor('primary')->weight('bold')->color('primary')->searchable()->sortable()
-                    ->description(fn ($record): string => $record->spk->tgk)
+                    ->description(fn ($record): string => $record->tgk)
                     ,
-                TextColumn::make('spk.produk.sts')
+                TextColumn::make('produk.sts')
                     ->label('Status SPK')
                     ->badge()
                     ->icon(fn (?string $state): string => match ($state) {
@@ -64,23 +91,23 @@ class SpkTeknisisTable
                     })
                     ->placeholder('-'),
                     
-                TextColumn::make('spk.nosr')
-                    ->label('Serial Number')
+                TextColumn::make('kdb')
+                    ->label('Kode Barang')
                     ->icon('heroicon-o-qr-code')->columnFilter(ColumnFilter::search())
                     ->iconColor('gray')->searchable()->copyable()
                     ->copyMessage('Serial number copied')
                     ->description(function ($record): HtmlString {
-                        $kdb = e($record->spk?->produk?->kdb ?? '-');
+                        $nosr = e($record->produk?->nosr ?? '-');
                         return new HtmlString(
                             '<div class="flex items-center gap-1 text-xs text-gray-500">
                                 <span>🏷️</span>
-                                <span>' . $kdb . '</span>
+                                <span>' . $nosr . '</span>
                             </div>'
                         );
                     })
                     ,
 
-                TextColumn::make('spk.nmcust')
+                TextColumn::make('nmcust')
                     ->label('Customer')
                     ->columnFilter(ColumnFilter::search())
                     ->icon('heroicon-o-building-office-2')->columnFilter(ColumnFilter::search())
@@ -131,7 +158,7 @@ class SpkTeknisisTable
                 //     ->iconColor('gray')
                 //     ->searchable(),
 
-                TextColumn::make('spk.produk.nmb')
+                TextColumn::make('produk.nmb')
                     ->label('Nama Produk')->columnFilter(ColumnFilter::search())
                     ->icon('heroicon-o-cube')->iconColor('primary')->weight('medium')->searchable()->wrap()
                     ->iconColor('warning')->weight('medium')->searchable()->wrap()->extraHeaderAttributes([
@@ -142,7 +169,7 @@ class SpkTeknisisTable
                     ])
                    ,
 
-                TextColumn::make('spk.produk.klh')
+                TextColumn::make('produk.klh')
                     ->label('Keluhan')->columnFilter(ColumnFilter::search())
                     ->icon('heroicon-o-chat-bubble-left-ellipsis')
                     ->iconColor('warning')->wrap()->limit(50)
@@ -156,7 +183,7 @@ class SpkTeknisisTable
                     ])
                     ,
 
-                TextColumn::make('spk.produk.krskn')
+                TextColumn::make('produk.krskn')
                     ->label('Kerusakan')->columnFilter(ColumnFilter::search())
                     ->icon('heroicon-o-exclamation-triangle')
                     ->iconColor('danger')->wrap()->limit(50)
@@ -171,7 +198,7 @@ class SpkTeknisisTable
                     ])
                     ,
 
-                TextColumn::make('spk.produk.solusi')
+                TextColumn::make('produk.solusi')
                     ->label('Solusi')->columnFilter(ColumnFilter::search())
                     ->icon('heroicon-o-check-circle')
                     ->iconColor('success')->wrap()->limit(50)
@@ -186,7 +213,7 @@ class SpkTeknisisTable
                     ])
                     ,
 
-                TextColumn::make('spk.produk.tgldtg1')
+                TextColumn::make('produk.tgldtg1')
                     ->label('Kedatangan -1')
                     ->icon('heroicon-o-arrow-right-circle')
                     ->iconColor('success')
@@ -194,7 +221,7 @@ class SpkTeknisisTable
                     ->placeholder('-')
                     ->toggleable(),
 
-                TextColumn::make('spk.produk.tglplg1')
+                TextColumn::make('produk.tglplg1')
                     ->label('Kepulangan -1')
                     ->icon('heroicon-o-arrow-left-circle')
                     ->iconColor('danger')
@@ -202,7 +229,7 @@ class SpkTeknisisTable
                     ->placeholder('-')
                     ->toggleable(),
 
-                TextColumn::make('spk.produk.tgldtg2')
+                TextColumn::make('produk.tgldtg2')
                     ->label('Kedatangan -2')
                     ->icon('heroicon-o-arrow-right-circle')
                     ->iconColor('success')
@@ -210,7 +237,7 @@ class SpkTeknisisTable
                     ->placeholder('-')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('spk.produk.tglplg2')
+                TextColumn::make('produk.tglplg2')
                     ->label('Kepulangan -2')
                     ->icon('heroicon-o-arrow-left-circle')
                     ->iconColor('danger')
@@ -218,7 +245,7 @@ class SpkTeknisisTable
                     ->placeholder('-')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->defaultSort('id', 'desc')
+            ->defaultSort('idwo', 'desc')
             ->striped()
             ->filters([
                 //

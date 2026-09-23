@@ -8,7 +8,7 @@ use App\Filament\Admin\Resources\SpkTeknisis\Pages\ViewSpkTeknisi;
 use App\Filament\Admin\Resources\SpkTeknisis\Schemas\SpkTeknisiForm;
 use App\Filament\Admin\Resources\SpkTeknisis\Schemas\SpkTeknisiInfolist;
 use App\Filament\Admin\Resources\SpkTeknisis\Tables\SpkTeknisisTable;
-use App\Models\Teknisi;
+use App\Models\Spk; 
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -18,7 +18,7 @@ use UnitEnum;
 
 class SpkTeknisiResource extends Resource
 {
-    protected static ?string $model = Teknisi::class;
+    protected static ?string $model = Spk::class;
     protected static string|UnitEnum|null $navigationGroup ='CRM';
     protected static string|BackedEnum|null $navigationIcon =Heroicon::OutlinedWrenchScrewdriver;
     protected static ?string $navigationLabel = 'SPK Teknisi';

@@ -27,17 +27,19 @@ class EditSpkTeknisi extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $this->record->load([
-            'spk',
-            'spk.produk',
+            'produk',
         ]);
-        $spk = $this->record->spk;
-        $produk = $spk?->produk;
+        $spk = $this->record;
+        $produk = $this->record->produk;
+        $teknisi = $this->record->teknisi->first();
         $datang1 = $produk?->getRawOriginal('tgldtg1');
         $pulang1 = $produk?->getRawOriginal('tglplg1');
         $datang2 = $produk?->getRawOriginal('tgldtg2');
         $pulang2 = $produk?->getRawOriginal('tglplg2');
         $datang3 = $produk?->getRawOriginal('tgldtg3');
         $pulang3 = $produk?->getRawOriginal('tglplg3');
+         // Teknisi
+        $data['teknisi_nama'] = $teknisi?->nama;
         // SPK
         if (
             $this->normalizeDate($datang1) === null ||
@@ -115,6 +117,7 @@ class EditSpkTeknisi extends EditRecord
             'sts' => $data['produk_sts'] ?? '',
             'krskn' => $data['produk_krskn'] ?? '',
             'solusi' => $data['produk_solusi'] ?? '',
+            'part_kembali' => $data['produk_part_kembali'] ?? '',
             'yvolt' => $data['produk_yvolt'] ?? '',
             'yampere' => $data['produk_yampere'] ?? '',
             'ymbar' => $data['produk_ymbar'] ?? '',
@@ -182,7 +185,7 @@ class EditSpkTeknisi extends EditRecord
      */
     protected function afterSave(): void
     {
-        $produk = $this->record->spk?->produk;
+        $produk = $this->record->produk;
         if (! $produk) {
             return;
         }
