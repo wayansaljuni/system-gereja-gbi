@@ -24,7 +24,7 @@ class RecentActivityWidget extends Widget
         return Activity::query()
             ->with('causer')
             ->latest('created_at')
-            ->limit(5)
+            ->limit(10)
             ->get();
     }
 }

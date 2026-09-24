@@ -19,40 +19,38 @@ class SpkTeknisiStats extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        $totalSpk = Spk::query()
-            ->aktif()
-            ->whereHas('teknisi')
-            ->count();
-
-        // $sudahAdaTeknisi = Spk::query()
-        //     ->aktif()
-        //     ->whereHas('teknisi')
-        //     ->count();
-
-        // $belumAdaTeknisi = Spk::query()
-        //     ->aktif()
-        //     ->whereDoesntHave('teknisi')
-        //     ->count();
-
-        // $totalTeknisi = Spk::query()
-        //     ->aktif()
-        //     ->withCount('teknisi')
-        //     ->get()
-        //     ->sum('teknisi_count');
+        $totalSpk = Spk::aktif()->whereHas('teknisi')->count();
+        $totalSpkBulanIni = Spk::bulanIni()->whereHas('teknisi')->count();
+        $sudahDikerjakanTeknisi = Spk::DikerjakanBulanIni()
+            ->whereHas('teknisi')->count();
+        $totalBelumDikerjakan = Spk::belumDikerjakanBulanIni()->whereHas('teknisi')->count();
 
         return [
-            Stat::make('Total SPK Teknisi Progress ', $totalSpk)
+            Stat::make('Total SPK Belum Dikerjakan', $totalSpk)
                 ->description('Click untuk melihat SPK sudah ditugaskan')
                 ->descriptionIcon('heroicon-m-arrow-right')
                 ->icon('heroicon-o-wrench-screwdriver')
                 ->color('primary')
                 ->url(SpkTeknisiResource::getUrl('index')),
-            // Stat::make('Sudah Ada Teknisi', $sudahAdaTeknisi)
-            //     ->description('SPK sudah ditugaskan')
-            //     ->icon('heroicon-o-user-group')
-            //     ->color('success'),
-
-            // Stat::make('Belum Ada Teknisi', $belumAdaTeknisi)
+            Stat::make('Total SPK Bulan Ini', $totalSpkBulanIni)
+                ->description(
+                    'Periode ' . now()->translatedFormat('F Y')
+                )
+                ->icon('heroicon-o-calendar-days')
+                ->color('primary'),
+            Stat::make('Total SPK Sudah Dikerjakan', $sudahDikerjakanTeknisi)
+                ->description(
+                    'Periode ' . now()->translatedFormat('F Y')
+                )
+                ->icon('heroicon-o-clipboard-document-check')
+                ->color('success'),
+            Stat::make('Total SPK Belum Dikerjakan', $totalBelumDikerjakan)
+                ->description(
+                    'Periode ' . now()->translatedFormat('F Y')
+                )
+                ->icon('heroicon-o-clock')
+                ->color('warning'),
+                // Stat::make('Belum Ada Teknisi', $belumAdaTeknisi)
             //     ->description('SPK belum memiliki teknisi')
             //     ->icon('heroicon-o-exclamation-triangle')
             //     ->color('danger'),
