@@ -50,60 +50,107 @@ class ActivityLogsInfolist
                                     ->placeholder('-'),
                             TextEntry::make('attribute_changes')
                                 ->label('Attribute Changes')
-                                // ->icon('heroicon-o-pencil-square')
-                                // ->iconColor('warning')
                                 ->state(function ($record) {
                                     $changes = json_decode($record->attribute_changes, true);
+
                                     if (! is_array($changes)) {
                                         return '-';
                                     }
+
                                     $old = $changes['old'] ?? [];
                                     $new = $changes['attributes'] ?? [];
+
                                     $formatValue = function ($value, $field) {
-                                        // Khusus field tanggal
+
+                                        // =========================
+                                        // ARRAY
+                                        // contoh: foto_produk / video_produk
+                                        // =========================
+                                        if (is_array($value)) {
+                                            if (empty($value)) {
+                                                return '-';
+                                            }
+
+                                            return collect($value)
+                                                ->map(function ($item) {
+                                                    if (is_array($item)) {
+                                                        return json_encode(
+                                                            $item,
+                                                            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+                                                        );
+                                                    }
+
+                                                    return (string) $item;
+                                                })
+                                                ->implode(', ');
+                                        }
+
+                                        // =========================
+                                        // FIELD TANGGAL
+                                        // =========================
                                         if (in_array($field, [
                                             'tgldtg1',
                                             'tglplg1',
                                             'tgldtg2',
                                             'tglplg2',
+                                            'tgldtg3',
+                                            'tglplg3',
                                         ])) {
-                                            // Anggap tanggal kosong / invalid sebagai "-"
+
+                                            // tanggal kosong / invalid MySQL lama
                                             if (
                                                 blank($value) ||
                                                 str_starts_with((string) $value, '-000001')
                                             ) {
                                                 return '-';
                                             }
+
                                             try {
                                                 return Carbon::parse($value)
                                                     ->format('d M Y H:i');
                                             } catch (\Exception $e) {
-                                                return $value;
+                                                return (string) $value;
                                             }
                                         }
-                                        return blank($value) ? '-' : $value;
+
+                                        // =========================
+                                        // VALUE BIASA
+                                        // =========================
+                                        return blank($value)
+                                            ? '-'
+                                            : (string) $value;
                                     };
+
                                     return collect($new)
+
+                                        // Field yang tidak perlu ditampilkan
                                         ->reject(fn ($value, $field) => in_array($field, [
                                             'updated_at',
                                             'created_at',
                                         ]))
+
                                         ->map(function ($newValue, $field) use ($old, $formatValue) {
+
                                             $oldValue = $old[$field] ?? null;
+
+                                            // Tidak ada perubahan
                                             if ($oldValue == $newValue) {
                                                 return null;
                                             }
+
                                             $oldValue = $formatValue($oldValue, $field);
                                             $newValue = $formatValue($newValue, $field);
+
                                             return "{$field}: {$oldValue} → {$newValue}";
                                         })
+
                                         ->filter()
                                         ->implode("\n");
                                 })
+
                                 ->formatStateUsing(fn ($state) => nl2br(e($state)))
-                                ->html()
-                                ->columnSpanFull(),
-                            ]),
+                                ->html(),
+                            ]),                                    
                     ]);
             }
 }
