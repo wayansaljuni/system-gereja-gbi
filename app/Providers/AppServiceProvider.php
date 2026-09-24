@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use App\Http\Responses\LogoutResponse;
+use Filament\Auth\Http\Responses\Contracts\LogoutResponse as LogoutResponseContract;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,7 +14,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        Schema::defaultStringLength(191);        //
+        Schema::defaultStringLength(191);
+        $this->app->bind(
+            LogoutResponseContract::class,
+            LogoutResponse::class,
+        );        //
     }
 
     /**
