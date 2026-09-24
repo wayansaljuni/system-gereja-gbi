@@ -97,10 +97,13 @@ class SpkTeknisiForm
                             ->rows(3),
                         FileUpload::make('produk_foto_produk')
                             ->label('Foto Produk / Pekerjaan')
-                            ->image()->multiple()
+                            ->image()
+                            ->multiple()
                             ->disk('public')
-                            ->imagePreviewHeight('180')->panelLayout('grid')
                             ->directory('spk-teknisi/foto')
+                            ->visibility('public')
+                            ->imagePreviewHeight('180')
+                            ->panelLayout('grid')
                             ->acceptedFileTypes([
                                 'image/jpeg',
                                 'image/png',
