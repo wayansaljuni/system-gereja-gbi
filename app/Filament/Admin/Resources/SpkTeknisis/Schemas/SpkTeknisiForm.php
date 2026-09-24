@@ -149,7 +149,7 @@ class SpkTeknisiForm
                             ->label('Kedatangan -1')
                             ->prefixIcon('heroicon-o-arrow-right-circle')
                             ->seconds(false)->minDate(fn ($get) => $get('spk_tgk'))
-                            ->displayFormat('d M Y H:i')
+                            ->displayFormat('d M Y H:i')->native(false)
                             ->required(fn ($livewire): bool =>$livewire->currentVisit === 1)
                             ->disabled(fn ($livewire): bool =>$livewire->currentVisit !== 1),
 
@@ -157,7 +157,7 @@ class SpkTeknisiForm
                             ->label('Kepulangan -1')
                             ->prefixIcon('heroicon-o-arrow-left-circle')
                             ->seconds(false)->minDate(fn ($get) => $get('produk_tgldtg1'))
-                            ->displayFormat('d M Y H:i')
+                            ->displayFormat('d M Y H:i')->native(false)
                             ->required(fn ($livewire): bool =>$livewire->currentVisit === 1)
                             ->disabled(fn ($livewire): bool =>$livewire->currentVisit !== 1),
 
@@ -169,7 +169,7 @@ class SpkTeknisiForm
                             ->label('Kedatangan -2')
                             ->prefixIcon('heroicon-o-arrow-right-circle')
                             ->seconds(false)->minDate(fn ($get) => $get('spk_tgk'))
-                            ->displayFormat('d M Y H:i')
+                            ->displayFormat('d M Y H:i')->native(false)
                             ->required(fn ($livewire): bool =>$livewire->currentVisit === 2)
                             ->disabled(fn ($livewire): bool =>$livewire->currentVisit !== 2),
 
@@ -177,7 +177,7 @@ class SpkTeknisiForm
                             ->label('Kepulangan -2')
                             ->prefixIcon('heroicon-o-arrow-left-circle')
                             ->seconds(false)->minDate(fn ($get) => $get('produk_tgldtg2'))
-                            ->displayFormat('d M Y H:i')
+                            ->displayFormat('d M Y H:i')->native(false)
                             ->required(fn ($livewire): bool =>$livewire->currentVisit === 2)
                             ->disabled(fn ($livewire): bool =>$livewire->currentVisit !== 2),
 
@@ -189,7 +189,7 @@ class SpkTeknisiForm
                             ->label('Kedatangan -3')
                             ->prefixIcon('heroicon-o-arrow-right-circle')
                             ->seconds(false)->minDate(fn ($get) => $get('spk_tgk'))
-                            ->displayFormat('d M Y H:i')
+                            ->displayFormat('d M Y H:i')->native(false)
                             ->required(fn ($livewire): bool =>$livewire->currentVisit === 3)
                             ->disabled(fn ($livewire): bool =>$livewire->currentVisit !== 3),
 
@@ -197,7 +197,7 @@ class SpkTeknisiForm
                             ->label('Kepulangan -3')
                             ->prefixIcon('heroicon-o-arrow-left-circle')
                             ->seconds(false)->minDate(fn ($get) => $get('produk_tgldtg3'))
-                            ->displayFormat('d M Y H:i')
+                            ->displayFormat('d M Y H:i')->native(false)
                             ->required(fn ($livewire): bool =>$livewire->currentVisit === 3 )
                             ->disabled(fn ($livewire): bool =>$livewire->currentVisit !== 3 ),
                 ]),
