@@ -35,7 +35,8 @@ class SpkTeknisiForm
                             ->label('Tanggal SPK')
                             ->prefixIcon('heroicon-o-calendar-days')
                             ->seconds(false)->native(false)
-                            ->displayFormat('d M Y')
+                            ->displayFormat('d M Y H:i')
+                            // ->displayFormat('d/m/Y H:i')
                             ->disabled()
                             ->dehydrated(false),
 
@@ -96,7 +97,9 @@ class SpkTeknisiForm
                             ->rows(3),
                         FileUpload::make('produk_foto_produk')
                             ->label('Foto Produk / Pekerjaan')
-                            ->image()->multiple()->imagePreviewHeight('180')->panelLayout('grid')
+                            ->image()->multiple()
+                            ->disk('public')
+                            ->imagePreviewHeight('180')->panelLayout('grid')
                             ->directory('spk-teknisi/foto')
                             ->acceptedFileTypes([
                                 'image/jpeg',
