@@ -34,8 +34,8 @@ class SpkTeknisiForm
                         DateTimePicker::make('spk_tgk')
                             ->label('Tanggal SPK')
                             ->prefixIcon('heroicon-o-calendar-days')
-                            ->seconds(false)
-                            ->displayFormat('d/m/Y H:i')
+                            ->seconds(false)->native(false)
+                            ->displayFormat('d M Y')
                             ->disabled()
                             ->dehydrated(false),
 
