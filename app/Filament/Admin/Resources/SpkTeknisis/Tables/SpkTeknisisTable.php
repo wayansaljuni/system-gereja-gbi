@@ -6,7 +6,7 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Table;
-// use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 use Zvizvi\FilamentColumnFilters\Filters\ColumnFilter;
 
@@ -16,58 +16,33 @@ class SpkTeknisisTable
     {
         return $table
             ->persistColumnSearchesInSession()
-            // ->modifyQueryUsing(function ($query) {
-            //     $user = auth()->user();
-            //     return $query
-            //         ->with([
-            //             'spk',
-            //             'spk.produk',
-            //             'komplain.customer',
-            //         ])
-            //         // Filter NIK hanya jika users.nik terisi
-            //         ->when(
-            //             filled($user?->nik),
-            //             fn ($query) => $query->where('nik', $user->nik)
-            //         )
-            //         // Filter SPK mulai 2026-01-01
-            //         ->whereHas('spk', function ($query) {
-            //             $query->where('tgk', '>=', '2026-01-01');
-            //         })                    
-            //         ->whereHas('spk.produk', function ($query) {
-            //             $query->where(function ($query) {
-            //                 $query
-            //                     ->where('sts', '<>', 'Closed')
-            //                     ;
-            //             });
-            //         });
-            // })
-                ->modifyQueryUsing(function ($query) {
-                    $user = auth()->user();
+            ->modifyQueryUsing(function ($query) {
+                $user = auth()->user();
 
-                    return $query
-                        ->with([
-                            'produk',
+                return $query
+                    ->with([
+                        'produk',
+                        'teknisi',
+                        'komplain.customer',
+                    ])
+
+                    // spk.tgk >= 2026-01-01
+                    ->where('tgk', '>=', '2026-01-01')
+
+                    // produk.sts <> Closed
+                    ->whereHas('produk', function ($query) {
+                        $query->where('sts', '<>', 'Closed');
+                    })
+
+                    // teknisi.nik = users.nik
+                    ->when(
+                        filled($user?->nik),
+                        fn ($query) => $query->whereHas(
                             'teknisi',
-                            'komplain.customer',
-                        ])
-
-                        // spk.tgk >= 2026-01-01
-                        ->where('tgk', '>=', '2026-01-01')
-
-                        // produk.sts <> Closed
-                        ->whereHas('produk', function ($query) {
-                            $query->where('sts', '<>', 'Closed');
-                        })
-
-                        // teknisi.nik = users.nik
-                        ->when(
-                            filled($user?->nik),
-                            fn ($query) => $query->whereHas(
-                                'teknisi',
-                                fn ($query) => $query->where('nik', $user->nik)
-                            )
-                        );
-                })
+                            fn ($query) => $query->where('nik', $user->nik)
+                        )
+                    );
+            })
 
             ->columns([
                 TextColumn::make('nospk')
@@ -92,7 +67,7 @@ class SpkTeknisisTable
                     ->placeholder('-'),
                     
                 TextColumn::make('kdb')
-                    ->label('Kode Barang')
+                    ->label('Kode / Serial Produk')
                     ->icon('heroicon-o-qr-code')->columnFilter(ColumnFilter::search())
                     ->iconColor('gray')->searchable()->copyable()
                     ->copyMessage('Serial number copied')
@@ -143,21 +118,27 @@ class SpkTeknisisTable
                     ->label('NIK')
                     ->icon('heroicon-o-identification')
                     ->iconColor('gray')
-                    ->searchable()
+                    ->searchable(
+                        query: function (Builder $query, string $search): Builder {
+                            return $query->whereHas('teknisi', function (Builder $query) use ($search) {
+                                $query->where('nik', 'like', "%{$search}%");
+                            });
+                        }
+                    )
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('nama')
                     ->label('Teknisi')->columnFilter(ColumnFilter::search())
                     ->icon('heroicon-o-user-circle')
                     ->iconColor('success')->weight('medium')->searchable()
-                    ,
-
-                // TextColumn::make('spk.produk.kdb')
-                //     ->label('Kode Barang')
-                //     ->icon('heroicon-o-tag')
-                //     ->iconColor('gray')
-                //     ->searchable(),
-
+                    ->searchable(
+                        query: function (Builder $query, string $search): Builder {
+                            return $query->whereHas('teknisi', function (Builder $query) use ($search) {
+                                $query->where('nama', 'like', "%{$search}%");
+                            });
+                        }
+                    )
+                        ,
                 TextColumn::make('produk.nmb')
                     ->label('Nama Produk')->columnFilter(ColumnFilter::search())
                     ->icon('heroicon-o-cube')->iconColor('primary')->weight('medium')->searchable()->wrap()

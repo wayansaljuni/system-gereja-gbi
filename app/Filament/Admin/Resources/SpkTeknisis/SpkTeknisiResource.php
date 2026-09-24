@@ -24,6 +24,10 @@ class SpkTeknisiResource extends Resource
     protected static ?string $navigationLabel = 'SPK Teknisi';
     protected static ?string $modelLabel = 'SPK Teknisi';
     protected static ?string $pluralModelLabel = 'SPK Teknisi';
+    protected static ?string $recordTitleAttribute = 'nospk';
+    protected static ?int $navigationSort = 2;
+    protected static ?string $titleAttribute = 'nospk';
+
 
     public static function form(Schema $schema): Schema
     {
