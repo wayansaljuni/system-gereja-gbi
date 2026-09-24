@@ -83,6 +83,8 @@ class Produk extends Model
             'tgldtg3' => 'datetime',
             'tglplg3' => 'datetime',
             'updated_at' => 'datetime',
+            'foto_produk' => 'array',
+            'video_produk' => 'array',
         ];
     }    
     use LogsActivity;
