@@ -99,43 +99,15 @@ class Spk extends Model
             );        
     }   
     
-
-    public function scopeDikerjakanBulanIni(Builder $query): Builder
-    {
-        $nik = auth()->user()?->nik;
-        $start = now()->startOfMonth();
-        $end   = now()->endOfMonth();
-        return $query
-            ->whereHas('produk', function (Builder $query) use ($start, $end) {
-                $query->where(function (Builder $query) use ($start, $end) {
-                    $query
-                        ->whereBetween('tgldtg1', [$start, $end])
-                        ->orWhereBetween('tgldtg2', [$start, $end])
-                        ->orWhereBetween('tgldtg3', [$start, $end]);
-                });
-            })
-            // Kalau user mempunyai NIK, hanya SPK teknisi tersebut
-            ->when(
-                filled($nik),
-                fn (Builder $query) =>
-                    $query->whereHas(
-                        'teknisi',
-                        fn (Builder $teknisi) =>
-                            $teknisi->where('nik', $nik)
-                    )
-            );
-    }
     public function scopeBulanIni(Builder $query): Builder
     {
         $nik = auth()->user()?->nik;
-
         return $query
             // SPK berdasarkan tanggal bulan berjalan
             ->whereBetween('tgk', [
                 now()->startOfMonth()->toDateString(),
                 now()->endOfMonth()->toDateString(),
             ])
-
             // Jika users.nik terisi, filter berdasarkan teknisi
             ->when(
                 filled($nik),
@@ -147,28 +119,20 @@ class Spk extends Model
                     )
             );
     }    
-    public function scopeBelumDikerjakanBulanIni(Builder $query): Builder
+
+    public function scopeDikerjakanBulanIni(Builder $query): Builder
     {
         $nik = auth()->user()?->nik;
-
+        $start = now()->startOfMonth();
+        $end   = now()->endOfMonth();
         return $query
-            // SPK yang dibuat bulan ini
-            ->whereBetween('tgk', [
-                now()->startOfMonth()->toDateString(),
-                now()->endOfMonth()->toDateString(),
-            ])
-
-            // Belum pernah dikerjakan / dikunjungi
-            ->whereHas('produk', function (Builder $query) {
-                $query->where(function (Builder $query) {
+            ->whereBetween('tgk', [$start, $end])
+            ->whereHas('produk', function (Builder $query) use ($start, $end) {
+                $query->where(function (Builder $query) use ($start, $end) {
                     $query
-                        ->whereNull('tgldtg1')
-                        ->orWhere('tgldtg1', '')
-                        ->orWhere('tgldtg1', '0000-00-00 00:00:00');
+                        ->whereBetween('tgldtg1', [$start, $end]);
                 });
-            })
-
-            // Jika user memiliki NIK, hanya SPK teknisi tersebut
+            })    
             ->when(
                 filled($nik),
                 fn (Builder $query) =>
@@ -178,5 +142,6 @@ class Spk extends Model
                             $teknisi->where('nik', $nik)
                     )
             );
-    }    
+    }
+
 }
