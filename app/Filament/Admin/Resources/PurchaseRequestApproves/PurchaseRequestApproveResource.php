@@ -21,7 +21,7 @@ class PurchaseRequestApproveResource extends Resource
     protected static ?string $model = Hpr::class;
     protected static string|UnitEnum|null $navigationGroup = 'Purchasing';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::BookOpen;
-    protected static ?string $recordTitleAttribute = 'title';
+    protected static ?string $recordTitleAttribute = 'nota';
     protected static ?int $navigationSort = 5;
     protected static ?string $navigationLabel = 'Approval PR';
     protected static ?string $modelLabel = 'Approval Purchasing Request';
