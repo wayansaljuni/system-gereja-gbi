@@ -4,7 +4,7 @@ namespace App\Filament\Admin\Resources\SpkTeknisis\Tables;
 
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Enums\RecordActionsPosition;
+// use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
@@ -113,7 +113,6 @@ class SpkTeknisisTable
                     //     isIndividual: true,
                     // )
                     ,   
-
                 TextColumn::make('nik')
                     ->label('NIK')
                     ->icon('heroicon-o-identification')
@@ -127,9 +126,9 @@ class SpkTeknisisTable
                     )
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('nama')
+                TextColumn::make('teknisi.nama')
                     ->label('Teknisi')->columnFilter(ColumnFilter::search())
-                    ->icon('heroicon-o-user-circle')
+                    ->icon('heroicon-o-user-circle')->listWithLineBreaks()
                     ->iconColor('success')->weight('medium')->searchable()
                     ->searchable(
                         query: function (Builder $query, string $search): Builder {
@@ -236,7 +235,8 @@ class SpkTeknisisTable
                     ->label('Edit')
                     ->icon('heroicon-o-pencil-square')
                     ->color('warning'),
-            ], position: RecordActionsPosition::BeforeColumns)
+            ], )
+            // position: RecordActionsPosition::BeforeColumns)
             ;
     }
 }

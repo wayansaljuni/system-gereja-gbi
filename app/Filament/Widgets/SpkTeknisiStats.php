@@ -30,7 +30,7 @@ class SpkTeknisiStats extends StatsOverviewWidget
                 ->description('Click untuk melihat SPK sudah ditugaskan')
                 ->descriptionIcon('heroicon-m-arrow-right')
                 ->icon('heroicon-o-wrench-screwdriver')
-                ->color('primary')
+                ->color('warning')
                 ->url(SpkTeknisiResource::getUrl('index')),
             Stat::make('Total SPK Bulan Ini', $totalSpkBulanIni)
                 ->description(
