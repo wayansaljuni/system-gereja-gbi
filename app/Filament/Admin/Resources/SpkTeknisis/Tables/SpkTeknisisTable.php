@@ -6,7 +6,9 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 use Zvizvi\FilamentColumnFilters\Filters\ColumnFilter;
 
 class SpkTeknisisTable
@@ -15,40 +17,71 @@ class SpkTeknisisTable
     {
         return $table
             ->persistColumnSearchesInSession()
-            ->modifyQueryUsing(function ($query) {
-                $user = auth()->user();
+            // ->modifyQueryUsing(function ($query) {
+            //     $user = auth()->user();
 
+            //     return $query
+            //         ->with([
+            //             'produk',
+            //             'teknisi',
+            //             'komplain.customer',
+            //         ])
+
+            //         // spk.tgk >= 2026-01-01
+            //         ->where('tgk', '>=', '2026-01-01')
+
+            //         // produk.sts <> Closed
+            //         ->whereHas('produk', function ($query) {
+            //             $query->where('sts', '<>', 'Closed');
+            //         })
+
+            //         // teknisi.nik = users.nik
+            //         ->when(
+            //             filled($user?->nik),
+            //             fn ($query) => $query->whereHas(
+            //                 'teknisi',
+            //                 fn ($query) => $query->where('nik', $user->nik)
+            //             )
+            //         )
+            //         ->when(
+            //             filled($user?->kd_cab),
+            //             fn ($query) => $query->whereHas(
+            //                 'produk',
+            //                 fn ($query) => $query->where('kdcab', $user->kd_cab)
+            //             )
+            //         );
+            // })
+            ->modifyQueryUsing(function (Builder $query): Builder {
+                $user = auth()->user();
                 return $query
+                    ->select('spk.*')
+                    ->join('produk', 'produk.id', '=', 'spk.idp')
+                    ->where('spk.tgk', '>=', '2026-01-01')
+                    ->where('produk.sts', '<>', 'Closed')
+                    ->when(
+                        filled($user?->kd_cab),
+                        fn (Builder $query) => $query
+                            ->where('produk.kdcab', $user->kd_cab)
+                    )
+                    ->when(
+                        filled($user?->nik),
+                        fn (Builder $query) => $query->whereExists(
+                            function (QueryBuilder $subquery) use ($user): void {
+                                $subquery
+                                    ->selectRaw('1')
+                                    ->from('teknisi')
+                                    ->whereColumn('teknisi.nospk', 'spk.nospk')
+                                    ->whereColumn('teknisi.noko', 'spk.noko')
+                                    ->where('teknisi.nik', $user->nik);
+                            }
+                        )
+                    )
                     ->with([
                         'produk',
                         'teknisi',
                         'komplain.customer',
-                    ])
-
-                    // spk.tgk >= 2026-01-01
-                    ->where('tgk', '>=', '2026-01-01')
-
-                    // produk.sts <> Closed
-                    ->whereHas('produk', function ($query) {
-                        $query->where('sts', '<>', 'Closed');
-                    })
-
-                    // teknisi.nik = users.nik
-                    ->when(
-                        filled($user?->nik),
-                        fn ($query) => $query->whereHas(
-                            'teknisi',
-                            fn ($query) => $query->where('nik', $user->nik)
-                        )
-                    )
-                    ->when(
-                        filled($user?->kd_cab),
-                        fn ($query) => $query->whereHas(
-                            'produk',
-                            fn ($query) => $query->where('kdcab', $user->kd_cab)
-                        )
-                    );
-            })
+                    ]);
+                })
 
             ->columns([
                 TextColumn::make('nospk')
@@ -91,7 +124,7 @@ class SpkTeknisisTable
                         query: fn (Builder $query, string $search): Builder =>
                             $query->where(function (Builder $query) use ($search) {
                                 $query
-                                    ->where('kdb', 'like', "%{$search}%")
+                                    ->where('spk.kdb', 'like', "%{$search}%")
                                     ->orWhereHas('produk', function (Builder $produk) use ($search) {
                                         $produk
                                             ->where('nosr', 'like', "%{$search}%")
@@ -111,15 +144,20 @@ class SpkTeknisisTable
                             . '</span>'
                         );
                     })
-                    ->description(fn ($record): HtmlString => new HtmlString(
-                        '<span style="color:#f97316;">'
-                        . e($record->produk?->nmb ?? '-')
-                        . '</span>'
-                    )),
-                                        
+                    ->description(function ($record): HtmlString {
+                        $namaLengkap = $record->produk?->nmb ?? '-';
+                        $namaSingkat = Str::limit($namaLengkap, 40);
+
+                        return new HtmlString(
+                            '<span style="color:#f97316;" title="' . e($namaLengkap) . '">'
+                            . e($namaSingkat)
+                            . '</span>'
+                        );
+                    }),                                        
                 TextColumn::make('nmcust')
                     ->label('Customer')
                     ->columnFilter(ColumnFilter::search())
+                    ->limit(30)
                     ->icon('heroicon-o-building-office-2')->columnFilter(ColumnFilter::search())
                     ->iconColor('warning')->weight('medium')->searchable()->wrap()->extraHeaderAttributes([
                         'style' => 'min-width: 250px; width: 250px;',
@@ -163,7 +201,10 @@ class SpkTeknisisTable
 
                 TextColumn::make('teknisi.nama')
                     ->label('Teknisi')->columnFilter(ColumnFilter::search())
-                    ->icon('heroicon-o-user-circle')->listWithLineBreaks()
+                    ->icon('heroicon-o-user-circle')
+                    ->listWithLineBreaks()
+                    ->limitList(1)
+                    ->expandableLimitedList()
                     ->iconColor('success')->weight('medium')->searchable()
                     ->searchable(
                         query: function (Builder $query, string $search): Builder {
