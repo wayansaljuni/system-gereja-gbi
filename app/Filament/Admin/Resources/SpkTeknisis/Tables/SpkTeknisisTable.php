@@ -100,7 +100,7 @@ class SpkTeknisisTable
                         return new HtmlString(
                             '<span style="display:inline-flex; gap:10px; align-items:center;">'
                             . '<span>' . $kdb . '</span>'
-                            . '<span style="color:#b45309;">🏷️ ' . $nosr . '</span>'
+                            . '<span style="color:#b45309;">🏷️NoSeri : ' . $nosr . '</span>'
                             . '</span>'
                         );
                     })
