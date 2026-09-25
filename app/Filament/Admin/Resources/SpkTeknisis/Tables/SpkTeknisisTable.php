@@ -4,7 +4,6 @@ namespace App\Filament\Admin\Resources\SpkTeknisis\Tables;
 
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-// use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
@@ -46,42 +45,71 @@ class SpkTeknisisTable
 
             ->columns([
                 TextColumn::make('nospk')
-                    ->label('No. SPK / Tgl SPK')->columnFilter(ColumnFilter::search())
+                    ->label('No. SPK / Date / Status')
+                    ->columnFilter(ColumnFilter::search())
                     ->icon('heroicon-o-document-text')
-                    ->iconColor('primary')->weight('bold')->color('primary')->searchable()->sortable()
-                    ->description(fn ($record): string => $record->tgk)
-                    ,
-                TextColumn::make('produk.sts')
-                    ->label('Status SPK')
-                    ->badge()
-                    ->icon(fn (?string $state): string => match ($state) {
-                        'Closed' => 'heroicon-o-check-circle',
-                        'Open' => 'heroicon-o-clock',
-                        default => 'heroicon-o-information-circle',
-                    })
-                    ->color(fn (?string $state): string => match ($state) {
-                        'Closed' => 'success',
-                        'Open' => 'warning',
-                        default => 'gray',
-                    })
-                    ->placeholder('-'),
-                    
-                TextColumn::make('kdb')
-                    ->label('Kode / Serial Produk')
-                    ->icon('heroicon-o-qr-code')->columnFilter(ColumnFilter::search())
-                    ->iconColor('gray')->searchable()->copyable()
-                    ->copyMessage('Serial number copied')
+                    ->iconColor('primary')
+                    ->weight('bold')
+                    ->color('primary')
+                    ->searchable()
+                    ->sortable()
                     ->description(function ($record): HtmlString {
-                        $nosr = e($record->produk?->nosr ?? '-');
+                        $tanggal = e($record->tgk ?? '-');
+                        $status = $record->produk?->sts ?? '-';
+
+                        $warna = match ($status) {
+                            'Closed' => '#15803d',
+                            'Process' => '#b45309',
+                            default => '#6b7280',
+                        };
+
                         return new HtmlString(
-                            '<div class="flex items-center gap-1 text-xs text-gray-500">
-                                <span>🏷️</span>
-                                <span>' . $nosr . '</span>
-                            </div>'
+                            '<span style="display:inline-flex; align-items:center; gap:8px;">'
+                            . '<span>' . $tanggal . '</span>'
+                            . '<span style="color:' . $warna . '; border:1px solid currentColor;'
+                            . ' border-radius:6px; padding:1px 6px;">'
+                            . e($status)
+                            . '</span>'
+                            . '</span>'
+                        );
+                    }),                    
+
+                TextColumn::make('kdb')
+                    ->label('SKU / Serial / Product Name')
+                    ->icon('heroicon-o-qr-code')
+                    ->iconColor('gray')
+                    ->copyable()->columnFilter(ColumnFilter::search())
+                    ->copyMessage('Kode produk disalin')
+                    ->searchable(
+                        query: fn (Builder $query, string $search): Builder =>
+                            $query->where(function (Builder $query) use ($search) {
+                                $query
+                                    ->where('kdb', 'like', "%{$search}%")
+                                    ->orWhereHas('produk', function (Builder $produk) use ($search) {
+                                        $produk
+                                            ->where('nosr', 'like', "%{$search}%")
+                                            ->orWhere('nmb', 'like', "%{$search}%");
+                                    });
+                            }),
+                        isIndividual: false,
+                    )
+                    ->formatStateUsing(function ($state, $record): HtmlString {
+                        $kdb = e($state ?? '-');
+                        $nosr = e($record->produk?->nosr ?? '-');
+
+                        return new HtmlString(
+                            '<span style="display:inline-flex; gap:10px; align-items:center;">'
+                            . '<span>' . $kdb . '</span>'
+                            . '<span style="color:#b45309;">🏷️ ' . $nosr . '</span>'
+                            . '</span>'
                         );
                     })
-                    ,
-
+                    ->description(fn ($record): HtmlString => new HtmlString(
+                        '<span style="color:#f97316;">'
+                        . e($record->produk?->nmb ?? '-')
+                        . '</span>'
+                    )),
+                                        
                 TextColumn::make('nmcust')
                     ->label('Customer')
                     ->columnFilter(ColumnFilter::search())
@@ -138,16 +166,16 @@ class SpkTeknisisTable
                         }
                     )
                         ,
-                TextColumn::make('produk.nmb')
-                    ->label('Nama Produk')->columnFilter(ColumnFilter::search())
-                    ->icon('heroicon-o-cube')->iconColor('primary')->weight('medium')->searchable()->wrap()
-                    ->iconColor('warning')->weight('medium')->searchable()->wrap()->extraHeaderAttributes([
-                        'style' => 'min-width: 250px; width: 250px;',
-                    ])
-                    ->extraCellAttributes([
-                        'style' => 'min-width: 250px;',
-                    ])
-                   ,
+                // TextColumn::make('produk.nmb')
+                //     ->label('Nama Produk')->columnFilter(ColumnFilter::search())
+                //     ->icon('heroicon-o-cube')->iconColor('primary')->weight('medium')->searchable()->wrap()
+                //     ->iconColor('warning')->weight('medium')->searchable()->wrap()->extraHeaderAttributes([
+                //         'style' => 'min-width: 250px; width: 250px;',
+                //     ])
+                //     ->extraCellAttributes([
+                //         'style' => 'min-width: 250px;',
+                //     ])
+                //    ,
 
                 TextColumn::make('produk.klh')
                     ->label('Keluhan')->columnFilter(ColumnFilter::search())
