@@ -3,7 +3,7 @@
 namespace App\Filament\Admin\Resources\SpkTeknisis\Pages;
 
 use App\Filament\Admin\Resources\SpkTeknisis\SpkTeknisiResource;
-use Filament\Actions\ViewAction;
+// use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditSpkTeknisi extends EditRecord
@@ -195,7 +195,7 @@ class EditSpkTeknisi extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            ViewAction::make(),
+            // ViewAction::make(),
             // DeleteAction::make(),
         ];
     }

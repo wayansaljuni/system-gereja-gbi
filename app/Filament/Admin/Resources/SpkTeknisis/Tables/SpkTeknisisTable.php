@@ -40,6 +40,13 @@ class SpkTeknisisTable
                             'teknisi',
                             fn ($query) => $query->where('nik', $user->nik)
                         )
+                    )
+                    ->when(
+                        filled($user?->kd_cab),
+                        fn ($query) => $query->whereHas(
+                            'produk',
+                            fn ($query) => $query->where('kdcab', $user->kd_cab)
+                        )
                     );
             })
 
