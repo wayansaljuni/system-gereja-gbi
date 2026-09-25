@@ -157,7 +157,7 @@ class SpkTeknisisTable
                 TextColumn::make('nmcust')
                     ->label('Customer')
                     ->columnFilter(ColumnFilter::search())
-                    ->limit(30)
+                    ->limit(50)
                     ->icon('heroicon-o-building-office-2')->columnFilter(ColumnFilter::search())
                     ->iconColor('warning')->weight('medium')->searchable()->wrap()->extraHeaderAttributes([
                         'style' => 'min-width: 250px; width: 250px;',
@@ -171,20 +171,27 @@ class SpkTeknisisTable
                     ->label('Comercial Name')
                     ->icon('heroicon-o-building-office')
                     ->iconColor('info')
+                    ->limit(50)
+                    ->iconColor('warning')->weight('medium')->searchable()->wrap()->extraHeaderAttributes([
+                        'style' => 'min-width: 250px; width: 250px;',
+                    ])
+                    ->extraCellAttributes([
+                        'style' => 'min-width: 250px;',
+                    ])
                     ->getStateUsing(
                         fn ($record) =>
                             $record->komplain?->customer?->nmcomercial ?? '-'
                     )
-                    // ->searchable(
-                    //     query: function (Builder $query, string $search): Builder {
-                    //         return $query->whereHas(
-                    //             'komplain.customer',
-                    //             fn (Builder $query) =>
-                    //                 $query->where('nmcomercial', 'like', "%{$search}%")
-                    //         );
-                    //     },
-                    //     isIndividual: true,
-                    // )
+                    ->searchable(
+                        query: function (Builder $query, string $search): Builder {
+                            return $query->whereHas(
+                                'komplain.customer',
+                                fn (Builder $query) =>
+                                    $query->where('nmcomercial', 'like', "%{$search}%")
+                            );
+                        },
+                        isIndividual: false,
+                    )
                     ,   
                 TextColumn::make('nik')
                     ->label('NIK')
