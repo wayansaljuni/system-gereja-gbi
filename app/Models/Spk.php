@@ -76,6 +76,7 @@ class Spk extends Model
     public function scopeAktif(Builder $query): Builder
     {
         $nik = auth()->user()?->nik;
+        $kd_cab = auth()->user()?->kd_cab;
         return $query
             // Filter SPK mulai 2026-01-01
             ->where('tgk', '>=', '2026-01-01')
@@ -96,12 +97,22 @@ class Spk extends Model
                         fn (Builder $teknisi) =>
                             $teknisi->where('nik', $nik)
                     )
+            )
+            ->when(
+                filled($kd_cab),
+                fn (Builder $query) =>
+                    $query->whereHas(
+                        'produk',
+                        fn (Builder $produk) =>
+                            $produk->where('kdcab', $kd_cab)
+                    )
             );        
     }   
     
     public function scopeBulanIni(Builder $query): Builder
     {
         $nik = auth()->user()?->nik;
+        $kd_cab = auth()->user()?->kd_cab;
         return $query
             // SPK berdasarkan tanggal bulan berjalan
             ->whereBetween('tgk', [
@@ -117,12 +128,22 @@ class Spk extends Model
                         fn (Builder $teknisi) =>
                             $teknisi->where('nik', $nik)
                     )
+            )
+            ->when(
+                filled($kd_cab),
+                fn (Builder $query) =>
+                    $query->whereHas(
+                        'produk',
+                        fn (Builder $produk) =>
+                            $produk->where('kdcab', $kd_cab)
+                    )
             );
     }    
 
     public function scopeDikerjakanBulanIni(Builder $query): Builder
     {
         $nik = auth()->user()?->nik;
+        $kd_cab = auth()->user()?->kd_cab;
         $start = now()->startOfMonth();
         $end   = now()->endOfMonth();
         return $query
@@ -140,6 +161,15 @@ class Spk extends Model
                         'teknisi',
                         fn (Builder $teknisi) =>
                             $teknisi->where('nik', $nik)
+                    )
+            )
+            ->when(
+                filled($kd_cab),
+                fn (Builder $query) =>
+                    $query->whereHas(
+                        'produk',
+                        fn (Builder $produk) =>
+                            $produk->where('kdcab', $kd_cab)
                     )
             );
     }
