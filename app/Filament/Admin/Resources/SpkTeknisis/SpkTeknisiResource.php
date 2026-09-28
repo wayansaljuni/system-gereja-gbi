@@ -28,6 +28,25 @@ class SpkTeknisiResource extends Resource
     protected static ?int $navigationSort = 2;
     protected static ?string $titleAttribute = 'nospk';
 
+    public static function getNavigationBadge(): ?string
+    {
+        $totalSpkBulanIni = Spk::bulanIni()->whereHas('teknisi')->count();
+        $sudahDikerjakanTeknisi = Spk::DikerjakanBulanIni()
+            ->whereHas('teknisi')->count();
+        $totalBelumDikerjakan = $totalSpkBulanIni-$sudahDikerjakanTeknisi;
+
+        return (string) $totalBelumDikerjakan;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'danger';
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Menunggu penyelesaian SPK 60 Hari terakhir';
+    }
 
     public static function form(Schema $schema): Schema
     {

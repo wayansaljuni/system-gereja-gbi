@@ -32,21 +32,21 @@ class SpkTeknisiStats extends StatsOverviewWidget
                 ->icon('heroicon-o-wrench-screwdriver')
                 ->color('warning')
                 ->url(SpkTeknisiResource::getUrl('index')),
-            Stat::make('Total SPK Bulan Ini', $totalSpkBulanIni)
+            Stat::make('Total SPK', $totalSpkBulanIni)
                 ->description(
-                    'Periode ' . now()->translatedFormat('F Y')
+                    'Periode 60 hari terakhir'
                 )
                 ->icon('heroicon-o-calendar-days')
                 ->color('primary'),
             Stat::make('Total SPK Sudah Dikerjakan', $sudahDikerjakanTeknisi)
                 ->description(
-                    'Periode ' . now()->translatedFormat('F Y')
+                    'Periode 60 hari terakhir'
                 )
                 ->icon('heroicon-o-clipboard-document-check')
                 ->color('success'),
             Stat::make('Total SPK Belum Dikerjakan', $totalBelumDikerjakan)
                 ->description(
-                    'Periode ' . now()->translatedFormat('F Y')
+                    'Periode 60 hari terakhir'
                 )
                 ->icon('heroicon-o-clock')
                 ->color('warning'),

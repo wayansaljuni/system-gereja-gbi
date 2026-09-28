@@ -116,8 +116,10 @@ class Spk extends Model
         return $query
             // SPK berdasarkan tanggal bulan berjalan
             ->whereBetween('tgk', [
-                now()->startOfMonth()->toDateString(),
-                now()->endOfMonth()->toDateString(),
+                // now()->startOfMonth()->toDateString(),
+                // now()->endOfMonth()->toDateString(),
+                now()->subDays(60)->toDateString(),
+                now()->toDateString(),            
             ])
             // Jika users.nik terisi, filter berdasarkan teknisi
             ->when(
@@ -144,8 +146,10 @@ class Spk extends Model
     {
         $nik = auth()->user()?->nik;
         $kd_cab = auth()->user()?->kd_cab;
-        $start = now()->startOfMonth();
-        $end   = now()->endOfMonth();
+        $start = now()->subDays(60);
+        $end = now();
+        // $start = now()->startOfMonth();
+        // $end   = now()->endOfMonth();
         return $query
             ->whereBetween('tgk', [$start, $end])
             ->whereHas('produk', function (Builder $query) use ($start, $end) {
