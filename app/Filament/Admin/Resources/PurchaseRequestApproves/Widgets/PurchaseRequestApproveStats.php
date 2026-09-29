@@ -19,31 +19,11 @@ class PurchaseRequestApproveStats extends StatsOverviewWidget
     }
     protected function getStats(): array
     {
-        $user = auth()->user();
-
-        $query = Hpr::query()
-            ->where(function ($query) {
-                $query
-                    ->where('approve', '')
-                    ->orWhere(function ($query) {
-                        $query
-                            ->where('approve', 'Y')
-                            ->where('approve1', '');
-                    });
-            })
-            ->whereDate('tgl', '>=', now()->subDays(90));
-
-        if (
-            ! $user->hasRole('super_admin')
-            && $user->kd_cab !== '00'
-        ) {
-            $query->where('kd_cab', $user->kd_cab);
-        }
-
-        $total = $query->count();
+        $totalPerluApproval = Hpr::query()
+            ->perluApproval(auth()->user()?->kd_cab)->count();
 
         return [
-            Stat::make('Purchase Request Need Approval', $total)
+            Stat::make('Purchase Request Need Approval', $totalPerluApproval)
                 ->description('Last 90 days')
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('warning')

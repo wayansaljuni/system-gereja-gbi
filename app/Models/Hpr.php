@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -73,4 +74,37 @@ class Hpr extends Model
             ->logOnlyDirty();
     }
 
+    public function scopePerluApproval(Builder $query, ?string $kdCab): Builder
+    {
+        if (blank($kdCab)) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        $query->whereDate('hpr.tgl', '>=', now()->subDays(180)->toDateString());
+
+        if ($kdCab === '00') {
+            return $query->where(function (Builder $query) {
+                $query
+                    // PR cabang 00 yang belum approve
+                    ->where(function (Builder $query) {
+                        $query
+                            ->where('hpr.kd_cab', '00')
+                            ->where('hpr.approve', '');
+                    })
+                    // PR cabang lain: approve pertama sudah Y,
+                    // approve kedua masih kosong
+                    ->orWhere(function (Builder $query) {
+                        $query
+                            ->where('hpr.kd_cab', '<>', '00')
+                            ->where('hpr.approve', 'Y')
+                            ->where('hpr.approve1', '');
+                    });
+            });
+        }
+
+        // User cabang selain 00 hanya melihat PR cabangnya sendiri
+        return $query
+            ->where('hpr.kd_cab', $kdCab)
+            ->where('hpr.approve', '');
+    }
 }

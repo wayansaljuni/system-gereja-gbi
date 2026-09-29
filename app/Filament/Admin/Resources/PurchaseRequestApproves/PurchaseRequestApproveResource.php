@@ -20,7 +20,7 @@ class PurchaseRequestApproveResource extends Resource
 {
     protected static ?string $model = Hpr::class;
     protected static string|UnitEnum|null $navigationGroup = 'Purchasing';
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::BookOpen;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentCheck;
     protected static ?string $recordTitleAttribute = 'nota';
     protected static ?int $navigationSort = 5;
     protected static ?string $navigationLabel = 'Approval PR';
@@ -52,28 +52,25 @@ class PurchaseRequestApproveResource extends Resource
             // 'edit' => EditPurchaseRequestApprove::route('/{record}/edit'),
         ];
     }
-    
+    public static function getNavigationBadge(): ?string
+    {
+        $totalPrNeedApprove = Hpr::perluApproval(auth()->user()?->kd_cab)->count();
+        return (string) $totalPrNeedApprove;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'danger';
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Menunggu Approval PR...';
+    }
+
     public static function getEloquentQuery(): Builder
     {
-        $query = parent::getEloquentQuery();
-
-        $user = auth()->user();
-
-        if (! $user) {
-            return $query->whereRaw('1 = 0');
-        }
-
-        // Super Admin bisa melihat semua cabang
-        if ($user->hasRole('super_admin') || $user->kd_cab === '00') {
-            return $query;
-        }
-
-        // User yang tidak punya cabang tidak boleh melihat data
-        if (blank($user->kd_cab)) {
-            return $query->whereRaw('1 = 0');
-        }
-
-        // User biasa hanya melihat cabangnya
-        return $query->where('kd_cab', $user->kd_cab);
+        return parent::getEloquentQuery()
+            ->perluApproval(auth()->user()?->kd_cab)->orderByDesc('hpr.idhpr');        
     }    
 }

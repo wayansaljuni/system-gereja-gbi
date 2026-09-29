@@ -17,7 +17,11 @@ class PurchaseRequestApprovesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->persistColumnSearchesInSession()
+            // ->modifyQueryUsing(
+            //     fn (Builder $query): Builder =>
+            //         $query->perluApproval(auth()->user()?->kd_cab)->orderByDesc('hpr.idhpr')
+            // )
+            // ->persistColumnSearchesInSession()
             ->columns([
 
             TextColumn::make('approval_level_1')
@@ -299,6 +303,7 @@ class PurchaseRequestApprovesTable
                     // ->searchable(isIndividual:true)
                     ->columnFilter(ColumnFilter::search())
                     ->sortable()
+                    ->badge()
                     ->description(fn ($record): string => $record->inventory),
 
                 TextColumn::make('tgl')
@@ -406,21 +411,21 @@ class PurchaseRequestApprovesTable
                     }),
             ])
             ->filters([
-                Filter::make('perlu_approval')
-                    ->label('perlu approve')
-                    ->toggle()
-                    ->default(true) // aktif otomatis saat halaman pertama dibuka
-                    ->query(fn ($query) => $query->where(function ($q) {
-                        $q->where('approve', '') // belum diputuskan sama sekali (L1)
-                            ->orWhere(function ($q2) {
-                                $q2->where('approve', 'Y')->where('approve1', ''); // L1 lolos, nunggu L2
-                            });
-                    })),
+                // Filter::make('perlu_approval')
+                //     ->label('perlu approve')
+                //     ->toggle()
+                //     ->default(true) // aktif otomatis saat halaman pertama dibuka
+                //     ->query(fn ($query) => $query->where(function ($q) {
+                //         $q->where('approve', '') // belum diputuskan sama sekali (L1)
+                //             ->orWhere(function ($q2) {
+                //                 $q2->where('approve', 'Y')->where('approve1', ''); // L1 lolos, nunggu L2
+                //             });
+                //     })),
                 Filter::make('tanggal')
                     ->schema([
                         DatePicker::make('From')
                             ->label('From Date')
-                            ->default(now()->subDays(90)),
+                            ->default(now()->subDays(180)),
 
                         DatePicker::make('Until')
                             ->label('Until Date')

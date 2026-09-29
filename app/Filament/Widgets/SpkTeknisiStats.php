@@ -19,6 +19,7 @@ class SpkTeknisiStats extends StatsOverviewWidget
 
     protected function getStats(): array
     {
+        // BlmApproved
         $totalSpk = Spk::aktif()->whereHas('teknisi')->count();
         $totalSpkBulanIni = Spk::bulanIni()->whereHas('teknisi')->count();
         $sudahDikerjakanTeknisi = Spk::DikerjakanBulanIni()
