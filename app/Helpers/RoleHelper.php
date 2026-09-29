@@ -51,4 +51,11 @@ class RoleHelper
         ]);
         
     }
+    public static function isApprovalpo(): bool
+    {
+        return self::hasRole([
+            'super_admin',
+            'approvalpo',
+        ]);
+    }
 }

@@ -54,4 +54,20 @@ class AgreementReminderResource extends Resource
             // 'edit' => EditAgreementReminder::route('/{record}/edit'),
         ];
     }
+    public static function getNavigationBadge(): ?string
+    {
+        $total = AgreementReminder::query()->count();
+        return (string) $total;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'danger';
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return 'Reminder...';
+    }
+
 }

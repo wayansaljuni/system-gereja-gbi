@@ -167,8 +167,8 @@ class SpkTeknisisTable
                     ])
                     ,
 
-                TextColumn::make('commercial_name')
-                    ->label('Comercial Name')
+                TextColumn::make('lok')
+                    ->label('Lokasi Product')
                     ->icon('heroicon-o-building-office')
                     ->iconColor('info')
                     ->limit(50)
@@ -180,14 +180,14 @@ class SpkTeknisisTable
                     ])
                     ->getStateUsing(
                         fn ($record) =>
-                            $record->komplain?->customer?->nmcomercial ?? '-'
+                            $record->komplain?->lok ?? '-'
                     )
                     ->searchable(
                         query: function (Builder $query, string $search): Builder {
                             return $query->whereHas(
-                                'komplain.customer',
+                                'komplain',
                                 fn (Builder $query) =>
-                                    $query->where('nmcomercial', 'like', "%{$search}%")
+                                    $query->where('lok', 'like', "%{$search}%")
                             );
                         },
                         isIndividual: false,

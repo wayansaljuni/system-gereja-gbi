@@ -17,15 +17,12 @@ class PurchaseRequestApprovesTable
     public static function configure(Table $table): Table
     {
         return $table
-            // ->modifyQueryUsing(
-            //     fn (Builder $query): Builder =>
-            //         $query->perluApproval(auth()->user()?->kd_cab)->orderByDesc('hpr.idhpr')
-            // )
-            // ->persistColumnSearchesInSession()
+            ->persistColumnSearchesInSession()
             ->columns([
-
             TextColumn::make('approval_level_1')
+                ->color('success')
                 ->label('Approve-1 (AM)')
+                ->weight('bold')
                 ->state(function ($record) {
                     if ($record->approve === 'Y') {
                         return 'Approved';
@@ -411,16 +408,6 @@ class PurchaseRequestApprovesTable
                     }),
             ])
             ->filters([
-                // Filter::make('perlu_approval')
-                //     ->label('perlu approve')
-                //     ->toggle()
-                //     ->default(true) // aktif otomatis saat halaman pertama dibuka
-                //     ->query(fn ($query) => $query->where(function ($q) {
-                //         $q->where('approve', '') // belum diputuskan sama sekali (L1)
-                //             ->orWhere(function ($q2) {
-                //                 $q2->where('approve', 'Y')->where('approve1', ''); // L1 lolos, nunggu L2
-                //             });
-                //     })),
                 Filter::make('tanggal')
                     ->schema([
                         DatePicker::make('From')

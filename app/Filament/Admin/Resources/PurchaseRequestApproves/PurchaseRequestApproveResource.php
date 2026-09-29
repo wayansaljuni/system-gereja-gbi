@@ -2,8 +2,6 @@
 
 namespace App\Filament\Admin\Resources\PurchaseRequestApproves;
 
-// use App\Filament\Admin\Resources\PurchaseRequestApproves\Pages\CreatePurchaseRequestApprove;
-// use App\Filament\Admin\Resources\PurchaseRequestApproves\Pages\EditPurchaseRequestApprove;
 use App\Filament\Admin\Resources\PurchaseRequestApproves\Pages\ListPurchaseRequestApproves;
 use App\Filament\Admin\Resources\PurchaseRequestApproves\Schemas\PurchaseRequestApproveForm;
 use App\Filament\Admin\Resources\PurchaseRequestApproves\Tables\PurchaseRequestApprovesTable;
@@ -22,7 +20,7 @@ class PurchaseRequestApproveResource extends Resource
     protected static string|UnitEnum|null $navigationGroup = 'Purchasing';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentCheck;
     protected static ?string $recordTitleAttribute = 'nota';
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 1;
     protected static ?string $navigationLabel = 'Approval PR';
     protected static ?string $modelLabel = 'Approval Purchasing Request';
     protected static ?string $pluralModelLabel = 'Approval Purchasing Requests';
@@ -60,7 +58,7 @@ class PurchaseRequestApproveResource extends Resource
 
     public static function getNavigationBadgeColor(): ?string
     {
-        return 'danger';
+        return 'warning';
     }
 
     public static function getNavigationBadgeTooltip(): ?string
