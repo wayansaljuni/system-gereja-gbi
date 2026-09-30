@@ -3,7 +3,7 @@
 namespace App\Filament\Admin\Resources\PurchaseRequestApproves\Pages;
 
 use App\Filament\Admin\Resources\PurchaseRequestApproves\PurchaseRequestApproveResource;
-use App\Filament\Admin\Widgets\PurchaseRequestApproveStats;
+use App\Filament\Admin\Resources\PurchaseRequestApproves\Widgets\PurchaseRequestApproveStats;
 use Filament\Resources\Pages\ListRecords;
 
 class ListPurchaseRequestApproves extends ListRecords

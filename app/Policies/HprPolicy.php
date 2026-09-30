@@ -12,10 +12,11 @@ class HprPolicy
 {
     use HandlesAuthorization;
     
-    public function viewAny(AuthUser $authUser): bool
+    public function viewAny(AuthUser $user): bool
     {
-        return $authUser->can('ViewAny:Hpr');
+        return $user->hasAnyRole(['super_admin', 'approvepr']);
     }
+
 
     public function view(AuthUser $authUser, Hpr $hpr): bool
     {

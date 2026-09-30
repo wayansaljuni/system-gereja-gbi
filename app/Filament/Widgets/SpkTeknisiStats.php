@@ -22,7 +22,7 @@ class SpkTeknisiStats extends StatsOverviewWidget
         // BlmApproved
         $totalSpk = Spk::aktif()->whereHas('teknisi')->count();
         $totalSpkBulanIni = Spk::bulanIni()->whereHas('teknisi')->count();
-        $sudahDikerjakanTeknisi = Spk::DikerjakanBulanIni()
+        $sudahDikerjakanTeknisi = Spk::dikerjakanBulanIni()
             ->whereHas('teknisi')->count();
         $totalBelumDikerjakan = $totalSpkBulanIni-$sudahDikerjakanTeknisi;
 

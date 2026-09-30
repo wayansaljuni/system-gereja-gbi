@@ -12,7 +12,7 @@ class HpoPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['super_admin', 'approvalpo']);
+        return $user->hasAnyRole(['super_admin', 'approvepo']);
     }
 
     /**
@@ -20,7 +20,7 @@ class HpoPolicy
      */
     public function view(User $user, Hpo $hpo): bool
     {
-        return $user->hasAnyRole(['super_admin', 'approvalpo']);
+        return $user->hasAnyRole(['super_admin', 'approvepo']);
     }
 
     /**
@@ -64,7 +64,7 @@ class HpoPolicy
     }
     public function approve(User $user, Hpo $hpo): bool
     {
-        return $user->hasAnyRole(['super_admin', 'approvalpo'])
+        return $user->hasAnyRole(['super_admin', 'approvepo'])
             && $hpo->approve !== 'Y';
     }
 }

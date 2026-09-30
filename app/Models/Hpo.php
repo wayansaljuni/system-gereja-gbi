@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class Hpo extends Model
 {
@@ -24,6 +28,20 @@ class Hpo extends Model
             'tglapp' => 'datetime',
         ];
     }    //
+
+     public function dpoItems()
+    {
+        return $this->hasMany(Dpo::class, 'nota', 'nota');
+    }
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function supplier(): BelongsTo
+    {
+         return $this->belongsTo(Supplier::class, 'kd_supp', 'kd_supp');
+    }
+    
     public function scopePerluApprovalPO(Builder $query, ?string $kdCab): Builder
     {
         if (blank($kdCab)) {
@@ -34,6 +52,14 @@ class Hpo extends Model
         return $query
             ->where('hpo.kd_cab', $kdCab)
             ->where('hpo.approve', '');
+    }
+    
+    use LogsActivity;
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty();
     }
 
 }

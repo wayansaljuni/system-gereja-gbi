@@ -2,9 +2,10 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Admin\Resources\PurchaseOrderApproves\Widgets\PurchaseOrderApproveStats;
+use App\Filament\Admin\Resources\PurchaseRequestApproves\Widgets\PurchaseRequestApproveStats;
 use App\Filament\Admin\Widgets\AgreementReminderOverview;
 use App\Filament\Admin\Widgets\AgreementStatsOverview;
-use App\Filament\Admin\Widgets\PurchaseRequestApproveStats;
 use App\Filament\Admin\Widgets\RecentActivityWidget;
 use App\Filament\Widgets\SpkTeknisiStats;
 use App\Http\Middleware\ForcePasswordChange;
@@ -69,7 +70,9 @@ class AdminPanelProvider extends PanelProvider
                 AgreementReminderOverview::class,
                 RecentActivityWidget::class,
                 PurchaseRequestApproveStats::class,
-                SpkTeknisiStats::class])
+                PurchaseOrderApproveStats::class,
+                SpkTeknisiStats::class,
+                ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

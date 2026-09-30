@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\PurchaseOrderApproves\Tables;
 
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
+use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -43,32 +44,49 @@ class PurchaseOrderApprovesTable
                     default => 'heroicon-o-check',
                 })
                 ->action(
-                    Action::make('setujuiL1')
-                        ->modalHeading(
-                            fn ($record) =>
-                                "Detail Purchase Orders - {$record->nota}"
-                        )
-                        ->modalContent(
-                            fn ($record) => view(
-                                'filament.admin.modals.purchase-request-detail',
-                                ['record' => $record]
-                            )
-                        )
+                    Action::make('setujui')
+                        ->label('Setujui')
+                        ->visible(fn ($record) => $record->approve === '')
+                        ->modalHidden(fn () => ! auth()->user()?->hasRole('approvepo'))
+                        ->modalHeading(fn ($record) => "Detail Purchase Orders - {$record->nota}")
+                        ->modalContent(fn ($record) => view(
+                            'filament.admin.modals.purchase-order-detail',
+                            ['record' => $record->load('dpoItems')]
+                        ))
                         ->modalWidth('4xl')
                         ->modalSubmitActionLabel('Setujui')
-                        ->visible(function ($record) {
+                        ->action(function ($record): void {
                             $user = auth()->user();
                             if (! $user?->hasRole('approvepo')) {
-                                return false;
+                                Notification::make()
+                                    ->title('Akses ditolak')
+                                    ->body('Anda tidak memiliki role approvepo.')
+                                    ->warning()
+                                    ->send();
+                                return;
                             }
-                            if ($record->approve !== '') {
-                                return false;
+                            if ($record->kd_cab !== $user->kd_cab) {
+                                Notification::make()
+                                    ->title('Cabang tidak sesuai')
+                                    ->body('Anda hanya dapat menyetujui PO dari cabang Anda.')
+                                    ->warning()
+                                    ->send();
+                                return;
                             }
-                            return $record->kd_cab === $user->kd_cab;
-                        })
-                ),
-
-                       
+                            // Jalankan kode persetujuan PO Anda di sini.
+                            $data = [
+                                'approve'   => 'Y',
+                                'tglapp'    => now(),
+                                'userapp' => $user?->name,
+                            ];
+                            $record->update($data);
+                            Notification::make()
+                                ->title('PO disetujui...')
+                                ->success()
+                                ->send();
+                        }),
+                    ),
+                      
                 TextColumn::make('nota')
                     ->label('No. Nota')
                     ->icon(Heroicon::OutlinedBookmark)
@@ -95,36 +113,85 @@ class PurchaseOrderApprovesTable
                     ->extraCellAttributes([
                         'style' => 'min-width: 250px;',
                     ]),
-                TextColumn::make('no_pr')
+                TextColumn::make('dpoitems.no_pr')
                     ->label('No.PR')
                     ->columnFilter(ColumnFilter::search())
                     ->sortable()
-                    ->description(fn ($record): string => $record->kons)
-                    ->extraHeaderAttributes([
-                        'style' => 'min-width: 100px; width: 100px;',
-                    ])
-                    ->extraCellAttributes([
-                        'style' => 'min-width: 100px;',
-                    ]),
+                    ->icon(Heroicon::ListBullet)
+                    ->listWithLineBreaks()
+                    ->limitList(1)
+                    ->expandableLimitedList()
+                    ->iconColor('success')->weight('medium')->searchable()
+                    ->searchable(
+                        query: function (Builder $query, string $search): Builder {
+                            return $query->whereHas('supplier', function (Builder $query) use ($search) {
+                                $query->where('nama', 'like', "%{$search}%");
+                            });
+                        }
+                    )
+
+                    // ->description(fn ($record): string => $record->kons)
+                    // ->extraHeaderAttributes([
+                    //     'style' => 'min-width: 100px; width: 100px;',
+                    // ])
+                    // ->extraCellAttributes([
+                    //     'style' => 'min-width: 100px;',
+                    // ])
+                    ,
                     
                 TextColumn::make('kd_supp')
                     ->label('Supplier')->columnFilter(ColumnFilter::search())
-                    ->sortable()->searchable(),
+                    ->sortable()->searchable()
+                    ->icon(Heroicon::BuildingLibrary)
+                    ->description(fn ($record): string => $record->supplier?->nama ?? '-')->badge(),
+
                 TextColumn::make('kd_cab')
                     ->label('Cabang')->badge()->columnFilter(ColumnFilter::search())
-                    ->sortable()->searchable(),
+                    ->sortable()->searchable()
+                    ->icon(Heroicon::BuildingOffice),
                     // ->description(fn ($record): string => $record->jnsbudget),
                 TextColumn::make('gp')
                     ->label('General Purchase')->badge()->columnFilter(ColumnFilter::search())
                     ->color('success')
-                    ->sortable()->searchable(),
+                    ->icon(Heroicon::Check)
+                    ->sortable()->searchable()
+                    ->formatStateUsing(fn (?string $state): string => match ($state) {
+                        'Y' => 'Yes',
+                        'T' => 'No',
+                        default => '-',
+                    })
+                    ,
                 TextColumn::make('kons')
-                    ->label('Konsinyasi')->badge()->columnFilter(ColumnFilter::search())
-                    ->sortable()->searchable(),
+                    ->label('Jenis PO')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => match ($state) {
+                        'Y' => 'Konsinyasi',
+                        'T' => 'Non-Konsinyasi',
+                        default => '-',
+                    })
+                    ->color(fn ($record): string => match ($record->kons) {
+                        'Y' => 'info',
+                        'T' => 'success',
+                        default => 'gray',
+                    })
+                    ->columnFilter(ColumnFilter::search())
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('ippn')
-                    ->label('PPN')->badge()->columnFilter(ColumnFilter::search())
+                    ->label('Status PPN')->badge()->columnFilter(ColumnFilter::search())
                     ->color('warning')
-                    ->sortable()->searchable(),
+                    ->sortable()->searchable()
+                    ->description(fn ($record): string => $record->ppn .'%'),
+                TextColumn::make('user')
+                    ->label('User Entry')->columnFilter(ColumnFilter::search())
+                    ->color('warning')
+                    ->icon(Heroicon::UserCircle)
+                    ->sortable()->searchable()
+                    ->description(fn ($record): string => $record->tgl_update),
+                // TextColumn::make('tgl_update')
+                //     ->label('Tgl. Update')->badge()->columnFilter(ColumnFilter::search())
+                //     ->color('warning')
+                //     ->sortable()->searchable(),
 
                 TextColumn::make('approve')
                     ->label('Status Approved')

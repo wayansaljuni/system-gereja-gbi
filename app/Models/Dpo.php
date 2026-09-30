@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Dpr extends Model
+class Dpo extends Model
 {
     protected $connection = 'mysql55';
-    protected $primaryKey = 'iddpr';
+    protected $primaryKey = 'iddpo';
     public $incrementing = true;
     protected $keyType = 'int';
-    protected $table = 'dpr';
+    protected $table = 'dpo';
     // Sesuaikan kalau tabel dpr ternyata punya kolom created_at/updated_at.
     public $timestamps = false;
 
@@ -27,8 +27,8 @@ class Dpr extends Model
     /**
      * Relasi balik ke header PR (tabel hpr) lewat kolom nota.
      */
-    public function hpr(): BelongsTo
+    public function hpo(): BelongsTo
     {
-        return $this->belongsTo(Hpr::class, 'nota', 'nota');
-    }
+        return $this->belongsTo(Hpo::class, 'nota', 'nota');
+    }    //
 }

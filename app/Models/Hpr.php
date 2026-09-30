@@ -65,6 +65,7 @@ class Hpr extends Model
     {
         return $this->belongsTo(User::class);
     }
+    
     use LogsActivity;
 
     public function getActivitylogOptions(): LogOptions
