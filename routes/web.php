@@ -3,10 +3,19 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AgreementAttachmentController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
+Route::get('/', function () {
+    $loginUrl = Route::has('filament.admin.auth.login')
+        ? route('filament.admin.auth.login')
+        : url('/admin/login');
+
+    return view('welcome', [
+        'loginUrl' => $loginUrl,
+    ]);
+});
 
 Route::middleware(['auth'])->group(function () {
 

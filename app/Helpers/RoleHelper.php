@@ -22,40 +22,4 @@ class RoleHelper
         return self::hasRole('super_admin');
     }
 
-    public static function isLegal(): bool
-    {
-        return self::hasRole('legal');
-    }
-
-    public static function isSuperadminOrLegal(): bool
-    {
-        return self::hasRole([
-            'super_admin',
-            'legal',
-        ]);
-
-    }
-
-    public static function isApprovalpr(): bool
-    {
-        return self::hasRole([
-            'super_admin',
-            'approvalpr',
-        ]);
-    }
-    public static function isSuperadminOrApprovalpr(): bool
-    {
-        return self::hasRole([
-            'super_admin',
-            'approvalpr',
-        ]);
-        
-    }
-    public static function isApprovalpo(): bool
-    {
-        return self::hasRole([
-            'super_admin',
-            'approvalpo',
-        ]);
-    }
 }

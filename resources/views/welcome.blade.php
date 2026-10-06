@@ -1,424 +1,256 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'NAYATI-SYSTEM') }} — Enterprise Resource Planning</title>
+<style>
+    * { box-sizing: border-box; }
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=fraunces:600,700,900i|inter:400,500,600,700|ibm-plex-mono:500" rel="stylesheet" />
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f3f6fb;
+        color: #1e293b;
+        line-height: 1.6;
+    }
 
-    <style>
-        :root{
-            --ink:#101826;
-            --ink-soft:#1b2436;
-            --paper:#EEF1F6;
-            --paper-card:#FFFFFF;
-            --gold:#B8862E;
-            --gold-bright:#D9A441;
-            --slate:#5B6472;
-            --line:#D7DCE5;
-            --line-dark:#2B3547;
-            --ok:#2F7A4E;
-        }
-        *{box-sizing:border-box;margin:0;padding:0;}
-        html{scroll-behavior:smooth;}
-        body{
-            font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
-            background:var(--paper);
-            color:var(--ink);
-            line-height:1.5;
-            -webkit-font-smoothing:antialiased;
-        }
-        a{color:inherit;text-decoration:none;}
-        img,svg{display:block;max-width:100%;}
-        .wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
-        .mono{font-family:'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.03em;}
+    .wrap {
+        width: min(1120px, 100%);
+        margin: 0 auto;
+        padding: 24px;
+    }
 
-        :focus-visible{outline:2px solid var(--gold-bright);outline-offset:3px;}
+    .heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
 
-        /* ---------- Top bar ---------- */
-        header.topbar{
-            position:sticky;top:0;z-index:50;
-            background:rgba(238,241,246,.86);
-            backdrop-filter:blur(10px);
-            border-bottom:1px solid var(--line);
-        }
-        .topbar-inner{
-            display:flex;align-items:center;justify-content:space-between;
-            padding:16px 0;
-        }
-        .brand{display:flex;align-items:center;gap:10px;}
-        .brand-mark{
-            width:34px;height:34px;border-radius:9px;
-            background:linear-gradient(155deg,var(--ink) 0%,var(--ink-soft) 60%,#2c3854 100%);
-            display:flex;align-items:center;justify-content:center;
-            box-shadow:0 1px 0 rgba(255,255,255,.06) inset;
-        }
-        .brand-mark svg{width:18px;height:18px;}
-        .brand-name{font-weight:700;font-size:15px;letter-spacing:.02em;}
-        .brand-name .dim{color:var(--slate);font-weight:500;}
+    .label {
+        color: #2563eb;
+        font-size: 13px;
+        font-weight: 700;
+        margin: 0 0 6px;
+    }
 
-        nav.mainnav{display:flex;align-items:center;gap:28px;}
-        nav.mainnav a{font-size:14px;color:var(--slate);font-weight:500;transition:color .15s;}
-        nav.mainnav a:hover{color:var(--ink);}
+    h1 { margin: 0; font-size: 32px; }
+    .intro, .date { color: #64748b; }
+    .date { font-size: 13px; white-space: nowrap; }
 
-        .btn{
-            display:inline-flex;align-items:center;justify-content:center;gap:8px;
-            padding:11px 20px;border-radius:7px;font-weight:600;font-size:14px;
-            border:1px solid transparent;cursor:pointer;transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
-        }
-        .btn-primary{
-            background:var(--ink);color:#fff;
-            box-shadow:0 1px 0 rgba(255,255,255,.08) inset, 0 6px 16px -8px rgba(16,24,38,.6);
-        }
-        .btn-primary:hover{background:var(--ink-soft);transform:translateY(-1px);}
-        .btn-ghost{
-            background:transparent;color:var(--ink);border-color:var(--line-dark);
-        }
-        .btn-ghost:hover{border-color:var(--ink);}
-        .btn-gold{
-            background:var(--gold);color:#fff;
-            box-shadow:0 6px 18px -8px rgba(184,134,46,.65);
-        }
-        .btn-gold:hover{background:var(--gold-bright);transform:translateY(-1px);}
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+        margin-bottom: 28px;
+    }
 
-        /* ---------- Hero ---------- */
-        .hero{
-            position:relative;overflow:hidden;
-            background:
-                repeating-linear-gradient(180deg, rgba(16,24,38,.035) 0px, rgba(16,24,38,.035) 1px, transparent 1px, transparent 34px),
-                var(--paper);
-            border-bottom:1px solid var(--line);
-        }
-        .hero-inner{
-            padding:96px 0 80px;
-            display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center;
-        }
-        .eyebrow{
-            display:inline-flex;align-items:center;gap:8px;
-            font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;
-            color:var(--gold);text-transform:uppercase;font-weight:500;
-            padding:6px 12px;border:1px solid rgba(184,134,46,.35);border-radius:100px;
-            background:rgba(184,134,46,.06);
-            margin-bottom:22px;
-        }
-        .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--ok);}
-        h1.headline{
-            font-family:'Fraunces',Georgia,serif;
-            font-weight:700;
-            font-size:clamp(34px,4.4vw,58px);
-            line-height:1.05;
-            letter-spacing:-.01em;
-            color:var(--ink);
-            margin-bottom:22px;
-        }
-        h1.headline em{
-            font-style:italic;font-weight:900;color:var(--gold);
-        }
-        .lede{
-            font-size:17px;color:var(--slate);max-width:52ch;margin-bottom:34px;
-        }
-        .hero-cta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:36px;}
-        .hero-note{font-size:13px;color:var(--slate);display:flex;align-items:center;gap:8px;}
-        .hero-note svg{width:15px;height:15px;color:var(--ok);flex-shrink:0;}
+    .card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-top: 4px solid #2563eb;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 6px 20px rgb(15 23 42 / 5%);
+    }
 
-        .hero-stats{display:flex;gap:30px;padding-top:26px;border-top:1px solid var(--line);}
-        .stat b{
-            display:block;font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--ink);
-        }
-        .stat span{font-size:12.5px;color:var(--slate);}
+    .card.finance { border-top-color: #059669; }
+    .card.activity { border-top-color: #9333ea; }
 
-        /* ---------- Ledger card (signature element) ---------- */
-        .ledger{
-            position:relative;
-            background:var(--paper-card);
-            border:1px solid var(--line);
-            border-radius:14px;
-            box-shadow:0 30px 60px -30px rgba(16,24,38,.35);
-            padding:26px 26px 22px;
-            transform:rotate(1.2deg);
-        }
-        .ledger::before{
-            content:"";position:absolute;inset:10px;border:1px dashed rgba(16,24,38,.14);border-radius:8px;pointer-events:none;
-        }
-        .ledger-head{
-            display:flex;justify-content:space-between;align-items:flex-start;
-            padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:14px;
-        }
-        .ledger-head .doc-id{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--slate);}
-        .stamp{
-            font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.08em;
-            color:var(--ok);border:1.5px solid var(--ok);padding:4px 10px;border-radius:5px;
-            transform:rotate(-6deg);
-        }
-        .ledger-row{
-            display:flex;justify-content:space-between;align-items:center;
-            padding:11px 0;border-bottom:1px solid rgba(16,24,38,.07);font-size:13.5px;
-        }
-        .ledger-row:last-of-type{border-bottom:none;}
-        .ledger-row .k{color:var(--slate);}
-        .ledger-row .v{font-weight:600;}
-        .badge{
-            font-size:11px;font-weight:600;padding:3px 9px;border-radius:100px;
-        }
-        .badge.active{background:rgba(47,122,78,.12);color:var(--ok);}
-        .badge.pending{background:rgba(184,134,46,.14);color:var(--gold);}
-        .ledger-foot{
-            margin-top:16px;padding-top:14px;border-top:1px solid var(--line);
-            display:flex;justify-content:space-between;font-size:12px;color:var(--slate);
-        }
+    /* Kotak dan ukuran ikon */
+    .card .icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        background: #eff6ff;
+        color: #2563eb;
+    }
 
-        /* ---------- Section shared ---------- */
-        section{padding:88px 0;}
-        .section-head{max-width:640px;margin-bottom:52px;}
-        .section-tag{
-            font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--gold);
-            text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;display:block;
-        }
-        h2.section-title{
-            font-family:'Fraunces',serif;font-size:clamp(26px,3vw,36px);font-weight:700;color:var(--ink);
-            margin-bottom:14px;letter-spacing:-.01em;
-        }
-        .section-desc{color:var(--slate);font-size:15.5px;max-width:56ch;}
+    .card .icon svg {
+        display: block;
+        width: 28px;
+        height: 28px;
+        max-width: 28px;
+        flex-shrink: 0;
+    }
 
-        /* ---------- Modules grid ---------- */
-        .modules{
-            display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
-            background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;
-        }
-        .module{
-            background:var(--paper-card);padding:30px 26px;transition:background .15s;
-        }
-        .module:hover{background:#FBFAF7;}
-        .module .idx{
-            font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--gold);margin-bottom:18px;display:block;
-        }
-        .module h3{font-size:16px;font-weight:700;margin-bottom:8px;}
-        .module p{font-size:13.5px;color:var(--slate);line-height:1.55;}
+    .finance .icon { background: #ecfdf5; color: #059669; }
+    .activity .icon { background: #faf5ff; color: #9333ea; }
 
-        /* ---------- Workflow strip ---------- */
-        .flow{
-            display:flex;align-items:stretch;background:var(--ink);border-radius:16px;
-            padding:44px 40px;color:#fff;gap:0;overflow-x:auto;
-        }
-        .flow-step{flex:1;min-width:180px;position:relative;padding-right:28px;}
-        .flow-step:not(:last-child)::after{
-            content:"→";position:absolute;right:0;top:2px;color:var(--gold-bright);font-size:18px;opacity:.7;
-        }
-        .flow-step .num{
-            font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--gold-bright);margin-bottom:10px;display:block;
-        }
-        .flow-step h4{font-size:15px;font-weight:600;margin-bottom:6px;}
-        .flow-step p{font-size:12.5px;color:#9aa5b8;line-height:1.5;}
+    .card h3 { margin: 16px 0 8px; font-size: 18px; }
+    .card p { color: #64748b; font-size: 14px; }
+    .card a { color: #2563eb; font-size: 14px; font-weight: 600; }
 
-        /* ---------- CTA band ---------- */
-        .ctaband{
-            border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-            background:
-                repeating-linear-gradient(180deg, rgba(16,24,38,.035) 0px, rgba(16,24,38,.035) 1px, transparent 1px, transparent 34px),
-                var(--paper);
-        }
-        .ctaband-inner{
-            padding:70px 0;text-align:center;display:flex;flex-direction:column;align-items:center;gap:22px;
-        }
-        .ctaband h2{
-            font-family:'Fraunces',serif;font-weight:700;font-size:clamp(24px,3.4vw,34px);max-width:20ch;
-        }
+    .panel {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 24px;
+        scroll-margin-top: 24px;
+    }
 
-        /* ---------- Footer ---------- */
-        footer{padding:40px 0;}
-        .footer-inner{
-            display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;
-            font-size:12.5px;color:var(--slate);
-        }
+    .panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 20px 24px;
+        border-bottom: 1px solid #e2e8f0;
+    }
 
-        @media (max-width:920px){
-            .hero-inner{grid-template-columns:1fr;padding-top:64px;}
-            .modules{grid-template-columns:1fr 1fr;}
-            .ledger{transform:none;order:-1;}
-            nav.mainnav{display:none;}
-        }
-        @media (max-width:560px){
-            .modules{grid-template-columns:1fr;}
-            .hero-stats{flex-wrap:wrap;gap:22px;}
-            .flow{flex-direction:column;}
-            .flow-step{padding-right:0;padding-bottom:20px;}
-            .flow-step:not(:last-child)::after{display:none;}
-        }
-        @media (prefers-reduced-motion:reduce){
-            *{transition:none !important;}
-        }
-    </style>
-</head>
-<body>
+    .panel-head h2 { margin: 0; font-size: 20px; }
+    .panel-body { padding: 24px; }
 
-    <header class="topbar">
-        <div class="wrap topbar-inner">
-            <div class="brand">
-                <span class="brand-mark">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="5" r="2.2" fill="#D9A441"/>
-                        <circle cx="6" cy="17" r="2.2" fill="#EEF1F6"/>
-                        <circle cx="18" cy="17" r="2.2" fill="#EEF1F6"/>
-                        <path d="M12 7.2V12M12 12L6.8 15.2M12 12L17.2 15.2" stroke="#EEF1F6" stroke-width="1.4" stroke-linecap="round"/>
-                    </svg>
-                </span>
-                <span class="brand-name">NAYATI<span class="dim">-SYSTEM</span></span>
-            </div>
+    .tag {
+        background: #eff6ff;
+        color: #2563eb;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
 
-            <nav class="mainnav">
-                <a href="#modul">Modul</a>
-                <a href="#alur">Alur Kerja</a>
-                <a href="#tentang">Tentang</a>
-            </nav>
+    .features {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 24px;
+    }
 
-            <a href="{{ Route::has('filament.admin.auth.login') ? route('filament.admin.auth.login') : url('/admin/login') }}" class="btn btn-primary">
-                LOGIN
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    .feature h3 { margin: 0 0 8px; font-size: 15px; }
+    .feature p { margin: 0; color: #64748b; font-size: 14px; }
+
+    .notice {
+        margin: 20px 0 0;
+        padding: 12px 16px;
+        background: #f8fafc;
+        border-radius: 8px;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+
+    .chip {
+        background: #ecfdf5;
+        color: #047857;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+
+    .access {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding: 28px;
+        background: #172554;
+        color: white;
+        border-radius: 16px;
+    }
+
+    .access h2 { margin: 0 0 6px; font-size: 22px; }
+    .access p { margin: 0; color: #cbd5e1; font-size: 14px; }
+
+    .btn.gold {
+        display: inline-flex;
+        justify-content: center;
+        padding: 12px 20px;
+        background: #fbbf24;
+        color: #172554;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    @media (max-width: 768px) {
+        .cards, .features { grid-template-columns: 1fr; }
+        .heading, .access, .footer {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        h1 { font-size: 28px; }
+        .wrap { padding: 20px; }
+        .date { margin: 0; }
+    }
+    .top-login {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 10px;
+    }    
+</style>
+
+<main class="wrap">
+    <div class="heading">
+        <div><p class="label">Administrasi &amp; Pelayanan Gereja</p><h1>Dashboard Jemaat</h1><p class="intro">Kelola kehadiran, pencatatan keuangan, dan kegiatan jemaat dalam satu panel pelayanan.</p></div>
+        <p class="date">{{ now()->locale('id')->translatedFormat('l, d F Y') }}</p>
+        
+        <div class="top-login">
+            <a href="{{ $loginUrl }}" class="btn gold">
+                Login ke Panel
             </a>
         </div>
-    </header>
 
-    <section class="hero">
-        <div class="wrap hero-inner">
-            <div>
-                <span class="eyebrow"><span class="dot"></span> Sistem internal — akses staf resmi</span>
-                <h1 class="headline">Satu sistem untuk <em>seluruh operasional</em> perusahaan.</h1>
-                <p class="lede">
-                    NAYATI-SYSTEM menyatukan keuangan, inventaris, pengadaan dan perjanjian dalam satu panel —
-                    supaya setiap divisi bekerja dari data yang sama, bukan spreadsheet dan folder terpisah.
-                </p>
-
-                <div class="hero-cta">
-                    <a href="{{ Route::has('filament.admin.auth.login') ? route('filament.admin.auth.login') : url('/admin/login') }}" class="btn btn-gold">
-                        Login ke Panel Admin
-                    </a>
-                    <a href="#modul" class="btn btn-ghost">Lihat Modul</a>
-                </div>
-
-                <div class="hero-note">
-                    <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    Akses dibatasi untuk pengguna terverifikasi dengan peran yang sesuai.
-                </div>
-
-                <div class="hero-stats">
-                    <div class="stat"><b>-</b><span>Modul Terintegrasi</span></div>
-                    <div class="stat"><b>100%</b><span>Data Real-time</span></div>
-                    <div class="stat"><b>1</b><span>Panel, Semua Divisi</span></div>
-                </div>
+    </div>
+    <div class="cards">
+        <article class="card">
+            <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H5v15h14V5h-4M9 3h6v4H9zM8 13l3 3 5-6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <h3>Absensi Jemaat</h3><p>Pencatatan kehadiran ibadah, komsel, dan kegiatan pelayanan.</p><a href="#absensi">Lihat informasi absensi</a>
+        </article>
+        <article class="card finance">
+            <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4" stroke-linecap="round"/></svg></span>
+            <h3>Laporan Keuangan</h3><p>Pencatatan persembahan, pengeluaran, dan laporan kas gereja.</p><a href="#keuangan">Lihat informasi keuangan</a>
+        </article>
+        <article class="card activity">
+            <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 11h18M8 15h2M14 15h2" stroke-linecap="round"/></svg></span>
+            <h3>Kegiatan Jemaat</h3><p>Jadwal ibadah, persekutuan, dan agenda pelayanan jemaat.</p><a href="#kegiatan">Lihat informasi kegiatan</a>
+        </article>
+    </div>
+    <section class="panel" id="absensi">
+        <div class="panel-head"><h2>Absensi Jemaat</h2><span class="tag">Kehadiran &amp; Rekapitulasi</span></div>
+        <div class="panel-body">
+            <div class="features">
+                <div class="feature"><h3>Kehadiran Ibadah</h3><p>Catat kehadiran jemaat berdasarkan tanggal dan jenis ibadah.</p></div>
+                <div class="feature"><h3>Komsel &amp; Kelompok</h3><p>Rekap kehadiran persekutuan berdasarkan kelompok jemaat.</p></div>
+                <div class="feature"><h3>Rekap Absensi</h3><p>Tinjau kehadiran per jemaat dan periode untuk mendukung tindak lanjut pelayanan.</p></div>
             </div>
-
-            <div class="ledger" aria-hidden="true">
-                <div class="ledger-head">
-                    <div>
-                        <div class="doc-id">RINGKASAN / HARI INI</div>
-                    </div>
-                    <span class="stamp">LIVE</span>
-                </div>
-                <div class="ledger-row"><span class="k">Product Baru</span><span class="v">Deskripsi dan harga</span></div>
-                <div class="ledger-row"><span class="k">Pesanan Pembelian</span><span class="badge pending">Menunggu Approval</span></div>
-                <div class="ledger-row"><span class="k">Faktur Jatuh Tempo</span><span class="v">Penagihan</span></div>
-                <div class="ledger-row"><span class="k">Perjanjian Aktif</span><span class="badge active">Berjalan</span></div>
-                <div class="ledger-foot">
-                    <span class="mono">Diperbarui otomatis</span>
-                    <span class="mono">NAYATI-SYSTEM</span>
-                </div>
-            </div>
+            <p class="notice">Masuk ke panel untuk mengakses data kehadiran jemaat.</p>
         </div>
     </section>
-
-    <section id="modul">
-        <div class="wrap">
-            <div class="section-head">
-                <span class="section-tag">Modul Inti</span>
-                <h2 class="section-title">Setiap divisi, satu sumber data yang sama.</h2>
-                <p class="section-desc">Dari gudang sampai pembukuan — semua tercatat di panel yang sama, jadi tidak ada lagi angka yang beda antar tim.</p>
+    <section class="panel" id="keuangan">
+        <div class="panel-head"><h2>Laporan Keuangan</h2><span class="tag">Persembahan &amp; Kas Gereja</span></div>
+        <div class="panel-body">
+            <div class="features">
+                <div class="feature"><h3>Penerimaan Persembahan</h3><p>Pencatatan persembahan per kantong, nomor jemaat, atau tanpa identitas jemaat.</p></div>
+                <div class="feature"><h3>Tunai &amp; Transfer</h3><p>Bedakan metode pembayaran dan rekening penerima pada setiap pencatatan.</p></div>
+                <div class="feature"><h3>Laporan Kas</h3><p>Rekap pemasukan, pengeluaran, dan saldo berdasarkan periode dan rekening.</p></div>
             </div>
-
-            <div class="modules">
-                <div class="module">
-                    <span class="idx">01</span>
-                    <h3>Keuangan &amp; Akuntansi</h3>
-                    <p>Pencatatan transaksi, faktur, dan arus kas terhubung langsung dengan aktivitas operasional.</p>
-                </div>
-                <div class="module">
-                    <span class="idx">02</span>
-                    <h3>Inventaris &amp; Gudang</h3>
-                    <p>Pantau stok, mutasi barang, dan titik pemesanan ulang secara real-time.</p>
-                </div>
-                <div class="module">
-                    <span class="idx">03</span>
-                    <h3>Pembelian &amp; Pengadaan</h3>
-                    <p>Kelola permintaan, penawaran vendor, dan pesanan pembelian dalam satu alur persetujuan.</p>
-                </div>
-                <div class="module">
-                    <span class="idx">04</span>
-                    <h3>CRM-Customer Relation Mangement </h3>
-                    <p>Data Prospek, Deal, Purna Jual dan Services.</p>
-                </div>
-                <div class="module">
-                    <span class="idx">05</span>
-                    <h3>Perjanjian &amp; Kontrak</h3>
-                    <p>Catat jenis dan status perjanjian perusahaan, lengkap dengan riwayat persetujuannya.</p>
-                </div>
-                <div class="module">
-                    <span class="idx">06</span>
-                    <h3>Laporan &amp; Kontrol Akses</h3>
-                    <p>Dashboard lintas divisi dengan hak akses yang diatur sesuai peran masing-masing pengguna.</p>
-                </div>
-            </div>
+            <div class="chips" aria-label="Jenis persembahan"><span class="chip">Perpuluhan</span><span class="chip">Pembangunan</span><span class="chip">Sekolah Minggu Anak</span><span class="chip">Anak Muda</span><span class="chip">Janji Iman</span></div>
+            <p class="notice">Laporan keuangan tersedia di panel sesuai hak akses pengguna.</p>
         </div>
     </section>
-
-    <section id="alur">
-        <div class="wrap">
-            <div class="section-head">
-                <span class="section-tag">Alur Kerja</span>
-                <h2 class="section-title">Dari permintaan sampai laporan akhir.</h2>
+    <section class="panel" id="kegiatan">
+        <div class="panel-head"><h2>Kegiatan Jemaat</h2><span class="tag">Jadwal &amp; Pelayanan</span></div>
+        <div class="panel-body">
+            <div class="features">
+                <div class="feature"><h3>Ibadah &amp; Persekutuan</h3><p>Kelola jadwal ibadah raya, komsel, dan persekutuan doa.</p></div>
+                <div class="feature"><h3>Pelayanan Anak &amp; Pemuda</h3><p>Atur kegiatan sekolah minggu dan persekutuan anak muda.</p></div>
+                <div class="feature"><h3>Agenda Jemaat</h3><p>Catat tanggal, lokasi, dan penanggung jawab kegiatan gereja.</p></div>
             </div>
-
-            <div class="flow">
-                <div class="flow-step">
-                    <span class="num">01</span>
-                    <h4>Diajukan</h4>
-                    <p>Permintaan barang, pembelian, atau dokumen dicatat masuk sistem.</p>
-                </div>
-                <div class="flow-step">
-                    <span class="num">02</span>
-                    <h4>Disetujui</h4>
-                    <p>Pihak berwenang meninjau sesuai jalur persetujuan divisi terkait.</p>
-                </div>
-                <div class="flow-step">
-                    <span class="num">03</span>
-                    <h4>Dieksekusi</h4>
-                    <p>Stok, transaksi, atau status berubah otomatis di seluruh modul terkait.</p>
-                </div>
-                <div class="flow-step">
-                    <span class="num">04</span>
-                    <h4>Dilaporkan</h4>
-                    <p>Hasilnya langsung terlihat di dashboard lintas divisi.</p>
-                </div>
-            </div>
+            <p class="notice">Masuk ke panel untuk melihat dan mengelola agenda kegiatan.</p>
         </div>
     </section>
-
-    <section class="ctaband" id="tentang">
-        <div class="wrap ctaband-inner">
-            <span class="section-tag">Mulai Bekerja</span>
-            <h2>Masuk ke panel untuk mengelola operasional perusahaan hari ini.</h2>
-            <a href="{{ Route::has('filament.admin.auth.login') ? route('filament.admin.auth.login') : url('/admin/login') }}" class="btn btn-primary">
-                LOGIN NAYATI-SYSTEM
-            </a>
-        </div>
-    </section>
-
-    <footer>
-        <div class="wrap footer-inner">
-            <span>&copy; {{ date('Y') }} NAYATI-SYSTEM. Seluruh hak cipta dilindungi.</span>
-            <span class="mono">Enterprise Resource Planning — Internal</span>
-        </div>
-    </footer>
-
+    <div class="access"><div><h2>Panel Pelayanan Jemaat</h2><p>Akses data dan pengelolaan sesuai peran pengguna.</p></div><a href="{{ $loginUrl }}" class="btn gold">Login ke Panel</a></div>
+</main>
+<footer><div class="wrap footer"><span>&copy; {{ date('Y') }} Dashboard Jemaat.</span><span>Absensi · Keuangan · Kegiatan Jemaat</span></div></footer>
 </body>
 </html>
