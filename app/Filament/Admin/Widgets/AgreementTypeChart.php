@@ -10,7 +10,7 @@ class AgreementTypeChart extends ChartWidget
 {
     public static function canView(): bool
     {
-        return RoleHelper::isSuperadminOrLegal() ?? false;
+        return RoleHelper::isSuperadmin() ?? false;
     }    
 
     protected static ?int $sort = 3;

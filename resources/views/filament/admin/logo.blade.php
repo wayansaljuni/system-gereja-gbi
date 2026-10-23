@@ -17,6 +17,6 @@
         class="h-full w-auto shrink-0 rounded-md"
     />
     <span class="text-base font-bold text-gray-900 dark:text-white whitespace-nowrap leading-none">
-        NAYATI-SYSTEM
+        GBI-TLOGOMULYO
     </span>
 </div>

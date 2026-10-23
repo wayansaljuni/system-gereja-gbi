@@ -17,7 +17,7 @@ class AgreementStatsOverview extends BaseWidget
 
     public static function canView(): bool
     {
-        return RoleHelper::isSuperadminOrLegal() ?? false;
+        return RoleHelper::isSuperadmin() ?? false;
     }    
 
     protected function getStats(): array

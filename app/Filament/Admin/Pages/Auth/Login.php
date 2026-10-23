@@ -5,8 +5,8 @@ namespace App\Filament\Admin\Pages\Auth;
 use App\Models\User;
 use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Filament\Auth\Pages\Login as BaseLogin;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
+// use Illuminate\Support\Facades\DB;
+// use Illuminate\Validation\ValidationException;
 
 class Login extends BaseLogin
 {
@@ -25,17 +25,17 @@ class Login extends BaseLogin
         //     ->where('nik', $user->nik)
         //     ->first();
         
-        if ($user && ! $user->hasRole('superadmin') && !is_null($user->nik)) {
-            $isResigned = DB::connection('mysql55')
-                ->table('mkar')
-                ->where('nik', $user->nik)
-                ->first();
-            if ($isResigned->tglklr !== '0000-00-00' && !is_null($isResigned->tglklr)) {
-                throw ValidationException::withMessages([
-                    'data.email' => 'Akun sudah tidak aktif karena karyawan sudah keluar dari perusahaan.',
-                ]);
-            }
-        }
+        // if ($user && ! $user->hasRole('superadmin') && !is_null($user->nik)) {
+        //     $isResigned = DB::connection('mysql55')
+        //         ->table('mkar')
+        //         ->where('nik', $user->nik)
+        //         ->first();
+        //     if ($isResigned->tglklr !== '0000-00-00' && !is_null($isResigned->tglklr)) {
+        //         throw ValidationException::withMessages([
+        //             'data.email' => 'Akun sudah tidak aktif karena karyawan sudah keluar dari perusahaan.',
+        //         ]);
+        //     }
+        // }
         return parent::authenticate();
     }
 }
