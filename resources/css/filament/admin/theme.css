@@ -2,3 +2,43 @@
 
 @source '../../../../app/Filament/Admin/**/*';
 @source '../../../../resources/views/filament/admin/**/*';
+
+/* ========================================
+   Dashboard Stats Widget - Compact
+   ======================================== */
+
+.fi-wi-stats-overview {
+    gap: 0.75rem !important;
+}
+
+.fi-wi-stats-overview .fi-wi-stats-overview-stat {
+    padding: 0.85rem 1rem !important;
+    min-height: 120px !important;
+}
+
+/* Judul */
+.fi-wi-stats-overview .fi-wi-stats-overview-stat-title {
+    font-size: 0.80rem !important;
+}
+
+/* Angka */
+.fi-wi-stats-overview .fi-wi-stats-overview-stat-value {
+    font-size: 1.5rem !important;
+    line-height: 1.8rem !important;
+}
+
+/* Description */
+.fi-wi-stats-overview .fi-wi-stats-overview-stat-description {
+    font-size: 0.75rem !important;
+}
+
+/* Icon */
+.fi-wi-stats-overview .fi-wi-stats-overview-stat-description-icon {
+    width: 0.9rem !important;
+    height: 0.9rem !important;
+}
+
+/* Chart */
+.fi-wi-stats-overview .fi-wi-stats-overview-stat-chart {
+    max-height: 25px !important;
+}

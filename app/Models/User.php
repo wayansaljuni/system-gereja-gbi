@@ -8,6 +8,8 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Permission\Traits\HasRoles;
 // use Illuminate\Notifications\Notifiable;
 
@@ -66,6 +68,15 @@ class User extends Authenticatable implements FilamentUser
     public function hasAnyRoleCustom(array $roles): bool
     {
         return $this->hasAnyRole($roles);
+    }
+
+    use LogsActivity;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty();
     }
     
 }

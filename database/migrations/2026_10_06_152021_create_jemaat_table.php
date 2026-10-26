@@ -24,7 +24,7 @@ return new class extends Migration
 
             $table->foreignId('organisasi_id')
                 ->nullable()
-                ->constrained('keluarga')
+                ->constrained('organisasi')
                 ->nullOnDelete();
 
             $table->foreignId('kelompok_id')

@@ -2,9 +2,11 @@
 
 namespace App\Providers\Filament;
 
-// use App\Filament\Admin\Widgets\AgreementReminderOverview;
-// use App\Filament\Admin\Widgets\AgreementStatsOverview;
 use App\Filament\Admin\Widgets\RecentActivityWidget;
+use App\Filament\Widgets\JemaatStats;
+use App\Filament\Widgets\KelompokStats;
+use App\Filament\Widgets\KeluargaStats;
+use App\Filament\Widgets\OrganisasiStats;
 use App\Http\Middleware\ForcePasswordChange;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Enums\ThemeMode;
@@ -54,6 +56,7 @@ class AdminPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->navigationGroups([
+                'Data Jemaat',
                 'Agreements',
                 'Setting',
             ])            // ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
@@ -63,6 +66,10 @@ class AdminPanelProvider extends PanelProvider
                 // AgreementTypeChart::class,
                 // AgreementStatsOverview::class,
                 // AgreementReminderOverview::class,
+                KeluargaStats::class,
+                KelompokStats::class,  
+                OrganisasiStats::class,
+                JemaatStats::class,
                 RecentActivityWidget::class,
                 ])
             ->middleware([
