@@ -2,8 +2,8 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Admin\Widgets\AgreementReminderOverview;
-use App\Filament\Admin\Widgets\AgreementStatsOverview;
+// use App\Filament\Admin\Widgets\AgreementReminderOverview;
+// use App\Filament\Admin\Widgets\AgreementStatsOverview;
 use App\Filament\Admin\Widgets\RecentActivityWidget;
 use App\Http\Middleware\ForcePasswordChange;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
@@ -61,8 +61,8 @@ class AdminPanelProvider extends PanelProvider
                 // AccountWidget::class,
                 // FilamentInfoWidget::class,
                 // AgreementTypeChart::class,
-                AgreementStatsOverview::class,
-                AgreementReminderOverview::class,
+                // AgreementStatsOverview::class,
+                // AgreementReminderOverview::class,
                 RecentActivityWidget::class,
                 ])
             ->middleware([
