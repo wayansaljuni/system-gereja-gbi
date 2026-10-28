@@ -388,7 +388,7 @@ class TransaksiKeuanganHeaderForm
 
                             Textarea::make('keterangan')
                                 ->label('Keterangan')
-                                ->rows(3)
+                                ->rows(2)
                                 ->columnSpanFull(),
                         ])
                         ->columns(3)
@@ -397,39 +397,39 @@ class TransaksiKeuanganHeaderForm
                     // KOLOM KANAN: REKAP KEUANGAN
                     Section::make('Rekap Keuangan')
                         ->schema([
-                            TextEntry::make('total_pemasukan')
-                                ->label('Total Pemasukan')
-                                ->state(function (Get $get) use ($hitungRekap) {
-                                    return $hitungRekap($get)['total_pemasukan'];
-                                })
-                                ->money('IDR', locale: 'id')
-                                ->size('lg')
-                                ->weight('bold')
-                                ->color('success'),
+                            // TextEntry::make('total_pemasukan')
+                            //     ->label('Total Pemasukan')
+                            //     ->state(function (Get $get) use ($hitungRekap) {
+                            //         return $hitungRekap($get)['total_pemasukan'];
+                            //     })
+                            //     ->money('IDR', locale: 'id')
+                            //     ->size('lg')
+                            //     ->weight('bold')
+                            //     ->color('success'),
 
-                            TextEntry::make('total_pengeluaran')
-                                ->label('Total Pengeluaran')
-                                ->state(function (Get $get) use ($hitungRekap) {
-                                    return $hitungRekap($get)['total_pengeluaran'];
-                                })
-                                ->money('IDR', locale: 'id')
-                                ->size('lg')
-                                ->weight('bold')
-                                ->color('danger'),
+                            // TextEntry::make('total_pengeluaran')
+                            //     ->label('Total Pengeluaran')
+                            //     ->state(function (Get $get) use ($hitungRekap) {
+                            //         return $hitungRekap($get)['total_pengeluaran'];
+                            //     })
+                            //     ->money('IDR', locale: 'id')
+                            //     ->size('lg')
+                            //     ->weight('bold')
+                            //     ->color('danger'),
 
-                            TextEntry::make('saldo_total')
-                                ->label('Total Saldo')
-                                ->state(function (Get $get) use ($hitungRekap) {
-                                    return $hitungRekap($get)['saldo_total'];
-                                })
-                                ->money('IDR', locale: 'id')
-                                ->size('lg')
-                                ->weight('bold')
-                                ->color(function (Get $get) use ($hitungRekap) {
-                                    return $hitungRekap($get)['saldo_total'] < 0
-                                        ? 'danger'
-                                        : 'success';
-                                }),
+                            // TextEntry::make('saldo_total')
+                            //     ->label('Total Saldo')
+                            //     ->state(function (Get $get) use ($hitungRekap) {
+                            //         return $hitungRekap($get)['saldo_total'];
+                            //     })
+                            //     ->money('IDR', locale: 'id')
+                            //     ->size('lg')
+                            //     ->weight('bold')
+                            //     ->color(function (Get $get) use ($hitungRekap) {
+                            //         return $hitungRekap($get)['saldo_total'] < 0
+                            //             ? 'danger'
+                            //             : 'success';
+                            //     }),
 
                             TextEntry::make('pemasukan_tunai')
                                 ->label('Pemasukan Tunai')
