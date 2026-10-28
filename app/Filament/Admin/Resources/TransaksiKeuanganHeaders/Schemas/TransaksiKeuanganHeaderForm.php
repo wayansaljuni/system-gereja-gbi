@@ -240,18 +240,21 @@ class TransaksiKeuanganHeaderForm
                         Select::make('jemaat_id')
                             // ->label('Jemaat / No. Kantong')
                             ->options($jemaatOptions)
+                            ->placeholder('...')
                             ->searchable()
-                            ->required()
+                            // ->required()
                             ->live()
                             ->columnSpan(1)
                             ,
 
                         Select::make("akun_id_{$id}")
                             ->label('Akun Kas / Bank')
+                            ->placeholder('...')
                             ->options($akunOptions)
                             ->default(fn () => $item->akun_default_id)
                             ->searchable()
                             ->required()
+                            ->columnSpan(1)
                             ->live(),
 
                         Select::make('metode_pembayaran')
@@ -265,7 +268,7 @@ class TransaksiKeuanganHeaderForm
                         TextInput::make('jumlah')
                             ->label('Jumlah (Rp)')
                             ->numeric()
-                            ->prefix('Rp')
+                            // ->prefix('Rp')
                             ->mask(
                                 RawJs::make(<<<'JS'
                                     $money($input, '.', ',', 2)
@@ -296,12 +299,16 @@ class TransaksiKeuanganHeaderForm
                     ])
                     ->columns(4)
                     ->table([
-                        Repeater\TableColumn::make('No. Kantong'),
-                        Repeater\TableColumn::make('Akun Kas / Bank'),
-                        Repeater\TableColumn::make('Tunai / Transfer'),
-                        Repeater\TableColumn::make('Jumlah (Rp)'),
+                        Repeater\TableColumn::make('No. Kantong')
+                        ->width('20%'),
+                        Repeater\TableColumn::make('Akun Kas / Bank')
+                        ->width('40%'),
+                        Repeater\TableColumn::make('Tunai / Transfer')
+                        ->width('15%'),
+                        Repeater\TableColumn::make('Jumlah (Rp)')
+                        ->width('25%'),
                     ])
-                    ->defaultItems(5)
+                    ->defaultItems(3)
                     ->addActionLabel('Tambah Kantong')
                     ->addActionAlignment(Alignment::Start)
                     ->addAction(
