@@ -2,8 +2,10 @@
 
 namespace App\Filament\Admin\Resources\Kelompoks\Tables;
 
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
@@ -73,19 +75,34 @@ class KelompoksTable
                     ->trueLabel('Kelompok aktif')
                     ->falseLabel('Kelompok tidak aktif'),
             ])
+            ->headerActions([
+                CreateAction::make()
+                    ->label('New KPW')
+                    ->icon(Heroicon::OutlinedPlus)
+                    ->modalHeading('Tambah KPW')
+                    ->modalDescription(
+                        'Tambahkan KPW baru ke dalam master data.'
+                    )
+                    ->modalWidth('3xl')
+                    ->createAnother(false),
+            ])
             ->recordActions([
                 EditAction::make()
-                    ->label('Edit')
-                    ->icon('heroicon-o-pencil-square'),
+                    ->label('')
+                    ->icon(Heroicon::OutlinedPencil)
+                    ->tooltip('Edit KPW')
+                    ->modalHeading('Edit KPW')
+                    ->modalWidth('3xl'),
 
                 DeleteAction::make()
-                    ->label('Hapus')
-                    ->icon('heroicon-o-trash')
+                    ->label('')
+                    ->icon(Heroicon::OutlinedTrash)
+                    ->tooltip('Hapus KPW')
                     ->color('danger'),
             ])
             ->defaultSort('nama')
             ->striped()
-            ->emptyStateHeading('Belum ada kelompok')
+            ->emptyStateHeading('Belum ada KPW')
             ->emptyStateDescription(
                 'Silakan tambahkan data kelompok baru.'
             )

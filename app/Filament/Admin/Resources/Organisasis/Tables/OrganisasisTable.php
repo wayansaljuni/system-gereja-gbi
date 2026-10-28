@@ -3,9 +3,11 @@
 namespace App\Filament\Admin\Resources\Organisasis\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
@@ -77,15 +79,25 @@ class OrganisasisTable
                     ->trueLabel('Organisasi aktif')
                     ->falseLabel('Organisasi tidak aktif'),
             ])
-
+           ->headerActions([
+                CreateAction::make()
+                    ->label('New Organisasi')
+                    ->icon(Heroicon::OutlinedPlus)
+                    ->modalHeading('Tambah Organisasi')
+                    ->modalDescription(
+                        'Tambahkan organisasi baru ke dalam master data.'
+                    )
+                    ->modalWidth('3xl')
+                    ->createAnother(false),
+            ])
             ->recordActions([
                 EditAction::make()
-                    ->label('Edit')
-                    ->icon('heroicon-o-pencil-square'),
+                    ->label('')
+                    ->icon(Heroicon::OutlinedPencilSquare),
 
                 DeleteAction::make()
-                    ->label('Hapus')
-                    ->icon('heroicon-o-trash')
+                    ->label('')
+                    ->icon(Heroicon::OutlinedTrash)
                     ->color('danger'),
             ])
 

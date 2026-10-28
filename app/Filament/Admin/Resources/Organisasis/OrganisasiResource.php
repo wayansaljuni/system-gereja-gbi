@@ -22,6 +22,7 @@ class OrganisasiResource extends Resource
     protected static ?string $modelLabel = 'Organisasi';
     protected static ?string $pluralModelLabel = 'Organisasi';
     protected static ?string $recordTitleAttribute = 'nama';
+    protected static ?int $navigationSort = 4;    
 
     public static function form(Schema $schema): Schema
     {

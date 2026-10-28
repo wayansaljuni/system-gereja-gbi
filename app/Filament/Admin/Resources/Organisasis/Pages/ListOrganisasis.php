@@ -4,7 +4,6 @@ namespace App\Filament\Admin\Resources\Organisasis\Pages;
 
 use App\Filament\Admin\Resources\Organisasis\OrganisasiResource;
 use App\Filament\Widgets\OrganisasiStats;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListOrganisasis extends ListRecords
@@ -20,7 +19,7 @@ class ListOrganisasis extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            // CreateAction::make(),
         ];
     }
 }

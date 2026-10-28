@@ -4,7 +4,6 @@ namespace App\Filament\Admin\Resources\Keluargas\Pages;
 
 use App\Filament\Admin\Resources\Keluargas\KeluargaResource;
 use App\Filament\Widgets\KeluargaStats;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListKeluargas extends ListRecords
@@ -14,7 +13,7 @@ class ListKeluargas extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            // CreateAction::make(),
         ];
     }
     protected function getHeaderWidgets(): array

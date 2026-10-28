@@ -10,15 +10,12 @@ return new class extends Migration
     {
         Schema::create('kategori_keuangan', function (Blueprint $table) {
             $table->id();
-
             $table->string('kode', 30)->unique();
             $table->string('nama', 150);
-
             $table->enum('tipe', [
                 'pemasukan',
                 'pengeluaran',
             ]);
-
             /*
              * Akun default.
              *
@@ -45,14 +42,10 @@ return new class extends Migration
              */
             $table->boolean('bisa_detail_jemaat')
                 ->default(false);
-
             $table->boolean('aktif')
                 ->default(true);
-
             $table->text('keterangan')->nullable();
-
             $table->timestamps();
-
             $table->index('tipe');
             $table->index('aktif');
         });

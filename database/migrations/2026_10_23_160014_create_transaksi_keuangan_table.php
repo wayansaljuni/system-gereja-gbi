@@ -10,12 +10,10 @@ return new class extends Migration
     {
         Schema::create('transaksi_keuangan', function (Blueprint $table) {
             $table->id();
-
             /*
              * Tanggal transaksi.
              */
             $table->dateTime('tanggal');
-
             /*
              * Ibadah yang berkaitan dengan transaksi.
              *
@@ -26,14 +24,12 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('ibadah')
                 ->nullOnDelete();
-
             /*
              * Jenis pemasukan / pengeluaran.
              */
             $table->foreignId('kategori_keuangan_id')
                 ->constrained('kategori_keuangan')
                 ->restrictOnDelete();
-
             /*
              * Akun aktual tempat uang masuk/keluar.
              *

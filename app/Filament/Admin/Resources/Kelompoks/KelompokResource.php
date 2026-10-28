@@ -17,17 +17,14 @@ use UnitEnum;
 class KelompokResource extends Resource
 {
     protected static ?string $model = Kelompok::class;
-
     protected static string|BackedEnum|null $navigationIcon =
         'heroicon-o-user-group';
-
     protected static string|UnitEnum|null $navigationGroup = 'Data Jemaat';
-
     protected static ?string $navigationLabel = 'KPW';
-
     protected static ?string $modelLabel = 'KPW';
-
     protected static ?string $pluralModelLabel = 'KPW';
+    protected static ?int $navigationSort = 2;    
+
     public static function form(Schema $schema): Schema
     {
         return KelompokForm::configure($schema);

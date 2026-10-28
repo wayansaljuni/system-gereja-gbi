@@ -24,6 +24,7 @@ class KeluargaResource extends Resource
     protected static ?string $modelLabel = 'Keluarga';
     protected static ?string $pluralModelLabel = 'Data Keluarga';
     protected static ?string $recordTitleAttribute = 'nama_keluarga';
+    protected static ?int $navigationSort = 3;    
 
     public static function form(Schema $schema): Schema
     {

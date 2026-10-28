@@ -57,6 +57,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 'Data Jemaat',
+                'Keuangan',
                 'Agreements',
                 'Setting',
             ])            // ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')

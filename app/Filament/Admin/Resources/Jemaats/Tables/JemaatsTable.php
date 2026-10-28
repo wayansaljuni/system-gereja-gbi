@@ -2,10 +2,10 @@
 
 namespace App\Filament\Admin\Resources\Jemaats\Tables;
 
-use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
@@ -126,34 +126,38 @@ class JemaatsTable
                     ->falseLabel('Jemaat tidak aktif'),
             ])
 
-            ->recordActions([
-                EditAction::make()
-                    ->label('Edit')
-                    ->icon('heroicon-o-pencil-square'),
-
-                DeleteAction::make()
-                    ->label('Hapus')
-                    ->icon('heroicon-o-trash')
-                    ->color('danger'),
+           ->headerActions([
+                CreateAction::make()
+                    ->label('New Jemaat')
+                    ->icon(Heroicon::OutlinedPlus)
+                    ->modalHeading('Tambah Jemaat')
+                    ->modalDescription(
+                        'Tambahkan Jemaat baru ke dalam master data.'
+                    )
+                    ->modalWidth('3xl')
+                    ->createAnother(false),
             ])
 
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->label('Hapus yang dipilih'),
-                ]),
+            ->recordActions([
+                EditAction::make()
+                    ->label('')
+                    ->icon(Heroicon::OutlinedPencil)
+                    ->tooltip('Edit')
+                    ->modalHeading('Edit')
+                    ->modalWidth('3xl'),
+
+                DeleteAction::make()
+                    ->label('')
+                    ->icon(Heroicon::OutlinedTrash)
+                    ->tooltip('Hapus'),
             ])
 
             ->defaultSort('nama')
-
             ->striped()
-
             ->emptyStateHeading('Belum ada data jemaat')
-
             ->emptyStateDescription(
                 'Silakan tambahkan data jemaat baru.'
             )
-
             ->emptyStateIcon(
                 'heroicon-o-users'
             );

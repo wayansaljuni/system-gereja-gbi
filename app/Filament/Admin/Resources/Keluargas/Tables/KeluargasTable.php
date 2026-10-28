@@ -3,9 +3,10 @@
 namespace App\Filament\Admin\Resources\Keluargas\Tables;
 
 // use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
-// use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
@@ -69,15 +70,26 @@ class KeluargasTable
                 ->trueLabel('Aktif')
                 ->falseLabel('Tidak Aktif'),
         ])
+        ->headerActions([
+            CreateAction::make()
+                ->label('New Keluarga')
+                ->icon(Heroicon::OutlinedPlus)
+                ->modalHeading('Tambah Keluarga')
+                ->modalDescription(
+                    'Tambahkan keluarga baru ke dalam master data.'
+                )
+                ->modalWidth('3xl')
+                ->createAnother(false),
+        ])        
         ->recordActions([
             EditAction::make()
-                ->label('Edit')
-                ->icon('heroicon-o-pencil-square')
+                ->label('')
+                ->icon(Heroicon::OutlinedPencilSquare)
                 ->color('primary')
                 ->modalWidth('2xl'),
 
             DeleteAction::make()
-                ->label('Hapus')
+                ->label('')
                 ->requiresConfirmation(),
         ])
         ->defaultSort('nama_keluarga')

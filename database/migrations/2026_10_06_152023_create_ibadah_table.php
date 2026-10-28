@@ -13,13 +13,10 @@ return new class extends Migration
     {
         Schema::create('ibadah', function (Blueprint $table) {
             $table->id();
-
             $table->string('kode', 20)->unique();
             $table->string('nama', 100);
             $table->string('kategori', 50)->nullable();
-
             $table->boolean('aktif')->default(true);
-
             $table->timestamps();            
         });
     }

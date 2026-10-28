@@ -4,7 +4,6 @@ namespace App\Filament\Admin\Resources\Jemaats\Pages;
 
 use App\Filament\Admin\Resources\Jemaats\JemaatResource;
 use App\Filament\Widgets\JemaatStats;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListJemaats extends ListRecords
@@ -30,7 +29,7 @@ class ListJemaats extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            // CreateAction::make(),
         ];
     }
 }

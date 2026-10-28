@@ -4,7 +4,6 @@ namespace App\Filament\Admin\Resources\Kelompoks\Pages;
 
 use App\Filament\Admin\Resources\Kelompoks\KelompokResource;
 use App\Filament\Widgets\KelompokStats;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListKelompoks extends ListRecords
@@ -25,7 +24,7 @@ class ListKelompoks extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            // CreateAction::make(),
         ];
     }
     protected function getHeaderWidgets(): array

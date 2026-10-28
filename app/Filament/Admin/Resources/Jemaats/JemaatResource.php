@@ -22,6 +22,7 @@ class JemaatResource extends Resource
     protected static ?string $modelLabel = 'Jemaat';
     protected static ?string $pluralModelLabel = 'Jemaat';
     protected static ?string $recordTitleAttribute = 'nama';
+    protected static ?int $navigationSort = 1;    
 
     public static function form(Schema $schema): Schema
     {
