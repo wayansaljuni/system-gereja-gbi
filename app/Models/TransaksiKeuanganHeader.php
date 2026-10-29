@@ -7,6 +7,8 @@ use App\Models\TransaksiKeuangan;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class TransaksiKeuanganHeader extends Model
 {
@@ -42,4 +44,13 @@ class TransaksiKeuanganHeader extends Model
     {
         return (float) $this->details()->sum('jumlah');
     }    //
+    use LogsActivity;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty();
+    }
+
 }
