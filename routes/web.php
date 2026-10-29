@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AgreementAttachmentController;
+use App\Http\Controllers\TransaksiKeuanganHeaderPrintController;
+use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -32,5 +33,10 @@ Route::middleware(['auth'])->group(function () {
     )
         ->where('path', '.*')
         ->name('agreement-attachments.download');
+        
+    Route::get(
+        '/transaksi-keuangan-header/{transaksiKeuanganHeader}/print',
+        [TransaksiKeuanganHeaderPrintController::class, 'print']
+    )->name('transaksi-keuangan-header.print');        
 
 });

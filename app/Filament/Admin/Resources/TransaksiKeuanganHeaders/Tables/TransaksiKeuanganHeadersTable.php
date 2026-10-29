@@ -2,8 +2,11 @@
 
 namespace App\Filament\Admin\Resources\TransaksiKeuanganHeaders\Tables;
 
+use Filament\Actions\Action;
+// use Filament\Tables\Actions\Action as TableAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
+// use Filament\Actions\ViewAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -61,7 +64,18 @@ class TransaksiKeuanganHeadersTable
             ])
             ->defaultSort('tanggal', 'desc')
             ->recordActions([
-                ViewAction::make(),
+                Action::make('print')
+                    ->label('Print')
+                    ->icon(Heroicon::OutlinedPrinter)
+                    ->color('gray')
+                    ->url(
+                        fn ($record): string => route(
+                            'transaksi-keuangan-header.print',
+                            ['transaksiKeuanganHeader' => $record->id]
+                        )
+                    )
+                    ->openUrlInNewTab(),
+                // ViewAction::make(),
                 EditAction::make(),
             ]);        
     }
