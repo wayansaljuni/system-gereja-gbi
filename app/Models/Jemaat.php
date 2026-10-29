@@ -2,8 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\AbsensiDetail;
+use App\Models\Kelompok;
+use App\Models\Keluarga;
+use App\Models\Organisasi;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
@@ -47,6 +52,14 @@ class Jemaat extends Model
     {
         return $this->belongsTo(Kelompok::class, 'kelompok_id');
     }
+
+    public function absensiDetails(): HasMany
+    {
+        return $this->hasMany(
+            AbsensiDetail::class,
+            'jemaat_id'
+        );
+    }    
     use LogsActivity;
 
     public function getActivitylogOptions(): LogOptions
