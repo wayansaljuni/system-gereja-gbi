@@ -115,9 +115,11 @@ class TransaksiKeuanganHeadersTable
                 EditAction::make()
                     ->label('')
                     ->icon(Heroicon::OutlinedPencilSquare)
+                    ->tooltip('Edit Transaksi Keuangan')
                     ->visible(fn ($record): bool => ! $record->approve),
                 Action::make('print')
                     ->label('')
+                    ->tooltip('Cetak Transaksi Keuangan')
                     ->icon(Heroicon::OutlinedPrinter)
                     ->color('gray')
                     ->url(
