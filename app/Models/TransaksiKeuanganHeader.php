@@ -18,6 +18,7 @@ class TransaksiKeuanganHeader extends Model
         'tanggal',
         'ibadah_id',
         'keterangan',
+        'approve',
     ];
 
     protected function casts(): array

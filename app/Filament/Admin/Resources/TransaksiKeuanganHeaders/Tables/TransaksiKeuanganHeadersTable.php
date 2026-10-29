@@ -3,12 +3,13 @@
 namespace App\Filament\Admin\Resources\TransaksiKeuanganHeaders\Tables;
 
 use Filament\Actions\Action;
-// use Filament\Tables\Actions\Action as TableAction;
 use Filament\Actions\EditAction;
-// use Filament\Actions\ViewAction;
+use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
 
 class TransaksiKeuanganHeadersTable
 {
@@ -35,6 +36,14 @@ class TransaksiKeuanganHeadersTable
                 ], 'jumlah')
             )
             ->columns([
+                IconColumn::make('approve')
+                    ->label('Approve')
+                    ->boolean()
+                    ->trueIcon(Heroicon::OutlinedCheckCircle)
+                    ->falseIcon(Heroicon::OutlinedClock)
+                    ->trueColor('success')
+                    ->falseColor('warning')
+                    ->sortable(),                
                 TextColumn::make('tanggal')
                     ->label('Tanggal')
                     ->dateTime('d/m/Y H:i')
@@ -64,6 +73,38 @@ class TransaksiKeuanganHeadersTable
             ])
             ->defaultSort('tanggal', 'desc')
             ->recordActions([
+                Action::make('approve')
+                    ->label('Approve')
+                    ->icon(Heroicon::OutlinedCheckCircle)
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Approve Transaksi Keuangan')
+                    ->modalDescription(
+                        'Setelah disetujui, transaksi tidak dapat diedit lagi. Lanjutkan?'
+                    )
+                    ->modalSubmitActionLabel('Ya, Approve')
+                    ->visible(fn ($record): bool => ! $record->approve)
+                    ->action(function ($record): void {
+                        DB::transaction(function () use ($record): void {
+                            $transaksi = $record->newQuery()
+                                ->whereKey($record->getKey())
+                                ->lockForUpdate()
+                                ->firstOrFail();
+
+                            if ($transaksi->approve) {
+                                return;
+                            }
+
+                            $transaksi->update([
+                                'approve' => true,
+                            ]);
+                        });
+
+                        Notification::make()
+                            ->title('Transaksi berhasil di-approve')
+                            ->success()
+                            ->send();
+                    }),                
                 Action::make('print')
                     ->label('Print')
                     ->icon(Heroicon::OutlinedPrinter)

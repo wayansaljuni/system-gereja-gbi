@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\TransaksiKeuanganHeaders\TransaksiKeuanganHeade
 use App\Models\KategoriKeuangan;
 use App\Models\TransaksiKeuangan;
 use App\Models\TransaksiKeuanganHeader;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -240,4 +241,35 @@ protected function mutateFormDataBeforeFill(array $data): array
             return $record->refresh();
         });
     }
+
+    public function mount(int|string $record): void
+    {
+        parent::mount($record);
+
+        if ($this->getRecord()->approve) {
+            Notification::make()
+                ->title('Transaksi sudah di-approve')
+                ->body('Transaksi yang sudah disetujui tidak dapat diedit lagi.')
+                ->warning()
+                ->send();
+
+            $this->redirect(
+                static::getResource()::getUrl('index')
+            );
+        }
+    }    
+    protected function beforeSave(): void
+    {
+        if ($this->getRecord()->approve) {
+            Notification::make()
+                ->title('Transaksi sudah di-approve')
+                ->body('Transaksi yang sudah disetujui tidak dapat diedit lagi.')
+                ->warning()
+                ->send();
+
+            $this->redirect(
+                static::getResource()::getUrl('index')
+            );
+        }        
+    }    
 }
