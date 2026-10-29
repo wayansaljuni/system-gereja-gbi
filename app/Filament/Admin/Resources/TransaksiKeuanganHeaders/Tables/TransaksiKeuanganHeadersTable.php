@@ -6,7 +6,6 @@ use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
@@ -36,14 +35,21 @@ class TransaksiKeuanganHeadersTable
                 ], 'jumlah')
             )
             ->columns([
-                IconColumn::make('approve')
-                    ->label('Approve')
-                    ->boolean()
-                    ->trueIcon(Heroicon::OutlinedCheckCircle)
-                    ->falseIcon(Heroicon::OutlinedClock)
-                    ->trueColor('success')
-                    ->falseColor('warning')
-                    ->sortable(),                
+                TextColumn::make('approve')
+                        ->label('Status')
+                        ->badge()
+                        ->formatStateUsing(
+                            fn ($state) => $state ? 'Disetujui' : 'Menunggu'
+                        )
+                        ->color(
+                            fn ($state) => $state ? 'success' : 'warning'
+                        )
+                        ->icon(
+                            fn ($state) => $state
+                                ? 'heroicon-o-check-circle'
+                                : 'heroicon-o-clock'
+                        )
+                        ->sortable(),
                 TextColumn::make('tanggal')
                     ->label('Tanggal')
                     ->dateTime('d/m/Y H:i')
@@ -105,8 +111,13 @@ class TransaksiKeuanganHeadersTable
                             ->success()
                             ->send();
                     }),                
+                // ViewAction::make(),
+                EditAction::make()
+                    ->label('')
+                    ->icon(Heroicon::OutlinedPencilSquare)
+                    ->visible(fn ($record): bool => ! $record->approve),
                 Action::make('print')
-                    ->label('Print')
+                    ->label('')
                     ->icon(Heroicon::OutlinedPrinter)
                     ->color('gray')
                     ->url(
@@ -116,8 +127,6 @@ class TransaksiKeuanganHeadersTable
                         )
                     )
                     ->openUrlInNewTab(),
-                // ViewAction::make(),
-                EditAction::make(),
             ]);        
     }
 

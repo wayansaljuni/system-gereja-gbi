@@ -18,6 +18,22 @@ class TransferAkunsTable
     return $table
         ->defaultSort('tanggal', 'desc')
         ->columns([
+            TextColumn::make('approve')
+                ->label('Status')
+                ->badge()
+                ->formatStateUsing(
+                    fn ($state) => $state ? 'Disetujui' : 'Menunggu'
+                )
+                ->color(
+                    fn ($state) => $state ? 'success' : 'warning'
+                )
+                ->icon(
+                    fn ($state) => $state
+                        ? 'heroicon-o-check-circle'
+                        : 'heroicon-o-clock'
+                )
+                ->sortable(),
+
             TextColumn::make('tanggal')
                 ->label('Tanggal Transfer')
                 ->dateTime('d M Y, H:i')
@@ -56,23 +72,7 @@ class TransferAkunsTable
                 ->placeholder('-')
                 ->toggleable(),
 
-            TextColumn::make('approve')
-                ->label('Status')
-                ->badge()
-                ->formatStateUsing(
-                    fn ($state) => $state ? 'Disetujui' : 'Menunggu'
-                )
-                ->color(
-                    fn ($state) => $state ? 'success' : 'warning'
-                )
-                ->icon(
-                    fn ($state) => $state
-                        ? 'heroicon-o-check-circle'
-                        : 'heroicon-o-clock'
-                )
-                ->sortable(),
-
-            TextColumn::make('ibadah.id')
+             TextColumn::make('ibadah.id')
                 ->label('Ibadah')
                 ->formatStateUsing(
                     fn ($state) => $state ? 'Ibadah #' . $state : '-'
@@ -92,11 +92,6 @@ class TransferAkunsTable
                 ->toggleable(isToggledHiddenByDefault: true),
         ])
         ->recordActions([
-            ViewAction::make()
-                ->label('View')
-                ->icon('heroicon-o-eye')
-                ->color('info'),
-
             Action::make('approve')
                 ->label('Approve')
                 ->icon('heroicon-o-check-circle')
@@ -121,14 +116,22 @@ class TransferAkunsTable
                 }),
 
             EditAction::make()
-                ->label('Edit')
-                ->icon('heroicon-o-pencil-square'),
+                ->label('')
+                ->visible(fn (TransferAkun $record): bool => ! $record->approve)
+                ->icon('heroicon-o-pencil-square')
+                ->tooltip('Edit Transfer Akun'),
 
             DeleteAction::make()
-                ->label('Hapus')
+                ->label('')
                 ->icon('heroicon-o-trash')
+                ->tooltip('Hapus Transfer Akun')
                 ->color('danger')
                 ->visible(fn (TransferAkun $record): bool => ! $record->approve),
+            ViewAction::make()
+                ->label('')
+                ->icon('heroicon-o-eye')
+                ->tooltip('Lihat Detail Transfer Akun')
+                ->color('info'),
         ]);
     }
 }

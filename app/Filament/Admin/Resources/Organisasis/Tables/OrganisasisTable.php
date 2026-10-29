@@ -93,12 +93,14 @@ class OrganisasisTable
             ->recordActions([
                 EditAction::make()
                     ->label('')
-                    ->icon(Heroicon::OutlinedPencilSquare),
+                    ->icon(Heroicon::OutlinedPencil)
+                    ->tooltip('Edit Organisasi'),
 
                 DeleteAction::make()
                     ->label('')
                     ->icon(Heroicon::OutlinedTrash)
-                    ->color('danger'),
+                    ->color('danger')
+                    ->tooltip('Hapus Organisasi'),
             ])
 
             ->toolbarActions([
