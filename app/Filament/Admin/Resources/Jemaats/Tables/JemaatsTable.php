@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\Jemaats\Tables;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
@@ -82,7 +83,7 @@ class JemaatsTable
                     ->sortable(),
 
                 TextColumn::make('kelompok.nama')
-                    ->label('Kelompok')
+                    ->label('KPW')
                     ->icon('heroicon-o-user-group')
                     ->iconColor('primary')
                     ->placeholder('-')
@@ -139,6 +140,12 @@ class JemaatsTable
             ])
 
             ->recordActions([
+                ViewAction::make()
+                    ->label('')
+                    ->icon(Heroicon::OutlinedEye)
+                    ->tooltip('Lihat')
+                    ->modalHeading('Lihat Jemaat')
+                    ->modalWidth('3xl'),
                 EditAction::make()
                     ->label('')
                     ->icon(Heroicon::OutlinedPencil)

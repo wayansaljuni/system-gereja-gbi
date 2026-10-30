@@ -24,4 +24,10 @@ class CreateJemaat extends CreateRecord
         // ]);
         return JemaatService::create($data);
     }    
+    
+    protected function getRedirectUrl(): string
+    {
+        // Kembali ke tabel daftar jemaat
+        return $this->getResource()::getUrl('index');
+    }
 }
