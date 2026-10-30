@@ -65,9 +65,14 @@ class AbsensiForm
 
                             TextEntry::make('total_jemaat')
                                 ->label('Total Jemaat Hadir')
+                                // ->state(fn (Get $get): int =>
+                                //     count($get('details') ?? [])
+                                // )
                                 ->state(fn (Get $get): int =>
-                                    count($get('details') ?? [])
-                                )
+                                    collect($get('details') ?? [])
+                                        ->filter(fn ($detail) => filled(data_get($detail, 'jemaat_id')))
+                                        ->count()
+                                )                                
                                 ->badge()
                                 ->color('primary')
                                 ->icon('heroicon-o-users'),
@@ -88,6 +93,7 @@ class AbsensiForm
                 ->schema([
                     Repeater::make('details')
                         ->relationship('details')
+                        ->extraAttributes(['class' => 'repeater-scroll'])
                         // ->label('Data Kehadiran')
                         ->schema([
                             Select::make('jemaat_id')
@@ -143,7 +149,7 @@ class AbsensiForm
                                     // return $jemaat->getKey();
                                     $jemaat = JemaatService::create([
                                         'nama' => $data['nama'],
-                                        'no_kantong' => $data['no_kantong'] ?? null,
+                                        // 'no_kantong' => $data['no_kantong'] ?? null,
                                     ]);
 
                                     return $jemaat->getKey();                                    
@@ -155,6 +161,7 @@ class AbsensiForm
                                 ->rows(1)
                                 ->columnSpan(1),
                         ])
+                        
                         ->columns([
                             'default' => 1,
                             'md' => 2,
@@ -163,8 +170,8 @@ class AbsensiForm
                         ->table([
                             Repeater\TableColumn::make('Nama Jemaat')
                                 ->width('40%'),
-                            Repeater\TableColumn::make('Keterangan')
-                                ->width('60%'),
+                            // Repeater\TableColumn::make('Keterangan')
+                            //     ->width('60%'),
                         ])
                         ->defaultItems(3)
                         ->addActionLabel('Tambah Kehadiran Jemaat')

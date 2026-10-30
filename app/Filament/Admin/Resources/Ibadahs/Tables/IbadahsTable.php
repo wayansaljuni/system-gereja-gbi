@@ -101,6 +101,6 @@ class IbadahsTable
                     ->tooltip('Hapus Ibadah'),
             ])
 
-            ->defaultSort('nama');     
+            ->defaultSort('nama', 'desc');     
     }
 }

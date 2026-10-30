@@ -42,3 +42,10 @@
 .fi-wi-stats-overview .fi-wi-stats-overview-stat-chart {
     max-height: 25px !important;
 }
+
+
+
+.repeater-scroll {
+    max-height: 450px;
+    overflow: auto;
+}

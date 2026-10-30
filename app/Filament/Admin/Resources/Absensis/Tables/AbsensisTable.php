@@ -92,6 +92,7 @@ class AbsensisTable
             //             ->label('Hapus Terpilih'),
             //     ]),
             // ])
+            ->defaultSort('tanggal', 'desc')
             ;
     }
 }
