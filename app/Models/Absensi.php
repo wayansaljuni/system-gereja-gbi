@@ -32,9 +32,13 @@ class Absensi extends Model
 
     public function details(): HasMany
     {
+        // return $this->hasMany(
+        //     AbsensiDetail::class,
+        //     'absensi_id'
+        // );
         return $this->hasMany(
             AbsensiDetail::class,
             'absensi_id'
-        );
+        )->with('jemaat');        
     }    //
 }

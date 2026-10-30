@@ -84,34 +84,22 @@ class CreateTransaksiKeuanganHeader extends CreateRecord
                         if ($jumlah <= 0) {
                             continue;
                         }
-
                         TransaksiKeuangan::create([
                             'transaksi_keuangan_header_id' => $header->id,
-
                             'tanggal' => $header->tanggal,
-
                             'ibadah_id' => $header->ibadah_id,
-
                             'kategori_keuangan_id' => $id,
-
                             'akun_id' => $row["akun_id_{$id}"] ?? null,
-
                             'jemaat_id' => $row['jemaat_id'] ?? null,
-
                             'metode_pembayaran' =>
                                 $row['metode_pembayaran'] ?? 'tunai',
-
                             'jumlah' => $jumlah,
-
                             'no_referensi' => null,
-
                             'keterangan' => $header->keterangan,
                         ]);
                     }
-
                     continue;
                 }
-
                 /*
                  * ======================================================
                  * PEMASUKAN / PENGELUARAN UMUM
@@ -130,31 +118,20 @@ class CreateTransaksiKeuanganHeader extends CreateRecord
                 if ($jumlah <= 0) {
                     continue;
                 }
-
                 TransaksiKeuangan::create([
                     'transaksi_keuangan_header_id' => $header->id,
-
                     'tanggal' => $header->tanggal,
-
                     'ibadah_id' => $header->ibadah_id,
-
                     'kategori_keuangan_id' => $id,
-
                     'akun_id' => $data["akun_id_{$id}"] ?? null,
-
                     'jemaat_id' => null,
-
                     'metode_pembayaran' =>
                         $data["metode_{$id}"] ?? 'tunai',
-
                     'jumlah' => $jumlah,
-
                     'no_referensi' => null,
-
                     'keterangan' => $header->keterangan,
                 ]);
             }
-
             return $header;
         });
     }    

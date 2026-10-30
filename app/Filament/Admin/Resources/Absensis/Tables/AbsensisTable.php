@@ -2,8 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Absensis\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -69,12 +68,23 @@ class AbsensisTable
             ])
             ->recordActions([
                 ViewAction::make()
-                    ->label('Lihat')
+                    ->label('')
+                    ->tooltip('Lihat detail absensi')
+                    ->modalWidth('3xl')
                     ->icon('heroicon-o-eye'),
 
                 EditAction::make()
-                    ->label('Edit')
+                    ->label('')
+                    ->tooltip('Ubah data absensi')
+                    ->modalWidth('3xl') 
                     ->icon('heroicon-o-pencil-square'),
+                Action::make('print')
+                    ->label('')
+                    ->icon('heroicon-o-printer')
+                    ->tooltip('Cetak Absensi')
+                    ->color('success')
+                    ->url(fn ($record) => route('absensi.print', $record))
+                    ->openUrlInNewTab(),                    
             ])
             // ->toolbarActions([
             //     BulkActionGroup::make([

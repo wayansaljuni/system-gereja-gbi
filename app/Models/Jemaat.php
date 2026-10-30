@@ -60,6 +60,33 @@ class Jemaat extends Model
             'jemaat_id'
         );
     }    
+
+    // public static function generateNoJemaat(): string
+    // {
+    //     return DB::transaction(function () {
+    //         // Mengunci tabel jemaat selama proses generate
+    //         DB::table('jemaat')
+    //             ->where('no_jemaat', 'like', 'NIJ-%')
+    //             ->lockForUpdate()
+    //             ->get();
+
+    //         $lastNumber = self::query()
+    //             ->where('no_jemaat', 'like', 'NIJ-%')
+    //             ->selectRaw("
+    //                 MAX(CAST(SUBSTRING(no_jemaat, 5) AS UNSIGNED)) as last_number
+    //             ")
+    //             ->value('last_number');
+
+    //         $nextNumber = ((int) $lastNumber) + 1;
+
+    //         return 'NIJ-' . str_pad(
+    //             $nextNumber,
+    //             4,
+    //             '0',
+    //             STR_PAD_LEFT
+    //         );
+    //     });        
+    // }
     use LogsActivity;
 
     public function getActivitylogOptions(): LogOptions

@@ -2,7 +2,10 @@
 
 namespace App\Filament\Admin\Resources\KategoriKeuangans;
 
+use App\Filament\Admin\Resources\KategoriKeuangans\Pages\CreateKategoriKeuangan;
+use App\Filament\Admin\Resources\KategoriKeuangans\Pages\EditKategoriKeuangan;
 use App\Filament\Admin\Resources\KategoriKeuangans\Pages\ListKategoriKeuangans;
+use App\Filament\Admin\Resources\KategoriKeuangans\Pages\ViewKategoriKeuangan;
 use App\Filament\Admin\Resources\KategoriKeuangans\Schemas\KategoriKeuanganForm;
 use App\Filament\Admin\Resources\KategoriKeuangans\Schemas\KategoriKeuanganInfolist;
 use App\Filament\Admin\Resources\KategoriKeuangans\Tables\KategoriKeuangansTable;
@@ -52,9 +55,9 @@ class KategoriKeuanganResource extends Resource
     {
         return [
             'index' => ListKategoriKeuangans::route('/'),
-            // 'create' => CreateKategoriKeuangan::route('/create'),
-            // 'view' => ViewKategoriKeuangan::route('/{record}'),
-            // 'edit' => EditKategoriKeuangan::route('/{record}/edit'),
+            'create' => CreateKategoriKeuangan::route('/create'),
+            'view' => ViewKategoriKeuangan::route('/{record}'),
+            'edit' => EditKategoriKeuangan::route('/{record}/edit'),
         ];
     }
 }

@@ -20,21 +20,13 @@ class JemaatForm
                 ->description('Informasi dasar dan identitas jemaat.')
                 ->icon('heroicon-o-identification')
                 ->schema([
-
                     TextInput::make('no_jemaat')
                         ->label('No. Jemaat')
-                        ->placeholder('Contoh: JM001')
-                        ->prefixIcon('heroicon-o-hashtag')
-                        ->maxLength(30)
-                        ->unique(ignoreRecord: true)
-                        ->extraInputAttributes([
-                            'style' => 'text-transform: uppercase',
-                        ])
-                        ->dehydrateStateUsing(
-                            fn ($state) => $state
-                                ? strtoupper(trim($state))
-                                : null
-                        ),
+                        ->placeholder('Otomatis: NIJ-0001')
+                        ->prefixIcon('heroicon-o-identification')
+                        ->disabled()
+                        ->dehydrated(false)
+                        ->helperText('Nomor identitas jemaat dibuat otomatis oleh sistem.'),
 
                     TextInput::make('no_kantong')
                         ->label('No. Kantong')

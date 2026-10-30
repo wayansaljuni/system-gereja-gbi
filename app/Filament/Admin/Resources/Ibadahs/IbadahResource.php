@@ -2,6 +2,8 @@
 
 namespace App\Filament\Admin\Resources\Ibadahs;
 
+use App\Filament\Admin\Resources\Ibadahs\Pages\CreateIbadah;
+use App\Filament\Admin\Resources\Ibadahs\Pages\EditIbadah;
 use App\Filament\Admin\Resources\Ibadahs\Pages\ListIbadahs;
 use App\Filament\Admin\Resources\Ibadahs\Pages\ViewIbadah;
 use App\Filament\Admin\Resources\Ibadahs\Schemas\IbadahForm;
@@ -54,9 +56,9 @@ class IbadahResource extends Resource
     {
         return [
             'index' => ListIbadahs::route('/'),
-            // 'create' => CreateIbadah::route('/create'),
+            'create' => CreateIbadah::route('/create'),
             'view' => ViewIbadah::route('/{record}'),
-            // 'edit' => EditIbadah::route('/{record}/edit'),
+            'edit' => EditIbadah::route('/{record}/edit'),
         ];
     }
 }

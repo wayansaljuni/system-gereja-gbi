@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AbsensiPrintController;
 use App\Http\Controllers\AgreementAttachmentController;
 use App\Http\Controllers\TransaksiKeuanganHeaderPrintController;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get(
         '/transaksi-keuangan-header/{transaksiKeuanganHeader}/print',
         [TransaksiKeuanganHeaderPrintController::class, 'print']
-    )->name('transaksi-keuangan-header.print');        
+    )->name('transaksi-keuangan-header.print');  
+
+    Route::get(
+        '/absensi/{absensi}/print',
+        [AbsensiPrintController::class, 'print']
+    )->name('absensi.print');    
 
 });

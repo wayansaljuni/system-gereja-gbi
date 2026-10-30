@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\TransferAkuns;
 
+use App\Filament\Admin\Resources\TransferAkuns\Pages\CreateTransferAkun;
 use App\Filament\Admin\Resources\TransferAkuns\Pages\EditTransferAkun;
 use App\Filament\Admin\Resources\TransferAkuns\Pages\ListTransferAkuns;
 use App\Filament\Admin\Resources\TransferAkuns\Pages\ViewTransferAkun;
@@ -53,7 +54,7 @@ class TransferAkunResource extends Resource
     {
         return [
             'index' => ListTransferAkuns::route('/'),
-            // 'create' => CreateTransferAkun::route('/create'),
+            'create' => CreateTransferAkun::route('/create'),
             'view' => ViewTransferAkun::route('/{record}'),
             'edit' => EditTransferAkun::route('/{record}/edit'),
         ];

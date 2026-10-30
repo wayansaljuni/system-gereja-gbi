@@ -2,8 +2,10 @@
 
 namespace App\Filament\Admin\Resources\Jemaats;
 
+use App\Filament\Admin\Resources\Jemaats\Pages\CreateJemaat;
+use App\Filament\Admin\Resources\Jemaats\Pages\EditJemaat;
 use App\Filament\Admin\Resources\Jemaats\Pages\ListJemaats;
-// use App\Filament\Admin\Resources\Jemaats\Pages\ViewJemaat;
+use App\Filament\Admin\Resources\Jemaats\Pages\ViewJemaat;
 use App\Filament\Admin\Resources\Jemaats\Schemas\JemaatForm;
 use App\Filament\Admin\Resources\Jemaats\Schemas\JemaatInfolist;
 use App\Filament\Admin\Resources\Jemaats\Tables\JemaatsTable;
@@ -50,9 +52,9 @@ class JemaatResource extends Resource
     {
         return [
             'index' => ListJemaats::route('/'),
-            // 'create' => CreateJemaat::route('/create'),
-            // 'view' => ViewJemaat::route('/{record}'),
-            // 'edit' => EditJemaat::route('/{record}/edit'),
+            'create' => CreateJemaat::route('/create'),
+            'view' => ViewJemaat::route('/{record}'),
+            'edit' => EditJemaat::route('/{record}/edit'),
         ];
     }
 }

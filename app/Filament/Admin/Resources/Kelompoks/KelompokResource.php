@@ -4,6 +4,8 @@ namespace App\Filament\Admin\Resources\Kelompoks;
 
 // use App\Filament\Admin\Resources\Kelompoks\Pages\CreateKelompok;
 // use App\Filament\Admin\Resources\Kelompoks\Pages\EditKelompok;
+use App\Filament\Admin\Resources\Kelompoks\Pages\CreateKelompok;
+use App\Filament\Admin\Resources\Kelompoks\Pages\EditKelompok;
 use App\Filament\Admin\Resources\Kelompoks\Pages\ListKelompoks;
 use App\Filament\Admin\Resources\Kelompoks\Schemas\KelompokForm;
 use App\Filament\Admin\Resources\Kelompoks\Tables\KelompoksTable;
@@ -46,8 +48,8 @@ class KelompokResource extends Resource
     {
         return [
             'index' => ListKelompoks::route('/'),
-            // 'create' => CreateKelompok::route('/create'),
-            // 'edit' => EditKelompok::route('/{record}/edit'),
+            'create' => CreateKelompok::route('/create'),
+            'edit' => EditKelompok::route('/{record}/edit'),
         ];
     }
 }

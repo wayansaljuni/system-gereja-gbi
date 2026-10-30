@@ -2,7 +2,10 @@
 
 namespace App\Filament\Admin\Resources\Akuns;
 
+use App\Filament\Admin\Resources\Akuns\Pages\CreateAkun;
+use App\Filament\Admin\Resources\Akuns\Pages\EditAkun;
 use App\Filament\Admin\Resources\Akuns\Pages\ListAkuns;
+use App\Filament\Admin\Resources\Akuns\Pages\ViewAkun;
 use App\Filament\Admin\Resources\Akuns\Schemas\AkunForm;
 use App\Filament\Admin\Resources\Akuns\Schemas\AkunInfolist;
 use App\Filament\Admin\Resources\Akuns\Tables\AkunsTable;
@@ -51,9 +54,9 @@ class AkunResource extends Resource
     {
         return [
             'index' => ListAkuns::route('/'),
-            // 'create' => CreateAkun::route('/create'),
-            // 'view' => ViewAkun::route('/{record}'),
-            // 'edit' => EditAkun::route('/{record}/edit'),
+            'create' => CreateAkun::route('/create'),
+            'view' => ViewAkun::route('/{record}'),
+            'edit' => EditAkun::route('/{record}/edit'),
         ];
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Admin\Resources\Organisasis;
 
+use App\Filament\Admin\Resources\Organisasis\Pages\CreateOrganisasi;
+use App\Filament\Admin\Resources\Organisasis\Pages\EditOrganisasi;
 use App\Filament\Admin\Resources\Organisasis\Pages\ListOrganisasis;
 use App\Filament\Admin\Resources\Organisasis\Schemas\OrganisasiForm;
 use App\Filament\Admin\Resources\Organisasis\Tables\OrganisasisTable;
@@ -45,8 +47,8 @@ class OrganisasiResource extends Resource
     {
         return [
             'index' => ListOrganisasis::route('/'),
-            // 'create' => CreateOrganisasi::route('/create'),
-            // 'edit' => EditOrganisasi::route('/{record}/edit'),
+            'create' => CreateOrganisasi::route('/create'),
+            'edit' => EditOrganisasi::route('/{record}/edit'),
         ];
     }
 }

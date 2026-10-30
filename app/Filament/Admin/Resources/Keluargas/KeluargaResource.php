@@ -4,6 +4,8 @@ namespace App\Filament\Admin\Resources\Keluargas;
 
 // use App\Filament\Admin\Resources\Keluargas\Pages\CreateKeluarga;
 // use App\Filament\Admin\Resources\Keluargas\Pages\EditKeluarga;
+use App\Filament\Admin\Resources\Keluargas\Pages\CreateKeluarga;
+use App\Filament\Admin\Resources\Keluargas\Pages\EditKeluarga;
 use App\Filament\Admin\Resources\Keluargas\Pages\ListKeluargas;
 use App\Filament\Admin\Resources\Keluargas\Pages\ViewKeluarga;
 use App\Filament\Admin\Resources\Keluargas\Schemas\KeluargaForm;
@@ -70,9 +72,9 @@ class KeluargaResource extends Resource
     {
         return [
             'index' => ListKeluargas::route('/'),
-            // 'create' => CreateKeluarga::route('/create'),
+            'create' => CreateKeluarga::route('/create'),
             'view' => ViewKeluarga::route('/{record}'),
-            // 'edit' => EditKeluarga::route('/{record}/edit'),
+            'edit' => EditKeluarga::route('/{record}/edit'),
         ];
     }
 }
