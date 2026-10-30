@@ -234,7 +234,10 @@ class TransaksiKeuanganHeaderForm
             */
             if ($detailJemaat) {
 
-                $fields[] = Repeater::make("jemaat_{$id}")
+            $fields[] = Repeater::make("jemaat_{$id}")
+                    ->extraAttributes([
+                        'style' => 'max-height: 250px; overflow: auto;',
+                    ])                
                     ->label('Rincian')
                     ->schema([
                         Select::make('jemaat_id')
@@ -362,7 +365,7 @@ class TransaksiKeuanganHeaderForm
         */
         return $schema->components([
 
-            Grid::make(2)
+            Grid::make(1)
                 ->schema([
                     // KOLOM KIRI: INFORMASI TRANSAKSI
                     Section::make('Informasi Transaksi')
@@ -388,49 +391,7 @@ class TransaksiKeuanganHeaderForm
 
                             Textarea::make('keterangan')
                                 ->label('Keterangan')
-                                ->rows(2)
-                                ->columnSpanFull(),
-                        ])
-                        ->columns(3)
-                        ->columnSpan(1),
-
-                    // KOLOM KANAN: REKAP KEUANGAN
-                    Section::make('Rekap Keuangan')
-                        ->schema([
-                            // TextEntry::make('total_pemasukan')
-                            //     ->label('Total Pemasukan')
-                            //     ->state(function (Get $get) use ($hitungRekap) {
-                            //         return $hitungRekap($get)['total_pemasukan'];
-                            //     })
-                            //     ->money('IDR', locale: 'id')
-                            //     ->size('lg')
-                            //     ->weight('bold')
-                            //     ->color('success'),
-
-                            // TextEntry::make('total_pengeluaran')
-                            //     ->label('Total Pengeluaran')
-                            //     ->state(function (Get $get) use ($hitungRekap) {
-                            //         return $hitungRekap($get)['total_pengeluaran'];
-                            //     })
-                            //     ->money('IDR', locale: 'id')
-                            //     ->size('lg')
-                            //     ->weight('bold')
-                            //     ->color('danger'),
-
-                            // TextEntry::make('saldo_total')
-                            //     ->label('Total Saldo')
-                            //     ->state(function (Get $get) use ($hitungRekap) {
-                            //         return $hitungRekap($get)['saldo_total'];
-                            //     })
-                            //     ->money('IDR', locale: 'id')
-                            //     ->size('lg')
-                            //     ->weight('bold')
-                            //     ->color(function (Get $get) use ($hitungRekap) {
-                            //         return $hitungRekap($get)['saldo_total'] < 0
-                            //             ? 'danger'
-                            //             : 'success';
-                            //     }),
-
+                                ->rows(1),
                             TextEntry::make('pemasukan_tunai')
                                 ->label('Pemasukan Tunai')
                                 ->state(function (Get $get) use ($hitungRekap) {
@@ -452,7 +413,6 @@ class TransaksiKeuanganHeaderForm
                                 ->weight('bold')
                                 ->color('danger')
                                 ,
-
                             TextEntry::make('saldo_tunai')
                                 ->label('Saldo Tunai')
                                 ->state(function (Get $get) use ($hitungRekap) {
@@ -493,9 +453,6 @@ class TransaksiKeuanganHeaderForm
                         ->columnSpan(1),
                     ])
                     ->columnSpanFull()
-                        ->extraAttributes([
-                            'class' => 'sticky top-0 z-30 bg-white dark:bg-gray-950 shadow-md',
-                        ])
                     ,
 
             // PERTAHANKAN SECTION PEMASUKAN DAN PENGELUARAN DI BAWAH INI
@@ -506,6 +463,9 @@ class TransaksiKeuanganHeaderForm
                         ->schema($pemasukan)
                         ->columnSpanFull(),
                 ])
+                ->extraAttributes([
+                    'style' => 'max-height: 60vh; overflow-y: auto; padding-right: .5rem;',
+                ])                
                 ->columnSpanFull(),
 
             Section::make('Pengeluaran')
@@ -514,6 +474,9 @@ class TransaksiKeuanganHeaderForm
                         ->schema($pengeluaran)
                         ->columnSpanFull(),
                 ])
+                ->extraAttributes([
+                    'style' => 'max-height: 60vh; overflow-y: auto; padding-right: .5rem;',
+                ])                
                 ->columnSpanFull(),
 
         ]);

@@ -7,7 +7,7 @@ use Filament\Auth\Http\Responses\Contracts\LogoutResponse as LogoutResponseContr
 use Illuminate\Auth\Events\Login;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Schema;
+// use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -42,6 +42,17 @@ class AppServiceProvider extends ServiceProvider
                 ])
                 ->log('Login ke aplikasi');                    //
         });
+        
+        // FilamentView::registerRenderHook(
+        //     PanelsRenderHook::HEAD_END,
+        //     fn () => Blade::render(<<<'HTML'
+        //         <style>
+        //             div:has(> .rekap-sticky) { position: sticky; top: 4rem; z-index: 30; }
+        //             .rekap-sticky { background: #fff; padding-bottom: .5rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / .1); }
+        //             .dark .rekap-sticky { background: rgb(var(--gray-950)); }
+        //         </style>
+        //     HTML),
+        // );        
 
     /**
      * Bootstrap any application services.
