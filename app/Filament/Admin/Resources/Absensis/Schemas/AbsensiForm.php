@@ -93,7 +93,10 @@ class AbsensiForm
                 ->schema([
                     Repeater::make('details')
                         ->relationship('details')
-                        ->extraAttributes(['class' => 'repeater-scroll'])
+                        // ->extraAttributes(['class' => 'repeater-scroll'])
+                        ->extraAttributes([
+                            'style' => 'max-height: 450px; overflow: auto;',
+                        ])
                         // ->label('Data Kehadiran')
                         ->schema([
                             Select::make('jemaat_id')
