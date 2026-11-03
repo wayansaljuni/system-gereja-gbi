@@ -275,34 +275,15 @@ public function form(Schema $schema): Schema
 
 public function table(Table $table): Table
 {
-    return $table
-        ->modifyQueryUsing(
-            fn (Builder $query) =>
-                $query->whereHas(
-                    'kategoriKeuangan',
-                    fn (Builder $q) => $q->where('tipe', 'pemasukan')
-                )
-        )
-        // ->groups([
-        //     Group::make('kategori_keuangan_id')
-        //         ->label('Kategori')
-        //         ->getTitleFromRecordUsing(
-        //             fn ($record) => $record->kategoriKeuangan?->nama ?? '-'
-        //         )
-        //         ->collapsible(),
-        // ])
-        // ->defaultGroup('kategori_keuangan_id')
-->groups([
-    Group::make('kategori_keuangan_id')
+    $kategoriMetodeGroup = Group::make('kategori_keuangan_id')
         ->label('Kategori + Metode')
 
-        // Key unik untuk setiap kombinasi kategori dan metode
         ->getKeyFromRecordUsing(
             fn ($record): string =>
-                $record->kategori_keuangan_id . '|' . $record->metode_pembayaran
+                $record->kategori_keuangan_id . '|' .
+                strtolower(trim($record->metode_pembayaran ?? ''))
         )
 
-        // Judul grup
         ->getTitleFromRecordUsing(
             fn ($record): string =>
                 ($record->kategoriKeuangan?->nama ?? '-') .
@@ -310,21 +291,78 @@ public function table(Table $table): Table
                 ucfirst($record->metode_pembayaran ?? '-')
         )
 
-        // Batasi query summary sesuai kategori DAN metode
         ->scopeQueryByKeyUsing(
             function (Builder $query, string $key): Builder {
                 [$kategoriId, $metode] = explode('|', $key, 2);
 
                 return $query
                     ->where('kategori_keuangan_id', $kategoriId)
-                    ->where('metode_pembayaran', $metode);
+                    ->whereRaw(
+                        'LOWER(TRIM(metode_pembayaran)) = ?',
+                        [$metode]
+                    );
             }
         )
 
+        ->orderQueryUsing(
+            fn (Builder $query, string $direction): Builder =>
+                $query
+                    ->orderBy('kategori_keuangan_id', $direction)
+                    ->orderByRaw("LOWER(TRIM(metode_pembayaran)) {$direction}")
+        )
+
         ->titlePrefixedWithLabel(false)
-        ->collapsible(),
-])
-->defaultGroup('kategori_keuangan_id')
+        ->collapsible();
+
+        return $table
+            ->modifyQueryUsing(
+                fn (Builder $query) =>
+                    $query->whereHas(
+                        'kategoriKeuangan',
+                        fn (Builder $q) => $q->where('tipe', 'pemasukan')
+                    )
+            )
+            ->groups([
+                $kategoriMetodeGroup,
+            ])
+            ->defaultGroup($kategoriMetodeGroup)
+        // ->groups([
+        //     Group::make('kategori_keuangan_id')
+        //         ->label('Kategori + Metode')
+
+        //         ->getKeyFromRecordUsing(
+        //             fn ($record): string =>
+        //                 $record->kategori_keuangan_id . '|' . strtolower($record->metode_pembayaran)
+        //         )
+
+        //         ->getTitleFromRecordUsing(
+        //             fn ($record): string =>
+        //                 ($record->kategoriKeuangan?->nama ?? '-') .
+        //                 ' — ' .
+        //                 ucfirst($record->metode_pembayaran ?? '-')
+        //         )
+
+        //         ->scopeQueryByKeyUsing(
+        //             function (Builder $query, string $key): Builder {
+        //                 [$kategoriId, $metode] = explode('|', $key, 2);
+
+        //                 return $query
+        //                     ->where('kategori_keuangan_id', $kategoriId)
+        //                     ->whereRaw('LOWER(metode_pembayaran) = ?', [$metode]);
+        //             }
+        //         )
+
+        //         // Urutkan agar grup dengan key sama selalu berdekatan
+        //         ->orderQueryUsing(
+        //             fn (Builder $query, string $direction): Builder =>
+        //                 $query
+        //                     ->orderBy('kategori_keuangan_id', $direction)
+        //                     ->orderBy('metode_pembayaran', $direction)
+        //         )
+
+        //         ->titlePrefixedWithLabel(false)
+        //         ->collapsible(),
+        // ])
 
         ->columns([
             TextColumn::make('tanggal')
