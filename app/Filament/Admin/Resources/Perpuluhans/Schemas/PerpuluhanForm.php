@@ -32,7 +32,6 @@ return $schema
                     ->preload()
                     ->placeholder('Pilih atau cari nama jemaat')
                     ->prefixIcon('heroicon-o-user')
-                    ->required()
                     ->native(false),
             ])
             ->columns(2),
