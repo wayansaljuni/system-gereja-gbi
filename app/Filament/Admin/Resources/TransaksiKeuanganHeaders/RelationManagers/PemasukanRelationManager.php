@@ -283,15 +283,49 @@ public function table(Table $table): Table
                     fn (Builder $q) => $q->where('tipe', 'pemasukan')
                 )
         )
-        ->groups([
-            Group::make('kategori_keuangan_id')
-                ->label('Kategori')
-                ->getTitleFromRecordUsing(
-                    fn ($record) => $record->kategoriKeuangan?->nama ?? '-'
-                )
-                ->collapsible(),
-        ])
-        ->defaultGroup('kategori_keuangan_id')
+        // ->groups([
+        //     Group::make('kategori_keuangan_id')
+        //         ->label('Kategori')
+        //         ->getTitleFromRecordUsing(
+        //             fn ($record) => $record->kategoriKeuangan?->nama ?? '-'
+        //         )
+        //         ->collapsible(),
+        // ])
+        // ->defaultGroup('kategori_keuangan_id')
+->groups([
+    Group::make('kategori_keuangan_id')
+        ->label('Kategori + Metode')
+
+        // Key unik untuk setiap kombinasi kategori dan metode
+        ->getKeyFromRecordUsing(
+            fn ($record): string =>
+                $record->kategori_keuangan_id . '|' . $record->metode_pembayaran
+        )
+
+        // Judul grup
+        ->getTitleFromRecordUsing(
+            fn ($record): string =>
+                ($record->kategoriKeuangan?->nama ?? '-') .
+                ' — ' .
+                ucfirst($record->metode_pembayaran ?? '-')
+        )
+
+        // Batasi query summary sesuai kategori DAN metode
+        ->scopeQueryByKeyUsing(
+            function (Builder $query, string $key): Builder {
+                [$kategoriId, $metode] = explode('|', $key, 2);
+
+                return $query
+                    ->where('kategori_keuangan_id', $kategoriId)
+                    ->where('metode_pembayaran', $metode);
+            }
+        )
+
+        ->titlePrefixedWithLabel(false)
+        ->collapsible(),
+])
+->defaultGroup('kategori_keuangan_id')
+
         ->columns([
             TextColumn::make('tanggal')
                 ->label('Tanggal')
