@@ -27,6 +27,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Zvizvi\FilamentColumnFilters\FilamentColumnFiltersPlugin;
+use App\Filament\Widgets\RekapKeuanganStats;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -74,6 +75,7 @@ class AdminPanelProvider extends PanelProvider
                 OrganisasiStats::class,
                 JemaatStats::class,
                 RecentActivityWidget::class,
+                RekapKeuanganStats::class,
                 ])
             ->middleware([
                 EncryptCookies::class,

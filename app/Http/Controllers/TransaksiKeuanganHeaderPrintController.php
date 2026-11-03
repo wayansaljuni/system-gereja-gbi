@@ -10,9 +10,9 @@ class TransaksiKeuanganHeaderPrintController extends Controller
     {
         $transaksiKeuanganHeader->load([
             'ibadah',
-            'details.kategoriKeuangan',
-            'details.akun',
-            'details.jemaat',
+            'transaksiKeuangan.kategoriKeuangan',
+            'transaksiKeuangan.akun',
+            'transaksiKeuangan.jemaat',
         ]);
 
         return view(

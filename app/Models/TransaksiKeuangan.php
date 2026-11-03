@@ -26,6 +26,7 @@ class TransaksiKeuangan extends Model
         'jumlah',
         'no_referensi',
         'keterangan',
+        'perpuluhan_id',
     ];
 
     protected $casts = [
@@ -53,11 +54,16 @@ class TransaksiKeuangan extends Model
         return $this->belongsTo(Jemaat::class);
     }    //
 
-    // public function details(): HasMany
+    public function perpuluhan(): BelongsTo
+    {
+        return $this->belongsTo(Perpuluhan::class);
+    }
+    // public function transaksiKeuangan(): HasMany
     // {
     //     return $this->hasMany(
     //         TransaksiKeuangan::class,
-    //         'transaksi_keuangan_header_id'
+    //         'transaksi_keuangan_header_id',
+    //         'id'
     //     );
     // }
 
@@ -71,7 +77,7 @@ class TransaksiKeuangan extends Model
 
     public function getTotalAttribute(): float
     {
-        return (float) $this->details()->sum('jumlah');
+        return (float) $this->transaksiKeuangan()->sum('jumlah');
     }
     use LogsActivity;
 

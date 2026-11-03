@@ -33,17 +33,18 @@ class TransaksiKeuanganHeader extends Model
         return $this->belongsTo(Ibadah::class);
     }
 
-    public function details(): HasMany
+    public function transaksiKeuangan(): HasMany
     {
         return $this->hasMany(
             TransaksiKeuangan::class,
-            'transaksi_keuangan_header_id'
+            'transaksi_keuangan_header_id',
+            'id'
         );
     }
 
     public function getTotalAttribute(): float
     {
-        return (float) $this->details()->sum('jumlah');
+        return (float) $this->transaksiKeuangan()->sum('jumlah');
     }    //
     use LogsActivity;
 

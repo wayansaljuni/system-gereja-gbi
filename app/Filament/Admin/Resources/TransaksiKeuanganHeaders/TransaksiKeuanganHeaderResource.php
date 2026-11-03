@@ -6,6 +6,8 @@ use App\Filament\Admin\Resources\TransaksiKeuanganHeaders\Pages\CreateTransaksiK
 use App\Filament\Admin\Resources\TransaksiKeuanganHeaders\Pages\EditTransaksiKeuanganHeader;
 use App\Filament\Admin\Resources\TransaksiKeuanganHeaders\Pages\ListTransaksiKeuanganHeaders;
 use App\Filament\Admin\Resources\TransaksiKeuanganHeaders\Pages\ViewTransaksiKeuanganHeader;
+use App\Filament\Admin\Resources\TransaksiKeuanganHeaders\RelationManagers\PemasukanRelationManager;
+use App\Filament\Admin\Resources\TransaksiKeuanganHeaders\RelationManagers\PengeluaranRelationManager;
 use App\Filament\Admin\Resources\TransaksiKeuanganHeaders\Schemas\TransaksiKeuanganHeaderForm;
 use App\Filament\Admin\Resources\TransaksiKeuanganHeaders\Schemas\TransaksiKeuanganHeaderInfolist;
 use App\Filament\Admin\Resources\TransaksiKeuanganHeaders\Tables\TransaksiKeuanganHeadersTable;
@@ -48,7 +50,8 @@ class TransaksiKeuanganHeaderResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            PemasukanRelationManager::class,
+            PengeluaranRelationManager::class,            //
         ];
     }
 

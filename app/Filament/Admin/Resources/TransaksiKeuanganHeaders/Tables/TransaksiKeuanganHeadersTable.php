@@ -18,7 +18,7 @@ class TransaksiKeuanganHeadersTable
             ->modifyQueryUsing(fn ($query) => $query
                 ->with('ibadah')
                 ->withSum([
-                    'details as total_pemasukan' => fn ($q) =>
+                    'transaksiKeuangan as total_pemasukan' => fn ($q) =>
                         $q->whereHas(
                             'kategoriKeuangan',
                             fn ($kategori) => $kategori
@@ -26,7 +26,7 @@ class TransaksiKeuanganHeadersTable
                         ),
                 ], 'jumlah')
                 ->withSum([
-                    'details as total_pengeluaran' => fn ($q) =>
+                    'transaksiKeuangan as total_pengeluaran' => fn ($q) =>
                         $q->whereHas(
                             'kategoriKeuangan',
                             fn ($kategori) => $kategori

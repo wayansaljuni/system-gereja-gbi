@@ -28,20 +28,20 @@ class JemaatForm
                         ->dehydrated(false)
                         ->helperText('Nomor identitas jemaat dibuat otomatis oleh sistem.'),
 
-                    TextInput::make('no_kantong')
-                        ->label('No. Kantong')
-                        ->placeholder('Contoh: KTG001')
-                        ->prefixIcon('heroicon-o-tag')
-                        ->maxLength(30)
-                        ->unique(ignoreRecord: true)
-                        ->extraInputAttributes([
-                            'style' => 'text-transform: uppercase',
-                        ])
-                        ->dehydrateStateUsing(
-                            fn ($state) => $state
-                                ? strtoupper(trim($state))
-                                : null
-                        ),
+                    // TextInput::make('no_kantong')
+                    //     ->label('No. Kantong')
+                    //     ->placeholder('Contoh: KTG001')
+                    //     ->prefixIcon('heroicon-o-tag')
+                    //     ->maxLength(30)
+                    //     ->unique(ignoreRecord: true)
+                    //     ->extraInputAttributes([
+                    //         'style' => 'text-transform: uppercase',
+                    //     ])
+                    //     ->dehydrateStateUsing(
+                    //         fn ($state) => $state
+                    //             ? strtoupper(trim($state))
+                    //             : null
+                    //     ),
 
                     TextInput::make('nama')
                         ->label('Nama Jemaat')

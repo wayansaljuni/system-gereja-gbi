@@ -479,15 +479,26 @@
         ================================================== --}}
 
         @php
-
-            $pemasukan = $transaksiKeuanganHeader->details
+            $pemasukan = $transaksiKeuanganHeader->transaksiKeuangan
                 ->filter(
                     fn ($detail) =>
                         $detail->kategoriKeuangan?->tipe === 'pemasukan'
                 )
+                ->sort(function ($a, $b) {
+                    $kategori = $a->kategori_keuangan_id <=> $b->kategori_keuangan_id;
+
+                    if ($kategori !== 0) {
+                        return $kategori;
+                    }
+
+                    return strnatcasecmp(
+                        $a->perpuluhan?->no_kantong ?? '',
+                        $b->perpuluhan?->no_kantong ?? ''
+                    );
+                })                
                 ->groupBy('kategori_keuangan_id');
 
-            $pengeluaran = $transaksiKeuanganHeader->details
+            $pengeluaran = $transaksiKeuanganHeader->transaksiKeuangan
                 ->filter(
                     fn ($detail) =>
                         $detail->kategoriKeuangan?->tipe === 'pengeluaran'
@@ -502,99 +513,60 @@
         ================================================== --}}
 
         @if ($pemasukan->isNotEmpty())
-
             <div class="transaction-type">
                 PEMASUKAN
             </div>
 
-
             @foreach ($pemasukan as $kategoriId => $details)
-
                 @php
-
                     $kategori =
                         $details->first()->kategoriKeuangan;
-
                     $subtotal =
                         $details->sum('jumlah');
-
                     $detailJemaat =
                         (bool) ($kategori?->bisa_detail_jemaat);
-
                 @endphp
 
-
                 <div class="category">
-
                     <div class="category-title">
-
                         {{ $kategori?->nama ?? '-' }}
-
                     </div>
-
-
                     <table class="detail-table">
-
                         <thead>
-
                             <tr>
-
                                 @if ($detailJemaat)
-
                                     <th width="20%">
                                         No. Kantong
                                     </th>
-
                                 @endif
-
                                 <th width="{{ $detailJemaat ? '35%' : '40%' }}">
                                     Akun Kas / Bank
                                 </th>
-
                                 <th width="20%">
                                     Metode
                                 </th>
-
                                 <th width="25%">
                                     Jumlah
                                 </th>
-
                             </tr>
-
                         </thead>
-
-
                         <tbody>
-
                             @foreach ($details as $detail)
-
                                 <tr>
-
                                     @if ($detailJemaat)
-
                                         <td>
-                                            {{ $detail->jemaat?->no_kantong ?? '-' }}
+                                            {{ $detail->perpuluhan?->no_kantong ?? '-' }}
                                         </td>
-
                                     @endif
-
-
                                     <td>
                                         {{ $detail->akun?->nama ?? '-' }}
                                     </td>
-
-
                                     <td class="center">
-
                                         {{ ucfirst(
                                             $detail->metode_pembayaran ?? '-'
                                         ) }}
-
                                     </td>
-
-
                                     <td class="right">
-
                                         Rp
                                         {{ number_format(
                                             $detail->jumlah,
@@ -602,25 +574,18 @@
                                             ',',
                                             '.'
                                         ) }}
-
                                     </td>
-
                                 </tr>
-
                             @endforeach
 
-
                             <tr class="subtotal">
-
                                 <td
                                     colspan="{{ $detailJemaat ? 3 : 2 }}"
                                     class="right"
                                 >
                                     Subtotal
                                 </td>
-
                                 <td class="right">
-
                                     Rp
                                     {{ number_format(
                                         $subtotal,
@@ -628,22 +593,13 @@
                                         ',',
                                         '.'
                                     ) }}
-
                                 </td>
-
                             </tr>
-
                         </tbody>
-
                     </table>
-
                 </div>
-
             @endforeach
-
         @endif
-
-
 
         {{-- =================================================
              PENGELUARAN
@@ -780,7 +736,7 @@
         @php
 
             $pemasukanTunai =
-                $transaksiKeuanganHeader->details
+                $transaksiKeuanganHeader->transaksiKeuangan
                     ->filter(
                         fn ($detail) =>
                             $detail->kategoriKeuangan?->tipe === 'pemasukan'
@@ -790,7 +746,7 @@
 
 
             $pemasukanTransfer =
-                $transaksiKeuanganHeader->details
+                $transaksiKeuanganHeader->transaksiKeuangan
                     ->filter(
                         fn ($detail) =>
                             $detail->kategoriKeuangan?->tipe === 'pemasukan'
@@ -800,7 +756,7 @@
 
 
             $pengeluaranTunai =
-                $transaksiKeuanganHeader->details
+                $transaksiKeuanganHeader->transaksiKeuangan
                     ->filter(
                         fn ($detail) =>
                             $detail->kategoriKeuangan?->tipe === 'pengeluaran'
@@ -810,7 +766,7 @@
 
 
             $pengeluaranTransfer =
-                $transaksiKeuanganHeader->details
+                $transaksiKeuanganHeader->transaksiKeuangan
                     ->filter(
                         fn ($detail) =>
                             $detail->kategoriKeuangan?->tipe === 'pengeluaran'
@@ -1003,29 +959,16 @@
             </table>
 
         </div>
-
-
-
         {{-- =================================================
              TANDA TANGAN
         ================================================== --}}
-
         <div class="signature">
-
             Dibuat,
-
             <div class="signature-space"></div>
-
             <strong>
                 __________________________
             </strong>
-
         </div>
-
-
     </div>
-
-
 </body>
-
 </html>

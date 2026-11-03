@@ -27,10 +27,10 @@ class JemaatInfolist
                         ->color('primary')
                         ->placeholder('-'),
 
-                    TextEntry::make('no_kantong')
-                        ->label('Nomor Kantong')
-                        ->icon('heroicon-o-ticket')
-                        ->placeholder('-'),
+                    // TextEntry::make('no_kantong')
+                    //     ->label('Nomor Kantong')
+                    //     ->icon('heroicon-o-ticket')
+                    //     ->placeholder('-'),
 
                     TextEntry::make('nama')
                         ->label('Nama Lengkap')
